@@ -1,6 +1,6 @@
-import * as PIXI from 'pixi.js'
-import { Entity } from '~/core'
+import { Entity, Core } from '~/core'
 import { ComponentPosition, ComponentVelocity, ComponentGraphics } from '~/components'
+import { ResourceAssets } from '~/resources'
 
 export class EntityCommander extends Entity {
   constructor(position: number[], velocity: number[]) {
@@ -14,6 +14,13 @@ export class EntityCommander extends Entity {
       ComponentVelocity.name,
       new ComponentVelocity(velocity[0], velocity[1]),
     )
-    this.components.set(ComponentGraphics.name, new ComponentGraphics(8, 8, 0xffffff))
+  }
+
+  public initialize(core: Core) {
+    const assets = core.getResource(ResourceAssets) as ResourceAssets
+
+    const { texture } = assets.resources['electricity']
+
+    this.components.set(ComponentGraphics.name, new ComponentGraphics(32, 32, texture))
   }
 }

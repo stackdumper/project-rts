@@ -2,14 +2,13 @@ import * as PIXI from 'pixi.js'
 import { Component } from '~/core'
 
 export class ComponentGraphics extends Component {
-  public graphics: PIXI.Graphics
+  public sprite: PIXI.Sprite
 
-  constructor(width: number, height: number, color: number) {
+  constructor(width: number, height: number, texture: PIXI.Texture) {
     super()
 
-    this.graphics = new PIXI.Graphics()
-      .beginFill(0xffffff)
-      .drawRect(0, 0, 8, 8)
-      .endFill()
+    this.sprite = new PIXI.Sprite(texture)
+    this.sprite.width = width
+    this.sprite.height = height
   }
 }
