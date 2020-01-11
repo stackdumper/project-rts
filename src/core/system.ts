@@ -5,9 +5,6 @@ import { Core } from './core'
  * System can update Entity(ies) and Resource(s).
  */
 export abstract class System {
-  /** System.id provides a unique identifier for the system to be recognized by Core */
-  static id: string
-
   /** System.initialize is used for one-time initialization during Core.addSystem */
   public initialize(core: Core) {}
 

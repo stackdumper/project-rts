@@ -49,7 +49,7 @@ export class SystemRender extends System {
 
   public update(core: Core) {
     // update entities
-    for (const entity of core.entities) {
+    for (const entity of core.entities.values()) {
       if (entity.components.graphics && entity.components.position) {
         entity.components.graphics.position.x = entity.components.position[0]
         entity.components.graphics.position.y = entity.components.position[1]

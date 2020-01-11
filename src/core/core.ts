@@ -5,24 +5,29 @@ import EventEmitter from 'eventemitter3'
  * Core orchestrates entities, systems and resources.
  */
 export class Core {
-  public entities: Set<Entity>
-  public systems: Set<System>
-  public resources: Set<Resource>
+  public entities: Map<string, Entity>
+  public systems: Map<string, System>
+  public resources: Map<string, Resource>
 
   /**
    * Core.events provide event bus for use by systems
    */
   public events: EventEmitter<
-    'add-entity' | 'remove-entity' | 'add-resource' | 'add-system'
+    | 'add-entity'
+    | 'remove-entity'
+    | 'add-resource'
+    | 'add-system'
+    | 'start-update'
+    | 'end-update'
   >
 
   /**
    * Core.constructor creates a new Core instance.
    */
   constructor() {
-    this.entities = new Set()
-    this.systems = new Set()
-    this.resources = new Set()
+    this.entities = new Map()
+    this.systems = new Map()
+    this.resources = new Map()
 
     this.events = new EventEmitter()
   }
@@ -35,7 +40,7 @@ export class Core {
   public addSystem(system: System) {
     system.initialize(this)
 
-    this.systems.add(system)
+    this.systems.set(system.constructor.name, system)
 
     this.events.emit('add-system', system)
   }
@@ -48,9 +53,24 @@ export class Core {
   public addResource(resource: Resource) {
     resource.initialize(this)
 
-    this.resources.add(resource)
+    this.resources.set(resource.constructor.name, resource)
 
     this.events.emit('add-resource', resource)
+  }
+
+  /**
+   * Core.addResource initializes provided resource
+   * and adds it to the list of resources for futher use by systems.
+   * Triggers 'add-resource' event.
+   */
+  public getResource<T extends Function>(resourceClass: T): Resource {
+    const t = this.resources.get(resourceClass.name)
+
+    if (t) {
+      return t
+    } else {
+      throw new Error(`[Core.getResource] unable to find resource: ${resourceClass.name}`)
+    }
   }
 
   /**
@@ -61,20 +81,20 @@ export class Core {
   public addEntity(entity: Entity) {
     entity.initialize(this)
 
-    this.entities.add(entity)
+    this.entities.set(entity.id, entity)
 
     this.events.emit('add-entity', entity)
   }
 
   /**
-   * Core.addEntity initializes provided entity
-   * and adds it to the list of entities for futher update by systems.
-   * Triggers 'add-entity' event.
+   * Core.addEntity deinitializes provided entity
+   * and removes it from the list of entities for futher update by systems.
+   * Triggers 'remove-entity' event.
    */
   public removeEntity(entity: Entity) {
     entity.deinitialize(this)
 
-    this.entities.delete(entity)
+    this.entities.delete(entity.id)
 
     this.events.emit('remove-entity', entity)
   }
@@ -83,8 +103,12 @@ export class Core {
    * Core.update updates all previously added systems.
    */
   public update() {
-    for (const system of this.systems) {
+    this.events.emit('start-update')
+
+    for (const system of this.systems.values()) {
       system.update(this)
     }
+
+    this.events.emit('end-update')
   }
 }

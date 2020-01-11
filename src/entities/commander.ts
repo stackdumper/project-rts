@@ -10,7 +10,7 @@ export class EntityCommander extends Entity {
       velocity: velocity,
       graphics: new PIXI.Graphics()
         .beginFill(0xffffff)
-        .drawRect(0, 0, 16, 16)
+        .drawRect(0, 0, 8, 8)
         .endFill(),
     }
   }
