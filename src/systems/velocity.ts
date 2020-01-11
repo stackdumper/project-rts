@@ -1,8 +1,9 @@
 import { System, Core } from '~/core'
 import { ResourceClock } from '~/resources'
+import { ComponentPosition, ComponentVelocity } from '~/components'
 
 /**
- * SystemRender is used to render game content into pixi.js scene.
+ * SystemVelocity is used to apply velocities to entities positions.
  */
 export class SystemVelocity extends System {
   static id = 'velocity'
@@ -12,9 +13,12 @@ export class SystemVelocity extends System {
       // how to avoid 'as'?
       const clock = core.getResource(ResourceClock) as ResourceClock
 
-      if (entity.components.velocity && entity.components.position) {
-        entity.components.position[0] += entity.components.velocity[0] * clock.dt
-        entity.components.position[1] += entity.components.velocity[1] * clock.dt
+      const position = entity.components.get(ComponentPosition.name) as ComponentPosition
+      const velocity = entity.components.get(ComponentVelocity.name) as ComponentVelocity
+
+      if (position && velocity) {
+        position.x += velocity.x * clock.dt
+        position.y += velocity.y * clock.dt
       }
     }
   }

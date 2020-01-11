@@ -1,6 +1,5 @@
-import * as PIXI from 'pixi.js'
 import nanoid from 'nanoid'
-import { Core } from './core'
+import { Core, Component } from '.'
 
 /**
  * Entity represents a single entity inside of the game physical and/or graphical world.
@@ -11,11 +10,7 @@ export abstract class Entity {
   public id: string = nanoid()
 
   /** Entity.components store entity data for use by systems */
-  public components: {
-    position?: number[]
-    velocity?: number[]
-    graphics?: PIXI.Graphics
-  } = {}
+  public components: Map<string, Component> = new Map()
 
   /** Entity.initialize is used to initialize entity during Core.addEntity */
   public initialize(core: Core) {}

@@ -1,7 +1,7 @@
 import { Core } from './core'
+import { ResourceClock } from './resources'
 import { SystemVelocity, SystemRender, SystemStats } from './systems'
 import { EntityCommander } from './entities'
-import { ResourceClock } from './resources'
 
 window.addEventListener('load', () => {
   const core = new Core()
@@ -10,11 +10,11 @@ window.addEventListener('load', () => {
   core.addResource(new ResourceClock(1000 / 60))
 
   // add systems
-  core.addSystem(new SystemStats())
   core.addSystem(new SystemVelocity())
   core.addSystem(
     new SystemRender({ view: document.getElementById('root') as HTMLCanvasElement }),
   )
+  core.addSystem(new SystemStats())
 
   // add entities with random positions and velocities
   for (let i = 0; i < 1000; i++) {
@@ -25,7 +25,7 @@ window.addEventListener('load', () => {
           [Math.random() * 2, Math.random() * 2],
         ),
       )
-    }, 3 * i)
+    }, 1 * i)
   }
 
   // start game loop

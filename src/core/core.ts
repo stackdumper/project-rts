@@ -59,18 +59,17 @@ export class Core {
   }
 
   /**
-   * Core.addResource initializes provided resource
-   * and adds it to the list of resources for futher use by systems.
-   * Triggers 'add-resource' event.
+   * Core.getREsource returns a resource by it's constructor.
+   * Throws an error if such resource does not exist.
    */
   public getResource<T extends Function>(resourceClass: T): Resource {
     const t = this.resources.get(resourceClass.name)
 
-    if (t) {
-      return t
-    } else {
+    if (!t) {
       throw new Error(`[Core.getResource] unable to find resource: ${resourceClass.name}`)
     }
+
+    return t
   }
 
   /**
@@ -87,7 +86,7 @@ export class Core {
   }
 
   /**
-   * Core.addEntity deinitializes provided entity
+   * Core.removeEntity deinitializes provided entity
    * and removes it from the list of entities for futher update by systems.
    * Triggers 'remove-entity' event.
    */

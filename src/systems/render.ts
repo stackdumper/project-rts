@@ -1,5 +1,6 @@
-import { System, Core, Entity } from '~/core'
 import * as PIXI from 'pixi.js'
+import { System, Core, Entity } from '~/core'
+import { ComponentGraphics, ComponentPosition } from '~/components'
 
 interface SystemRenderOptions {
   view: HTMLCanvasElement
@@ -34,15 +35,19 @@ export class SystemRender extends System {
   public initialize(core: Core) {
     // on add entity
     core.events.addListener('add-entity', (entity: Entity) => {
-      if (entity.components.graphics) {
-        this.app.stage.addChild(entity.components.graphics)
+      const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
+
+      if (graphics) {
+        this.app.stage.addChild(graphics.graphics)
       }
     })
 
     // on remove entity
     core.events.addListener('remove-entity', (entity: Entity) => {
-      if (entity.components.graphics) {
-        this.app.stage.removeChild(entity.components.graphics)
+      const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
+
+      if (graphics) {
+        this.app.stage.removeChild(graphics.graphics)
       }
     })
   }
@@ -50,9 +55,12 @@ export class SystemRender extends System {
   public update(core: Core) {
     // update entities
     for (const entity of core.entities.values()) {
-      if (entity.components.graphics && entity.components.position) {
-        entity.components.graphics.position.x = entity.components.position[0]
-        entity.components.graphics.position.y = entity.components.position[1]
+      const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
+      const position = entity.components.get(ComponentPosition.name) as ComponentPosition
+
+      if (graphics && position) {
+        graphics.graphics.position.x = position.x
+        graphics.graphics.position.y = position.y
       }
     }
 

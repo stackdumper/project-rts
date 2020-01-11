@@ -2,7 +2,7 @@ import Stats from 'stats.js'
 import { System, Core } from '~/core'
 
 /**
- * SystemRender is used to render game content into pixi.js scene.
+ * SystemStats is used to display debug statistics.
  */
 export class SystemStats extends System {
   static id = 'stats'
