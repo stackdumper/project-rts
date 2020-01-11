@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.css"],"names":[],"mappings":"AAAA,KACE,QAAS,CACT,SAAU,CAEV,eAAgB,CAChB,oBAAqB,CACrB,wBACF","file":"src.dd796965.css","sourceRoot":"../src","sourcesContent":["body {\n  margin: 0;\n  padding: 0;\n\n  overflow: hidden;\n  scroll-behavior: none;\n  overscroll-behavior: none;\n}\n"]}

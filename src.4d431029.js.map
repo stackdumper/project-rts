@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.ts"],"names":[],"mappings":";AAAA,OAAO,iBAAiB,OAAQ,WAC9B,QAAQ,IAAI","file":"src.4d431029.js","sourceRoot":"../src","sourcesContent":["window.addEventListener('load', () => {\n  console.log('123')\n})\n"]}
