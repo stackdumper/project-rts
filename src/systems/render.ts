@@ -1,37 +1,20 @@
 import * as PIXI from 'pixi.js'
 import { System, Core, Entity, CoreEvent } from '~/core'
 import { ComponentGraphics, ComponentPosition } from '~/components'
-
-interface SystemRenderOptions {
-  view: HTMLCanvasElement
-}
+import { ResourceScene } from '~/resources'
 
 /**
  * SystemRender is used to render game content into pixi.js scene.
  */
 export class SystemRender extends System {
   static id = 'render'
-
   private app: PIXI.Application
 
-  constructor(options: SystemRenderOptions) {
+  constructor(core: Core) {
     super()
 
-    // disable pixi.js banner in console
-    PIXI.utils.skipHello()
-
-    // create new app instance
-    this.app = new PIXI.Application({
-      antialias: true,
-      resolution: window.devicePixelRatio || 1,
-      view: options.view,
-      resizeTo: options.view,
-      backgroundColor: 0xffffff,
-      powerPreference: 'high-performance',
-    })
-
-    // set scale mode to nearest for crisp and sharp textures
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+    const scene = core.getResource(ResourceScene) as ResourceScene
+    this.app = scene.app
   }
 
   // create event listeners
