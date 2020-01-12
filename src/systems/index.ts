@@ -1,3 +1,5 @@
-export { SystemRender } from './render'
-export { SystemVelocity } from './velocity'
 export { SystemStats } from './stats'
+export { SystemResources } from './resources'
+export { SystemVelocity } from './velocity'
+export { SystemRender } from './render'
+export { SystemRenderResources } from './render-resources'
