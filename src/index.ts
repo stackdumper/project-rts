@@ -6,13 +6,13 @@ import { EntityCommander } from './entities'
 
 window.addEventListener('load', () => {
   // load resources
-  ResourceAssets.loadResources().then((resources) => {
+  ResourceAssets.loadResources().then((assets) => {
     const core = new Core()
 
     // add resources
     const clock = new ResourceClock()
     core.addResource(clock)
-    core.addResource(new ResourceAssets(resources))
+    core.addResource(new ResourceAssets(assets))
 
     // add systems
     core.addSystem(new SystemVelocity())

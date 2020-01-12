@@ -9,6 +9,7 @@ export enum CoreEvent {
   StartUpdate = 'start-update',
   EndUpdate = 'end-update',
 }
+
 /**
  * Core orchestrates entities, systems and resources.
  */
