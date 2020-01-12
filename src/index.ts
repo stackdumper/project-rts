@@ -1,7 +1,13 @@
 import * as PIXI from 'pixi.js'
 import { Core } from './core'
-import { ResourceClock, ResourceAssets } from './resources'
-import { SystemVelocity, SystemRender, SystemStats } from './systems'
+import { ResourceClock, ResourceAssets, ResourceResources } from './resources'
+import {
+  SystemVelocity,
+  SystemRender,
+  SystemStats,
+  SystemResources,
+  SystemRenderResources,
+} from './systems'
 import { EntityCommander } from './entities'
 
 window.addEventListener('load', () => {
@@ -13,13 +19,16 @@ window.addEventListener('load', () => {
     const clock = new ResourceClock()
     core.addResource(clock)
     core.addResource(new ResourceAssets(assets))
+    core.addResource(new ResourceResources())
 
     // add systems
     core.addSystem(new SystemVelocity())
     core.addSystem(
       new SystemRender({ view: document.getElementById('root') as HTMLCanvasElement }),
     )
-    core.addSystem(new SystemStats())
+    core.addSystem(new SystemResources())
+    core.addSystem(new SystemRenderResources())
+    // core.addSystem(new SystemStats())
 
     // add entities with random positions and velocities
     for (let i = 0; i < 1000; i++) {
@@ -27,10 +36,10 @@ window.addEventListener('load', () => {
         core.addEntity(
           new EntityCommander(
             [Math.random() * 100, Math.random() * 100],
-            [Math.random() * 2, Math.random() * 2],
+            [Math.random() * 3, Math.random() * 3],
           ),
         )
-      }, 1 * i)
+      }, 3 * i)
     }
 
     PIXI.Ticker.shared.add((dt) => {
