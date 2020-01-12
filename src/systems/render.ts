@@ -1,4 +1,3 @@
-import * as PIXI from 'pixi.js'
 import { System, Core, Entity, CoreEvent } from '~/core'
 import { ComponentGraphics, ComponentPosition } from '~/components'
 import { ResourceScene } from '~/resources'
@@ -8,23 +7,21 @@ import { ResourceScene } from '~/resources'
  */
 export class SystemRender extends System {
   static id = 'render'
-  private app: PIXI.Application
 
-  constructor(core: Core) {
+  constructor() {
     super()
-
-    const scene = core.getResource(ResourceScene) as ResourceScene
-    this.app = scene.app
   }
 
   // create event listeners
   public initialize(core: Core) {
+    const { app } = core.getResource(ResourceScene) as ResourceScene
+
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {
-        this.app.stage.addChild(graphics.sprite)
+        app.stage.addChild(graphics.sprite)
       }
     })
 
@@ -33,12 +30,14 @@ export class SystemRender extends System {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {
-        this.app.stage.removeChild(graphics.sprite)
+        app.stage.removeChild(graphics.sprite)
       }
     })
   }
 
   public update(core: Core) {
+    const { app } = core.getResource(ResourceScene) as ResourceScene
+
     // update entities
     for (const entity of core.entities.values()) {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
@@ -51,6 +50,6 @@ export class SystemRender extends System {
     }
 
     // render scene
-    this.app.render()
+    app.render()
   }
 }

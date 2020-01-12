@@ -19,7 +19,7 @@ window.addEventListener('load', () => {
 
     // add systems
     core.addSystem(new SystemVelocity())
-    core.addSystem(new SystemRender(core))
+    core.addSystem(new SystemRender())
     core.addSystem(new SystemStats())
 
     // add entities with random positions and velocities
