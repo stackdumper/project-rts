@@ -18,16 +18,27 @@
     "game"
   ],
   "scripts": {
-    "test": "echo 'no test specified' && exit 0",
+    "test": "jest",
     "start": "parcel serve -p 8080 src/index.html",
     "build": "parcel build --public-url './' src/index.html",
     "format": "prettier --write './!(node_modules|dist)/**/*.{ts,tsx,js,jsx}'",
-    "format:check": "prettier --check './!(node_modules|dist)/**/*.{ts,tsx,js,jsx}'"
+    "check": "prettier --check './!(node_modules|dist)/**/*.{ts,tsx,js,jsx}' && tsc --noEmit -p ."
   },
   "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@types/nanoid": "^2.1.0",
+    "@types/stats.js": "^0.17.0",
+    "jest": "^24.9.0",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-clean-dist": "0.0.6",
     "prettier": "^1.19.1",
+    "stats.js": "^0.17.0",
+    "ts-jest": "^24.3.0",
     "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "eventemitter3": "^4.0.0",
+    "nanoid": "^2.1.9",
+    "pixi.js": "^5.2.0"
   }
 }

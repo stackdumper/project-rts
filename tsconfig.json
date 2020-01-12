@@ -4,14 +4,15 @@
     "module": "esnext",
     "lib": ["esnext", "dom"],
     "jsx": "preserve",
-
+    "strict": true,
+    
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
 
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "~/*": ["src/*"]
     }
   }
 }
