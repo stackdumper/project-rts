@@ -43,7 +43,6 @@ export class SystemRender extends System {
 
   // create event listeners
   public initialize(core: Core) {
-
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics

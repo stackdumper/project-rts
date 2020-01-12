@@ -19,7 +19,7 @@ window.addEventListener('load', () => {
     core.addSystem(
       new SystemRender({ view: document.getElementById('root') as HTMLCanvasElement }),
     )
-    // core.addSystem(new SystemStats())
+    core.addSystem(new SystemStats())
 
     // add entities with random positions and velocities
     for (let i = 0; i < 1000; i++) {
