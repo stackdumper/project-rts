@@ -1,6 +1,14 @@
 import { Entity, System, Resource } from '.'
 import EventEmitter from 'eventemitter3'
 
+export enum CoreEvent {
+  AddResource = 'add-resource',
+  AddSystem = 'add-system',
+  AddEntity = 'add-entity',
+  RemoveEntity = 'remove-entity',
+  StartUpdate = 'start-update',
+  EndUpdate = 'end-update',
+}
 /**
  * Core orchestrates entities, systems and resources.
  */
@@ -12,14 +20,7 @@ export class Core {
   /**
    * Core.events provide event bus for use by systems
    */
-  public events: EventEmitter<
-    | 'add-entity'
-    | 'remove-entity'
-    | 'add-resource'
-    | 'add-system'
-    | 'start-update'
-    | 'end-update'
-  >
+  public events: EventEmitter<CoreEvent>
 
   /**
    * Core.constructor creates a new Core instance.
@@ -33,19 +34,6 @@ export class Core {
   }
 
   /**
-   * Core.addSystem initializes provided
-   * and adds it to the list of systems for futher dispatch by Core.update.
-   * Triggers 'add-system' event.
-   */
-  public addSystem(system: System) {
-    system.initialize(this)
-
-    this.systems.set(system.constructor.name, system)
-
-    this.events.emit('add-system', system)
-  }
-
-  /**
    * Core.addResource initializes provided resource
    * and adds it to the list of resources for futher use by systems.
    * Triggers 'add-resource' event.
@@ -55,11 +43,11 @@ export class Core {
 
     this.resources.set(resource.constructor.name, resource)
 
-    this.events.emit('add-resource', resource)
+    this.events.emit(CoreEvent.AddResource, resource)
   }
 
   /**
-   * Core.getREsource returns a resource by it's constructor.
+   * Core.getResource returns a resource by it's constructor.
    * Throws an error if such resource does not exist.
    */
   public getResource<T extends Function>(resourceClass: T): Resource {
@@ -73,6 +61,19 @@ export class Core {
   }
 
   /**
+   * Core.addSystem initializes provided
+   * and adds it to the list of systems for futher dispatch by Core.update.
+   * Triggers 'add-system' event.
+   */
+  public addSystem(system: System) {
+    system.initialize(this)
+
+    this.systems.set(system.constructor.name, system)
+
+    this.events.emit(CoreEvent.AddSystem, system)
+  }
+
+  /**
    * Core.addEntity initializes provided entity
    * and adds it to the list of entities for futher update by systems.
    * Triggers 'add-entity' event.
@@ -82,7 +83,7 @@ export class Core {
 
     this.entities.set(entity.id, entity)
 
-    this.events.emit('add-entity', entity)
+    this.events.emit(CoreEvent.AddEntity, entity)
   }
 
   /**
@@ -95,19 +96,19 @@ export class Core {
 
     this.entities.delete(entity.id)
 
-    this.events.emit('remove-entity', entity)
+    this.events.emit(CoreEvent.RemoveEntity, entity)
   }
 
   /**
    * Core.update updates all previously added systems.
    */
   public update() {
-    this.events.emit('start-update')
+    this.events.emit(CoreEvent.StartUpdate)
 
     for (const system of this.systems.values()) {
       system.update(this)
     }
 
-    this.events.emit('end-update')
+    this.events.emit(CoreEvent.EndUpdate)
   }
 }
