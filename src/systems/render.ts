@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { System, Core, Entity } from '~/core'
+import { System, Core, Entity, CoreEvent } from '~/core'
 import { ComponentGraphics, ComponentPosition } from '~/components'
 
 interface SystemRenderOptions {
@@ -37,7 +37,7 @@ export class SystemRender extends System {
   // create event listeners
   public initialize(core: Core) {
     // on add entity
-    core.events.addListener('add-entity', (entity: Entity) => {
+    core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {
@@ -46,7 +46,7 @@ export class SystemRender extends System {
     })
 
     // on remove entity
-    core.events.addListener('remove-entity', (entity: Entity) => {
+    core.events.addListener(CoreEvent.RemoveEntity, (entity: Entity) => {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {

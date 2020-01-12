@@ -1,5 +1,5 @@
 import Stats from 'stats.js'
-import { System, Core } from '~/core'
+import { System, Core, CoreEvent } from '~/core'
 
 /**
  * SystemStats is used to display debug statistics.
@@ -21,11 +21,11 @@ export class SystemStats extends System {
   }
 
   public initialize(core: Core) {
-    core.events.addListener('start-update', () => {
+    core.events.addListener(CoreEvent.StartUpdate, () => {
       this.stats.begin()
     })
 
-    core.events.addListener('end-update', () => {
+    core.events.addListener(CoreEvent.EndUpdate, () => {
       this.stats.end()
     })
   }
