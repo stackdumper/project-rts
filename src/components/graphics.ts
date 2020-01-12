@@ -7,7 +7,7 @@ export class ComponentGraphics extends Component {
   constructor(width: number, height: number, texture: PIXI.Texture) {
     super()
 
-    this.sprite = new PIXI.Sprite(texture)
+    this.sprite = new PIXI.Sprite(PIXI.Texture.WHITE)
     this.sprite.width = width
     this.sprite.height = height
   }

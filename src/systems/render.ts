@@ -13,6 +13,7 @@ export class SystemRender extends System {
   static id = 'render'
 
   private app: PIXI.Application
+  private container: PIXI.Container
 
   constructor(options: SystemRenderOptions) {
     super()
@@ -26,9 +27,15 @@ export class SystemRender extends System {
       resolution: window.devicePixelRatio || 1,
       view: options.view,
       resizeTo: options.view,
-      backgroundColor: 0xffffff,
+      backgroundColor: 0x080808,
       powerPreference: 'high-performance',
     })
+
+    // create entity container
+    this.container = new PIXI.Container()
+
+    // add entity container to stage
+    this.app.stage.addChild(this.container)
 
     // set scale mode to nearest for crisp and sharp textures
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
@@ -36,12 +43,13 @@ export class SystemRender extends System {
 
   // create event listeners
   public initialize(core: Core) {
+
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {
-        this.app.stage.addChild(graphics.sprite)
+        this.container.addChild(graphics.sprite)
       }
     })
 
@@ -50,7 +58,7 @@ export class SystemRender extends System {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {
-        this.app.stage.removeChild(graphics.sprite)
+        this.container.removeChild(graphics.sprite)
       }
     })
   }
