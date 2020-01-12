@@ -8,10 +8,6 @@ import { ResourceScene } from '~/resources'
 export class SystemRender extends System {
   static id = 'render'
 
-  constructor() {
-    super()
-  }
-
   // create event listeners
   public initialize(core: Core) {
     const { app } = core.getResource(ResourceScene) as ResourceScene
