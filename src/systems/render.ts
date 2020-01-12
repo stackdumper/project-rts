@@ -1,10 +1,6 @@
-import * as PIXI from 'pixi.js'
 import { System, Core, Entity, CoreEvent } from '~/core'
 import { ComponentGraphics, ComponentPosition } from '~/components'
-
-interface SystemRenderOptions {
-  view: HTMLCanvasElement
-}
+import { ResourceScene } from '~/resources'
 
 /**
  * SystemRender is used to render game content into pixi.js scene.
@@ -12,36 +8,16 @@ interface SystemRenderOptions {
 export class SystemRender extends System {
   static id = 'render'
 
-  private app: PIXI.Application
-
-  constructor(options: SystemRenderOptions) {
-    super()
-
-    // disable pixi.js banner in console
-    PIXI.utils.skipHello()
-
-    // create new app instance
-    this.app = new PIXI.Application({
-      antialias: true,
-      resolution: window.devicePixelRatio || 1,
-      view: options.view,
-      resizeTo: options.view,
-      backgroundColor: 0xffffff,
-      powerPreference: 'high-performance',
-    })
-
-    // set scale mode to nearest for crisp and sharp textures
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
-  }
-
   // create event listeners
   public initialize(core: Core) {
+    const { app } = core.getResource(ResourceScene) as ResourceScene
+
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {
-        this.app.stage.addChild(graphics.sprite)
+        app.stage.addChild(graphics.sprite)
       }
     })
 
@@ -50,12 +26,14 @@ export class SystemRender extends System {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {
-        this.app.stage.removeChild(graphics.sprite)
+        app.stage.removeChild(graphics.sprite)
       }
     })
   }
 
   public update(core: Core) {
+    const { app } = core.getResource(ResourceScene) as ResourceScene
+
     // update entities
     for (const entity of core.entities.values()) {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
@@ -68,6 +46,6 @@ export class SystemRender extends System {
     }
 
     // render scene
-    this.app.render()
+    app.render()
   }
 }

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { Core } from './core'
-import { ResourceClock, ResourceAssets } from './resources'
+import { ResourceClock, ResourceAssets, ResourceScene } from './resources'
 import { SystemVelocity, SystemRender, SystemStats } from './systems'
 import { EntityCommander } from './entities'
 
@@ -13,12 +13,13 @@ window.addEventListener('load', () => {
     const clock = new ResourceClock()
     core.addResource(clock)
     core.addResource(new ResourceAssets(assets))
+    core.addResource(
+      new ResourceScene({ view: document.getElementById('root') as HTMLCanvasElement }),
+    )
 
     // add systems
     core.addSystem(new SystemVelocity())
-    core.addSystem(
-      new SystemRender({ view: document.getElementById('root') as HTMLCanvasElement }),
-    )
+    core.addSystem(new SystemRender())
     core.addSystem(new SystemStats())
 
     // add entities with random positions and velocities
