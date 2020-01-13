@@ -8,22 +8,27 @@ export class SystemResources extends System {
   static id = 'velocity'
 
   private incrementResource(resource: CResource, dt: number): TResource {
+    const nextCurrent = Math.max(
+      Math.min(
+        resource.current + (resource.production - resource.consumption) * dt,
+        resource.max,
+      ),
+      0,
+    )
+
     return {
-      current:
-        resource.current < resource.max
-          ? Math.min(resource.current + 3 * dt, resource.max)
-          : resource.current,
+      current: nextCurrent,
       max: resource.max,
+      production: resource.production,
+      consumption: resource.consumption,
     }
   }
 
   public update(core: Core) {
-    const resources = core.getResource(ResourceResources) as ResourceResources
-    const clock = core.getResource(ResourceClock) as ResourceClock
+    const { energy, mass } = core.getResource(ResourceResources) as ResourceResources
+    const { dt } = core.getResource(ResourceClock) as ResourceClock
 
-    console.log(resources.energy.conversion)
-
-    resources.energy.update(this.incrementResource(resources.energy, clock.dt))
-    resources.mass.update(this.incrementResource(resources.mass, clock.dt))
+    energy.update(this.incrementResource(energy, dt))
+    mass.update(this.incrementResource(mass, dt))
   }
 }

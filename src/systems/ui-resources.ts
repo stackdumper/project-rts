@@ -31,6 +31,20 @@ export class SystemUIResources extends System {
     massCurrent: document.querySelector(
       '#resource-mass .bar-indicator-current',
     )! as HTMLDivElement,
+
+    energyProduction: document.querySelector(
+      '#resource-energy .resource-production',
+    )! as HTMLDivElement,
+    massProduction: document.querySelector(
+      '#resource-mass .resource-production',
+    )! as HTMLDivElement,
+
+    energyConsumption: document.querySelector(
+      '#resource-energy .resource-consumption',
+    )! as HTMLDivElement,
+    massConsumption: document.querySelector(
+      '#resource-mass .resource-consumption',
+    )! as HTMLDivElement,
   }
 
   public update(core: Core) {
@@ -41,6 +55,13 @@ export class SystemUIResources extends System {
 
     this.bars.energyMax.textContent = resources.energy.max.toString()
     this.bars.massMax.textContent = resources.mass.max.toString()
+
+    this.bars.energyProduction.textContent = '+' + resources.energy.production.toString()
+    this.bars.massProduction.textContent = '+' + resources.mass.production.toString()
+
+    this.bars.energyConsumption.textContent =
+      '-' + resources.energy.consumption.toString()
+    this.bars.massConsumption.textContent = '-' + resources.mass.consumption.toString()
 
     const energyPercentage = (resources.energy.current / resources.energy.max) * 100
     const massPercentage = (resources.mass.current / resources.mass.max) * 100

@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>project-rts</title>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <link rel="stylesheet" href="index.less">
-  </head>
-  <body>
-    <canvas id="root"></canvas>
+  <title>project-rts</title>
 
-    <div id="top-left-menu">
-      <div id="resource-energy">
+  <link rel="stylesheet" href="index.less">
+</head>
+
+<body>
+  <canvas id="root"></canvas>
+
+  <div id="top-left-menu">
+    <div id="resource-energy">
+      <div class="resource-section">
         <div class="bar-container-shadow">
           <div class="bar-container">
             <div class="bar"></div>
@@ -26,23 +29,37 @@
         </div>
       </div>
       
-      <div id="resource-mass">
+      <div class="resource-section">
+        <div class="resource-stats resource-production">...</div>
+        <div class="resource-stats resource-consumption">...</div>
+      </div>
+    </div>
+
+    <div id="resource-mass">
+      <div class="resource-section">
         <div class="bar-container-shadow">
           <div class="bar-container">
             <div class="bar"></div>
           </div>
         </div>
-        
+
         <div class="bar-indicators">
           <div class="bar-indicator-current">...</div>
           <div class="bar-indicator-max">...</div>
         </div>
       </div>
+
+      <div class="resource-section">
+        <div class="resource-stats resource-production">...</div>
+        <div class="resource-stats resource-consumption">...</div>
+      </div>
     </div>
-    
-    <div id="top-right-menu"></div>
-    <div id="bottom-menu"></div>
-    
-    <script src="index.ts"></script>
-  </body>
+  </div>
+
+  <div id="top-right-menu"></div>
+  <div id="bottom-menu"></div>
+
+  <script src="index.ts"></script>
+</body>
+
 </html>
