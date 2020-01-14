@@ -5,6 +5,7 @@ import {
   ResourceAssets,
   ResourceScene,
   ResourceResources,
+  ResourceMap,
 } from './resources'
 import {
   SystemVelocity,
@@ -26,6 +27,7 @@ window.addEventListener('load', () => {
       .withResource(
         new ResourceScene({ view: document.getElementById('root') as HTMLCanvasElement }),
       )
+      .withResource(new ResourceMap())
       // add systems
       .withSystem(new SystemVelocity())
       .withSystem(new SystemResources())
