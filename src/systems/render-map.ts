@@ -3,8 +3,6 @@ import { ResourceScene, ResourceMap } from '~/resources'
 import { Graphics } from 'pixi.js'
 
 export class SystemRenderMap extends System {
-  static id = 'render_map'
-
   public initialize(core: Core) {
     const { app } = core.getResource(ResourceScene) as ResourceScene
     const { map } = core.getResource(ResourceMap) as ResourceMap
