@@ -3,21 +3,33 @@ import { ResourceScene, ResourceMap } from '~/resources'
 import { Graphics } from 'pixi.js'
 
 export class SystemRenderMap extends System {
+  private tileSize = 16
+  private colors = {
+    texture: 0x222f3e,
+    navigation: 0x576574,
+    resource: 0x1dd1a1,
+  }
+
   public initialize(core: Core) {
     const { app } = core.getResource(ResourceScene) as ResourceScene
     const { map } = core.getResource(ResourceMap) as ResourceMap
 
     const tiles = new Graphics()
 
-    for (let x = 0; x < map.tiles.length; x++) {
-      for (let y = 0; y < map.tiles[x].length; y++) {
-        const isResource = map.resources[x][y]
-        const canTravel = !isResource && map.navigation[x][y]
+    for (let x = 0; x < map.textures.length; x++) {
+      for (let y = 0; y < map.textures[x].length; y++) {
+        const tile = map.textures[x][y]
+        const navigation = map.navigation[x][y]
+        const resource = map.resources[x][y]
+
+        const color =
+          (resource && this.colors.resource) ||
+          (navigation && this.colors.navigation) ||
+          (tile && this.colors.texture)
 
         tiles
-          .lineStyle(1, 0xffffff)
-          .beginFill(isResource ? 0x00ff00 : canTravel ? 0x000000 : 0x808080)
-          .drawRect(40 * x, 40 * y, 40, 40)
+          .beginFill(color)
+          .drawRect(this.tileSize * x, this.tileSize * y, this.tileSize, this.tileSize)
           .endFill()
       }
     }

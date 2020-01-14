@@ -30,7 +30,7 @@ window.addEventListener('load', () => {
       .withResource(new ResourceAssets(assets))
       .withResource(new ResourceCursor())
       .withResource(new ResourceResources())
-      .withResource(new ResourceMap())
+      .withResource(new ResourceMap(100, 40))
       .withResource(new ResourceClock())
       .withResource(new ResourceSelection())
       .withResource(new ResourceScene())
@@ -47,8 +47,8 @@ window.addEventListener('load', () => {
       .build()
 
     // add commander and engineer
-    core.addEntity(new EntityCommander([800, 400], [0, 0]))
-    core.addEntity(new EntityEngineer([600, 400], [0, 0]))
+    core.addEntity(new EntityCommander([800, 400], [0.1, 0]))
+    core.addEntity(new EntityEngineer([600, 400], [0.15, 0]))
 
     // start game loop
     const clock = core.getResource(ResourceClock) as ResourceClock

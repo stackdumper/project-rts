@@ -4,7 +4,7 @@ import { Component } from '~/core'
 export class ComponentGraphics extends Component {
   public sprite: PIXI.Sprite
 
-  constructor(width: number, height: number, texture: PIXI.Texture) {
+  constructor(width: number, height: number) {
     super()
 
     this.sprite = new PIXI.Sprite(PIXI.Texture.WHITE)

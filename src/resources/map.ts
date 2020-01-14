@@ -1,7 +1,7 @@
 import { Resource } from '~/core'
 
 interface IMap {
-  tiles: number[][]
+  textures: number[][]
   resources: number[][]
   navigation: number[][]
 }
@@ -13,16 +13,18 @@ export class ResourceMap extends Resource {
     super()
 
     this.map = {
-      tiles: new Array(this.width).fill(0).map(() => new Array(this.height).fill(0)),
+      textures: new Array(this.width).fill(1).map(() => new Array(this.height).fill(1)),
+
       resources: new Array(this.width)
         .fill(0)
         .map(() =>
-          new Array(this.height).fill(0).map(() => Number(Math.random() >= 0.95)),
+          new Array(this.height).fill(0).map(() => Number(Math.random() >= 0.999)),
         ),
+
       navigation: new Array(this.width)
         .fill(0)
         .map(() =>
-          new Array(this.height).fill(0).map(() => Number(Math.random() <= 0.95)),
+          new Array(this.height).fill(0).map(() => Number(Math.random() >= 0.98)),
         ),
     }
   }
