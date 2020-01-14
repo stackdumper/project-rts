@@ -1,58 +1,41 @@
-import { Graphics } from 'pixi.js'
 import { Resource } from '~/core'
+import { Graphics } from 'pixi.js'
 
-interface Tile {
-  x: number
-  y: number
-  resource: boolean
-  canTravel: boolean
+interface IMap {
+  tiles: number[][]
+  resources: number[][]
+  canTravel: number[][]
 }
 
-interface MapSettings {
-  width: number
-  heidth: number
-  tileSize: number
-}
-
-const mapSettings: MapSettings = {
-  width: 10,
-  heidth: 10,
-  tileSize: 40,
-}
-
-const createTiles = ({ width, heidth, tileSize }: MapSettings): Tile[] => {
-  const tiles: Tile[] = []
-
-  for (let x = 0; x < new Array(width).length; x++) {
-    for (let y = 0; y < new Array(heidth).length; y++) {
-      tiles.push({
-        x: 120 + tileSize * x,
-        y: 120 + tileSize * y,
-        resource: Math.random() >= 0.96,
-        canTravel: true,
-      })
-    }
-  }
-
-  return tiles
+const map: IMap = {
+  tiles: new Array(10).fill(0).map(() => new Array(10).fill(0)),
+  resources: new Array(10)
+    .fill(0)
+    .map(() => new Array(10).fill(0).map(() => Number(Math.random() >= 0.95))),
+  canTravel: new Array(10)
+    .fill(0)
+    .map(() => new Array(10).fill(0).map(() => Number(Math.random() <= 0.95))),
 }
 
 export class ResourceMap extends Resource {
-  public tiles: Graphics[]
+  public tiles: Graphics
 
   constructor() {
     super()
 
-    this.tiles = createTiles(mapSettings).map((tile) =>
-      this.createTile(tile.x, tile.y, tile.resource, mapSettings.tileSize),
-    )
-  }
+    this.tiles = new Graphics()
 
-  private createTile(x: number, y: number, resource: boolean, tileSize: number) {
-    return new Graphics()
-      .lineStyle(1, 0xffffff)
-      .beginFill(resource ? 0x00ff00 : 0x000000)
-      .drawRect(x, y, tileSize, tileSize)
-      .endFill()
+    for (let x = 0; x < map.tiles.length; x++) {
+      for (let y = 0; y < map.tiles[x].length; y++) {
+        const isResource = map.resources[x][y]
+        const canTravel = !isResource && map.canTravel[x][y]
+
+        this.tiles
+          .lineStyle(1, 0xffffff)
+          .beginFill(isResource ? 0x00ff00 : canTravel ? 0x000000 : 0x808080)
+          .drawRect(40 * x, 40 * y, 40, 40)
+          .endFill()
+      }
+    }
   }
 }

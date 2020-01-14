@@ -13,9 +13,7 @@ export class SystemRender extends System {
     const { app } = core.getResource(ResourceScene) as ResourceScene
     const { tiles } = core.getResource(ResourceMap) as ResourceMap
 
-    tiles.forEach((tile) => {
-      app.stage.addChild(tile)
-    })
+    app.stage.addChild(tiles)
 
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
