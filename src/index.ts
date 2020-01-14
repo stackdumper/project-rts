@@ -30,7 +30,7 @@ window.addEventListener('load', () => {
       .withResource(new ResourceAssets(assets))
       .withResource(new ResourceCursor())
       .withResource(new ResourceResources())
-      .withResource(new ResourceMap())
+      .withResource(new ResourceMap(100, 40))
       .withResource(new ResourceClock())
       .withResource(new ResourceSelection())
       .withResource(new ResourceScene())
