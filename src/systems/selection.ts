@@ -9,19 +9,17 @@ export class SystemSelection extends System {
   private canvas = document.getElementById('root')! as HTMLCanvasElement
 
   private clearSelection = (selection: ResourceSelection) => {
-    if (selection.selected.length !== 0) {
-      for (const entity of selection.selected) {
-        const graphics = entity.components.get(
-          ComponentGraphics.name,
-        ) as ComponentGraphics
+    if (selection.selected) {
+      const graphics = selection.selected.components.get(
+        ComponentGraphics.name,
+      ) as ComponentGraphics
 
-        if (graphics) {
-          graphics.sprite.tint = 0xffffff
-        }
+      if (graphics) {
+        graphics.sprite.tint = 0xffffff
       }
-    }
 
-    selection.selected = []
+      selection.deselectEntity()
+    }
   }
 
   public initialize(core: Core) {
@@ -38,10 +36,10 @@ export class SystemSelection extends System {
         if (graphics) {
           const box = graphics.sprite.getBounds(true)
 
+          // if click position is on entity, select it
           if (box.contains(e.clientX, e.clientY)) {
             graphics.sprite.tint = 0x00a8ff
-
-            selection.selected = [entity]
+            selection.selectEntity(entity)
 
             break
           }
