@@ -47,8 +47,8 @@ window.addEventListener('load', () => {
       .build()
 
     // add commander and engineer
-    core.addEntity(new EntityCommander([800, 400], [0, 0]))
-    core.addEntity(new EntityEngineer([600, 400], [0, 0]))
+    core.addEntity(new EntityCommander([800, 400], [0.1, 0]))
+    core.addEntity(new EntityEngineer([600, 400], [0.15, 0]))
 
     // start game loop
     const clock = core.getResource(ResourceClock) as ResourceClock

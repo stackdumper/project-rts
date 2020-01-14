@@ -3,8 +3,9 @@ import { ResourceScene, ResourceMap } from '~/resources'
 import { Graphics } from 'pixi.js'
 
 export class SystemRenderMap extends System {
+  private tileSize = 16
   private colors = {
-    tile: 0x222f3e,
+    texture: 0x222f3e,
     navigation: 0x576574,
     resource: 0x1dd1a1,
   }
@@ -15,20 +16,20 @@ export class SystemRenderMap extends System {
 
     const tiles = new Graphics()
 
-    for (let x = 0; x < map.tiles.length; x++) {
-      for (let y = 0; y < map.tiles[x].length; y++) {
-        const tile = map.tiles[x][y]
+    for (let x = 0; x < map.textures.length; x++) {
+      for (let y = 0; y < map.textures[x].length; y++) {
+        const tile = map.textures[x][y]
         const navigation = map.navigation[x][y]
         const resource = map.resources[x][y]
 
         const color =
           (resource && this.colors.resource) ||
           (navigation && this.colors.navigation) ||
-          (tile && this.colors.tile)
+          (tile && this.colors.texture)
 
         tiles
           .beginFill(color)
-          .drawRect(16 * x, 16 * y, 16, 16)
+          .drawRect(this.tileSize * x, this.tileSize * y, this.tileSize, this.tileSize)
           .endFill()
       }
     }
