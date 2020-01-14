@@ -5,8 +5,6 @@ import { System, Core, CoreEvent } from '~/core'
  * SystemStats is used to display debug statistics.
  */
 export class SystemStats extends System {
-  static id = 'stats'
-
   private stats: Stats
   private entities: Stats.Panel
 

@@ -7,7 +7,7 @@ import {
 } from '~/components'
 import { ResourceAssets } from '~/resources'
 
-export class EntityCommander extends Entity {
+export class EntityEngineer extends Entity {
   constructor(position: number[], velocity: number[]) {
     super()
 
@@ -21,12 +21,7 @@ export class EntityCommander extends Entity {
     )
     this.components.set(
       ComponentUI.name,
-      new ComponentUI([
-        { name: 'Mass extractor' },
-        { name: 'Enegry generator' },
-        { name: 'Land factory' },
-        { name: 'Air factory' },
-      ]),
+      new ComponentUI([{ name: 'Anti-air turret' }, { name: 'Anti-ground turret' }]),
     )
   }
 
@@ -35,6 +30,6 @@ export class EntityCommander extends Entity {
 
     const { texture } = assets.resources['electricity']
 
-    this.components.set(ComponentGraphics.name, new ComponentGraphics(32, 32, texture))
+    this.components.set(ComponentGraphics.name, new ComponentGraphics(16, 16, texture))
   }
 }

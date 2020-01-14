@@ -6,8 +6,6 @@ import { ComponentPosition, ComponentVelocity } from '~/components'
  * SystemVelocity is used to apply velocities to entities positions.
  */
 export class SystemVelocity extends System {
-  static id = 'velocity'
-
   public update(core: Core) {
     for (const entity of core.entities.values()) {
       // how to avoid 'as'?
