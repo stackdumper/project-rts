@@ -1,6 +1,6 @@
 import { System, Core, Entity, CoreEvent } from '~/core'
 import { ComponentGraphics, ComponentPosition } from '~/components'
-import { ResourceScene, ResourceMap } from '~/resources'
+import { ResourceScene } from '~/resources'
 
 /**
  * SystemRender is used to render game content into pixi.js scene.
@@ -11,9 +11,6 @@ export class SystemRender extends System {
   // create event listeners
   public initialize(core: Core) {
     const { app } = core.getResource(ResourceScene) as ResourceScene
-    const { tiles } = core.getResource(ResourceMap) as ResourceMap
-
-    app.stage.addChild(tiles)
 
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {

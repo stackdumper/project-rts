@@ -13,6 +13,7 @@ import {
   SystemStats,
   SystemResources,
   SystemUIResources,
+  SystemRenderMap,
 } from './systems'
 import { EntityCommander } from './entities'
 
@@ -33,6 +34,7 @@ window.addEventListener('load', () => {
       .withSystem(new SystemResources())
       .withSystem(new SystemUIResources())
       .withSystem(new SystemRender())
+      .withSystem(new SystemRenderMap())
       // .withSystem(new SystemStats())
       .build()
 
