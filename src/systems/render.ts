@@ -6,8 +6,6 @@ import { ResourceScene } from '~/resources'
  * SystemRender is used to render game content into pixi.js scene.
  */
 export class SystemRender extends System {
-  static id = 'render'
-
   // create event listeners
   public initialize(core: Core) {
     const { app } = core.getResource(ResourceScene) as ResourceScene

@@ -1,14 +1,12 @@
 import * as PIXI from 'pixi.js'
 import { Resource } from '~/core'
 
-interface ResourceSceneOptions {
-  view: HTMLCanvasElement
-}
-
 export class ResourceScene extends Resource {
   public app: PIXI.Application
 
-  constructor(options: ResourceSceneOptions) {
+  private container = document.getElementById('root')! as HTMLCanvasElement
+
+  constructor() {
     super()
 
     // disable pixi.js banner in console
@@ -18,8 +16,8 @@ export class ResourceScene extends Resource {
     this.app = new PIXI.Application({
       antialias: true,
       resolution: window.devicePixelRatio || 1,
-      view: options.view,
-      resizeTo: options.view,
+      view: this.container,
+      resizeTo: this.container,
       backgroundColor: 0x080808,
       powerPreference: 'high-performance',
     })

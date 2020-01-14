@@ -5,8 +5,6 @@ import { ResourceClock, ResourceResources, TResource, CResource } from '~/resour
  * SystemResources is responseible for resource consumption and production.
  */
 export class SystemResources extends System {
-  static id = 'velocity'
-
   private incrementResource(resource: CResource, dt: number): TResource {
     const nextCurrent = Math.max(
       Math.min(

@@ -6,49 +6,49 @@ import {
   ResourceScene,
   ResourceResources,
   ResourceMap,
+  ResourceSelection,
+  ResourceCursor,
 } from './resources'
 import {
   SystemVelocity,
   SystemRender,
-  SystemStats,
   SystemResources,
   SystemUIResources,
   SystemRenderMap,
+  SystemUIBuildings,
+  SystemSelection,
+  SystemCursor,
+  SystemStats,
 } from './systems'
-import { EntityCommander } from './entities'
+import { EntityCommander, EntityEngineer } from './entities'
 
 window.addEventListener('load', () => {
   // load resources
   ResourceAssets.loadResources().then((assets) => {
     const core = new CoreBuilder()
       // add resources
-      .withResource(new ResourceClock())
       .withResource(new ResourceAssets(assets))
+      .withResource(new ResourceCursor())
       .withResource(new ResourceResources())
-      .withResource(
-        new ResourceScene({ view: document.getElementById('root') as HTMLCanvasElement }),
-      )
       .withResource(new ResourceMap())
+      .withResource(new ResourceClock())
+      .withResource(new ResourceSelection())
+      .withResource(new ResourceScene())
       // add systems
-      .withSystem(new SystemVelocity())
+      .withSystem(new SystemCursor())
       .withSystem(new SystemResources())
+      .withSystem(new SystemVelocity())
+      .withSystem(new SystemSelection())
       .withSystem(new SystemUIResources())
+      .withSystem(new SystemUIBuildings())
       .withSystem(new SystemRender())
       .withSystem(new SystemRenderMap())
       // .withSystem(new SystemStats())
       .build()
 
-    // add entities with random positions and velocities
-    for (let i = 0; i < 100; i++) {
-      setTimeout(() => {
-        core.addEntity(
-          new EntityCommander(
-            [Math.random() * 100, Math.random() * 100],
-            [Math.random() * 3, Math.random() * 3],
-          ),
-        )
-      }, 1 * i)
-    }
+    // add commander and engineer
+    core.addEntity(new EntityCommander([800, 400], [0, 0]))
+    core.addEntity(new EntityEngineer([600, 400], [0, 0]))
 
     // start game loop
     const clock = core.getResource(ResourceClock) as ResourceClock

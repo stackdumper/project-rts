@@ -2,11 +2,9 @@ import { System, Core } from '~/core'
 import { ResourceResources } from '~/resources'
 
 /**
- * SystemRenderResources is responsible for showing resources in the top left menu.
+ * SystemUIResources is responsible for showing resources in the top left menu.
  */
 export class SystemUIResources extends System {
-  static id = 'velocity'
-
   private bars = {
     energyShadow: document.querySelector(
       '#resource-energy .bar-container-shadow',
