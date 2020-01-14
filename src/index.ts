@@ -5,6 +5,7 @@ import {
   ResourceAssets,
   ResourceScene,
   ResourceResources,
+  ResourceMap,
   ResourceSelection,
   ResourceCursor,
 } from './resources'
@@ -13,6 +14,7 @@ import {
   SystemRender,
   SystemResources,
   SystemUIResources,
+  SystemRenderMap,
   SystemUIBuildings,
   SystemSelection,
   SystemCursor,
@@ -28,6 +30,7 @@ window.addEventListener('load', () => {
       .withResource(new ResourceAssets(assets))
       .withResource(new ResourceCursor())
       .withResource(new ResourceResources())
+      .withResource(new ResourceMap())
       .withResource(new ResourceClock())
       .withResource(new ResourceSelection())
       .withResource(new ResourceScene())
@@ -39,6 +42,7 @@ window.addEventListener('load', () => {
       .withSystem(new SystemUIResources())
       .withSystem(new SystemUIBuildings())
       .withSystem(new SystemRender())
+      .withSystem(new SystemRenderMap())
       // .withSystem(new SystemStats())
       .build()
 
