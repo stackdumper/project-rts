@@ -1,6 +1,6 @@
 import { Component } from '~/core'
 
-interface ComponentUIBuilding {
+export interface ComponentUIBuilding {
   name: string
 }
 

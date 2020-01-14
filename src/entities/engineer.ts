@@ -30,6 +30,6 @@ export class EntityEngineer extends Entity {
 
     const { texture } = assets.resources['electricity']
 
-    this.components.set(ComponentGraphics.name, new ComponentGraphics(22, 22, texture))
+    this.components.set(ComponentGraphics.name, new ComponentGraphics(16, 16, texture))
   }
 }

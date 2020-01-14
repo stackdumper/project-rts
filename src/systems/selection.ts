@@ -1,4 +1,4 @@
-import { System, Core, Entity, CoreEvent } from '~/core'
+import { System, Core } from '~/core'
 import { ComponentGraphics } from '~/components'
 import { ResourceSelection } from '~/resources'
 
@@ -8,18 +8,32 @@ import { ResourceSelection } from '~/resources'
 export class SystemSelection extends System {
   private canvas = document.getElementById('root')! as HTMLCanvasElement
 
+  private clearSelection = (selection: ResourceSelection) => {
+    if (selection.selected.length !== 0) {
+      for (const entity of selection.selected) {
+        const graphics = entity.components.get(
+          ComponentGraphics.name,
+        ) as ComponentGraphics
+
+        if (graphics) {
+          graphics.sprite.tint = 0xffffff
+        }
+      }
+    }
+
+    selection.selected = []
+  }
+
   public initialize(core: Core) {
     const selection = core.getResource(ResourceSelection) as ResourceSelection
 
     this.canvas.addEventListener('click', (e) => {
-      selection.selected = []
+      this.clearSelection(selection)
 
       for (const entity of core.entities.values()) {
         const graphics = entity.components.get(
           ComponentGraphics.name,
         ) as ComponentGraphics
-
-        graphics.sprite.tint = 0xffffff
 
         if (graphics) {
           const box = graphics.sprite.getBounds(true)
@@ -28,6 +42,8 @@ export class SystemSelection extends System {
             graphics.sprite.tint = 0x00a8ff
 
             selection.selected = [entity]
+
+            break
           }
         }
       }
