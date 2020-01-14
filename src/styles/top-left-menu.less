@@ -1,0 +1,124 @@
+
+
+#top-left-menu {
+  .menu;
+
+  left: 0;
+  top: 0;
+  
+  width: 300px;
+  padding: 8px 9px 4px 9px;
+  border-bottom-right-radius: 6px;
+
+  border-top: none;
+  border-left: none;
+
+  display: flex;
+  flex-direction: column;
+
+
+  & > div {
+    flex: 1;
+    margin: 2px 0;
+
+    color: rgb(200, 200, 200);
+    font-size: 12px;
+
+    display: flex;
+    flex-direction: row;
+
+    & > .resource-section {
+      &:nth-child(1) {
+        flex: 1;
+      }
+
+      &:nth-child(2) {
+        margin-left: 15px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        padding: 0px 0;
+
+        & > .resource-stats {
+          flex: 1;
+          opacity: 0.9;
+          
+          font-size: 11px;
+          font-weight: 600;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:nth-child(1) {
+            color: #2ecc71;
+          }
+
+          &:nth-child(2) {
+            color: #ee5253;
+          }
+        }
+      }
+
+      & > .bar-container-shadow {
+        flex: 1;
+  
+        height: 8px;
+  
+        & > .bar-container {
+          width: 100%;
+          height: 100%;
+          margin-top: 3px;
+    
+          border-radius: 1px;
+          background-color: rgb(43, 43, 43);
+    
+          overflow: hidden;
+  
+          & > .bar {
+            width: 100%;
+            height: 100%;
+      
+            border-radius: 1px;
+            will-change: transform;
+          }
+        }
+      }
+    }
+
+    & .bar-indicators {
+      margin-top: 2px;
+      font-size: 11px;
+      font-weight: 600;
+
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  & > div:nth-of-type(1) {
+    & .bar-indicators {
+      color: #F79F1F;
+    }
+
+    & .bar {
+      background-color: #F79F1F;
+      box-shadow: 0 0 2px 0 #F79F1F;
+    }
+  }
+
+  & > div:nth-of-type(2) {
+    & .bar-indicators {
+      color: #009432;
+    }
+
+    & .bar {
+      background-color: #009432;
+      box-shadow: 0 0 2px 0 #009432;
+    }
+  }
+}

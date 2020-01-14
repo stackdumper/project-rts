@@ -1,5 +1,5 @@
-import * as PIXI from 'pixi.js'
-import { Core } from './core'
+import { Ticker } from 'pixi.js'
+import { CoreBuilder } from './core'
 import {
   ResourceClock,
   ResourceAssets,
@@ -11,38 +11,31 @@ import {
   SystemRender,
   SystemStats,
   SystemResources,
-  SystemRenderResources,
+  SystemUIResources,
 } from './systems'
 import { EntityCommander } from './entities'
 
 window.addEventListener('load', () => {
   // load resources
   ResourceAssets.loadResources().then((assets) => {
-    const core = new Core()
-
-    // add resources
-    const clock = new ResourceClock()
-    core.addResource(clock)
-    core.addResource(new ResourceAssets(assets))
-    core.addResource(new ResourceResources())
-    core.addResource(
-      new ResourceScene({ view: document.getElementById('root') as HTMLCanvasElement }),
-    )
-
-    // add systems
-    core.addSystem(new SystemVelocity())
-    core.addSystem(new SystemRenderResources())
-    core.addSystem(new SystemRender())
-    core.addSystem(new SystemResources())
-    // core.addSystem(new SystemStats())
-
-    // add systems
-    core.addSystem(new SystemVelocity())
-    core.addSystem(new SystemRender())
-    core.addSystem(new SystemStats())
+    const core = new CoreBuilder()
+      // add resources
+      .withResource(new ResourceClock())
+      .withResource(new ResourceAssets(assets))
+      .withResource(new ResourceResources())
+      .withResource(
+        new ResourceScene({ view: document.getElementById('root') as HTMLCanvasElement }),
+      )
+      // add systems
+      .withSystem(new SystemVelocity())
+      .withSystem(new SystemResources())
+      .withSystem(new SystemUIResources())
+      .withSystem(new SystemRender())
+      // .withSystem(new SystemStats())
+      .build()
 
     // add entities with random positions and velocities
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 100; i++) {
       setTimeout(() => {
         core.addEntity(
           new EntityCommander(
@@ -50,10 +43,13 @@ window.addEventListener('load', () => {
             [Math.random() * 3, Math.random() * 3],
           ),
         )
-      }, 3 * i)
+      }, 1 * i)
     }
 
-    PIXI.Ticker.shared.add((dt) => {
+    // start game loop
+    const clock = core.getResource(ResourceClock) as ResourceClock
+
+    Ticker.shared.add((dt) => {
       // TODO: update dt
       clock.dt = dt
 
