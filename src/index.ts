@@ -5,15 +5,17 @@ import {
   ResourceAssets,
   ResourceScene,
   ResourceResources,
+  ResourceSelection,
 } from './resources'
 import {
   SystemVelocity,
   SystemRender,
-  SystemStats,
   SystemResources,
   SystemUIResources,
+  SystemUIBuildings,
+  SystemSelection,
 } from './systems'
-import { EntityCommander } from './entities'
+import { EntityCommander, EntityEngineer } from './entities'
 
 window.addEventListener('load', () => {
   // load resources
@@ -23,28 +25,22 @@ window.addEventListener('load', () => {
       .withResource(new ResourceClock())
       .withResource(new ResourceAssets(assets))
       .withResource(new ResourceResources())
+      .withResource(new ResourceSelection())
       .withResource(
         new ResourceScene({ view: document.getElementById('root') as HTMLCanvasElement }),
       )
       // add systems
       .withSystem(new SystemVelocity())
       .withSystem(new SystemResources())
+      .withSystem(new SystemSelection())
       .withSystem(new SystemUIResources())
+      .withSystem(new SystemUIBuildings())
       .withSystem(new SystemRender())
       // .withSystem(new SystemStats())
       .build()
 
-    // add entities with random positions and velocities
-    for (let i = 0; i < 100; i++) {
-      setTimeout(() => {
-        core.addEntity(
-          new EntityCommander(
-            [Math.random() * 100, Math.random() * 100],
-            [Math.random() * 3, Math.random() * 3],
-          ),
-        )
-      }, 1 * i)
-    }
+    core.addEntity(new EntityCommander([800, 400], [0, 0]))
+    core.addEntity(new EntityEngineer([600, 400], [0, 0]))
 
     // start game loop
     const clock = core.getResource(ResourceClock) as ResourceClock
