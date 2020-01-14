@@ -16,11 +16,12 @@ export class SystemUIBuildings extends System {
 
     element.textContent = building.name
     element.className = 'building-cell'
-    element.onclick = () => {
-      console.log('click', building.name)
-    }
 
     return element
+  }
+
+  private onClick = (building: ComponentUIBuilding) => {
+    console.log('click', building.name)
   }
 
   public initialize(core: Core) {
@@ -30,7 +31,11 @@ export class SystemUIBuildings extends System {
     selection.events.on(ResourceSelectionEvent.EntitySelected, (entity: Entity) => {
       const ui = entity.components.get(ComponentUI.name) as ComponentUI
 
-      ui?.buildings.map(this.createElement).forEach((element) => {
+      ui?.buildings.forEach((building) => {
+        const element = this.createElement(building)
+
+        element.onclick = this.onClick.bind(this, building)
+
         this.container.appendChild(element)
       })
     })
