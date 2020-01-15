@@ -1,13 +1,13 @@
 import { Resource } from '~/core'
 
-interface IMap {
+type TMap = {
   textures: number[][]
   resources: number[][]
   navigation: number[][]
 }
 
 export class ResourceMap extends Resource {
-  public map: IMap
+  public map: TMap
 
   constructor(private width = 10, private height = 10) {
     super()

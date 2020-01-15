@@ -8,14 +8,14 @@ import { ResourceScene } from '~/resources'
 export class SystemRender extends System {
   // create event listeners
   public initialize(core: Core) {
-    const { app } = core.getResource(ResourceScene) as ResourceScene
+    const { viewport } = core.getResource(ResourceScene) as ResourceScene
 
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {
-        app.stage.addChild(graphics.sprite)
+        viewport.addChild(graphics.sprite)
       }
     })
 
@@ -24,7 +24,7 @@ export class SystemRender extends System {
       const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
 
       if (graphics) {
-        app.stage.removeChild(graphics.sprite)
+        viewport.removeChild(graphics.sprite)
       }
     })
   }

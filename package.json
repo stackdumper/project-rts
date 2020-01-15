@@ -40,6 +40,7 @@
   "dependencies": {
     "eventemitter3": "^4.0.0",
     "nanoid": "^2.1.9",
+    "pixi-viewport": "^4.5.0",
     "pixi.js": "^5.2.0"
   }
 }
