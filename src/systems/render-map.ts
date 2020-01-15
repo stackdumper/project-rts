@@ -11,7 +11,7 @@ export class SystemRenderMap extends System {
   }
 
   public initialize(core: Core) {
-    const { app } = core.getResource(ResourceScene) as ResourceScene
+    const { viewport } = core.getResource(ResourceScene) as ResourceScene
     const { map } = core.getResource(ResourceMap) as ResourceMap
 
     const tiles = new Graphics()
@@ -34,6 +34,6 @@ export class SystemRenderMap extends System {
       }
     }
 
-    app.stage.addChild(tiles)
+    viewport.addChild(tiles)
   }
 }
