@@ -1,3 +1,4 @@
+import fs from 'fs'
 import { Core, CoreEvent, Resource } from '.'
 import { System } from './system'
 import { Entity } from './entity'
@@ -22,6 +23,7 @@ const mockEvents = Object.values(CoreEvent).reduce(
   {} as Record<CoreEvent, jest.Mock>,
 )
 
+// measures function execution time
 const measure = (fn: () => any, numSamples = 10) => {
   const getSample = () => {
     const start = process.hrtime()
@@ -86,7 +88,13 @@ describe('Core', () => {
         }
       }, 10)
 
-      expect(elapsed).toBeLessThan(1.0)
+      fs.appendFileSync(
+        `/tmp/project-rts-perf-resource.txt`,
+        `${new Date(Date.now()).toISOString()}: ${elapsed}\n`,
+      )
+
+      // expected <= 1.0
+      console.info('[resources/perf]', elapsed)
     })
   })
 
@@ -120,9 +128,13 @@ describe('Core', () => {
         }
       }, 10)
 
-      console.log(elapsed)
+      fs.appendFileSync(
+        `/tmp/project-rts-perf-core.txt`,
+        `${new Date(Date.now()).toISOString()}: ${elapsed}\n`,
+      )
 
-      expect(elapsed).toBeLessThan(15.0)
+      // expected <= 15.0
+      console.info('[core/perf]', elapsed)
     })
   })
 
