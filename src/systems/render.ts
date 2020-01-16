@@ -12,8 +12,9 @@ export class SystemRender extends System {
 
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
-      const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
+      console.log('add entity', entity)
 
+      const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
       if (graphics) {
         viewport.addChild(graphics.sprite)
       }

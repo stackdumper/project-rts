@@ -10,6 +10,7 @@ import {
   ResourceKeyboard,
   ResourceCursor,
   ResourceWheel,
+  ResourceBuildQueue,
 } from './resources'
 import {
   SystemVelocity,
@@ -21,6 +22,7 @@ import {
   SystemSelection,
   SystemStats,
   SystemNavigation,
+  SystemRenderBuildQueue,
 } from './systems'
 import { EntityCommander, EntityEngineer } from './entities'
 
@@ -32,6 +34,7 @@ window.addEventListener('load', () => {
       .withResource(new ResourceKeyboard())
       .withResource(new ResourceCursor())
       .withResource(new ResourceWheel())
+      .withResource(new ResourceBuildQueue())
       .withResource(new ResourceAssets(assets))
       .withResource(new ResourceResources())
       .withResource(new ResourceMap(100, 40))
@@ -47,12 +50,12 @@ window.addEventListener('load', () => {
       .withSystem(new SystemUIBuildings())
       .withSystem(new SystemRender())
       .withSystem(new SystemRenderMap())
+      .withSystem(new SystemRenderBuildQueue())
       .withSystem(new SystemStats())
       .build()
 
-    // add commander and engineer
-    core.addEntity(new EntityCommander([800, 400], [0.1, 0]))
-    core.addEntity(new EntityEngineer([600, 400], [0.15, 0]))
+    // add commander
+    core.addEntity(new EntityCommander())
 
     // start game loop
     const clock = core.getResource(ResourceClock) as ResourceClock

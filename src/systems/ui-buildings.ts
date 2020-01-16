@@ -1,5 +1,9 @@
 import { System, Core, Entity } from '~/core'
-import { ResourceSelection, ResourceSelectionEvent } from '~/resources'
+import {
+  ResourceSelection,
+  ResourceSelectionEvent,
+  ResourceBuildQueue,
+} from '~/resources'
 import { ComponentUI, ComponentUIBuilding } from '~/components'
 
 /**
@@ -14,17 +18,18 @@ export class SystemUIBuildings extends System {
   private createElement = (building: ComponentUIBuilding) => {
     const element = document.createElement('div')
 
-    element.textContent = building.name
+    element.textContent = building.title
     element.className = 'building-cell'
 
     return element
   }
 
-  private onClick = (building: ComponentUIBuilding) => {
-    console.log('click', building.name)
+  private onClick = (queue: ResourceBuildQueue, building: ComponentUIBuilding) => {
+    queue.entity = building.create()
   }
 
   public initialize(core: Core) {
+    const queue = core.getResource(ResourceBuildQueue) as ResourceBuildQueue
     const selection = core.getResource(ResourceSelection) as ResourceSelection
 
     // render ui when entity is selected
@@ -34,7 +39,7 @@ export class SystemUIBuildings extends System {
       ui?.buildings.forEach((building) => {
         const element = this.createElement(building)
 
-        element.onclick = this.onClick.bind(this, building)
+        element.onclick = this.onClick.bind(this, queue, building)
 
         this.container.appendChild(element)
       })

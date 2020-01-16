@@ -1,7 +1,8 @@
-import { Component } from '~/core'
+import { Component, Entity } from '~/core'
 
 export interface ComponentUIBuilding {
-  name: string
+  title: string
+  create: () => Entity
 }
 
 export class ComponentUI extends Component {
