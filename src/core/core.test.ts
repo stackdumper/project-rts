@@ -1,3 +1,4 @@
+import fs from 'fs'
 import { Core, CoreEvent, Resource } from '.'
 import { System } from './system'
 import { Entity } from './entity'
@@ -21,6 +22,25 @@ const mockEvents = Object.values(CoreEvent).reduce(
   (acc, cur) => ({ ...acc, [cur]: jest.fn() }),
   {} as Record<CoreEvent, jest.Mock>,
 )
+
+// measures function execution time
+const measure = (fn: () => any, numSamples = 10) => {
+  const getSample = () => {
+    const start = process.hrtime()
+
+    fn()
+
+    const end = process.hrtime(start)
+
+    return end[0] * 1000 + end[1] / 1000000
+  }
+
+  const samples = Array.from({ length: numSamples + 2 })
+    .map(() => getSample())
+    .splice(2)
+
+  return samples.reduce((acc, cur) => acc + cur, 0.0) / numSamples
+}
 
 // run tests
 describe('Core', () => {
@@ -60,6 +80,22 @@ describe('Core', () => {
 
       expect(f).toThrow()
     })
+
+    it('perf', () => {
+      const elapsed = measure(() => {
+        for (let i = 0; i < 100000; i++) {
+          core.getResource(MockResource)
+        }
+      }, 10)
+
+      fs.appendFileSync(
+        `/tmp/project-rts-perf-resource.txt`,
+        `${new Date(Date.now()).toISOString()}: ${elapsed}\n`,
+      )
+
+      // expected <= 1.0
+      console.info('[resources/perf]', elapsed)
+    })
   })
 
   describe('systems', () => {
@@ -83,6 +119,22 @@ describe('Core', () => {
       // check if events were called
       expect(mockEvents[CoreEvent.StartUpdate]).toBeCalled()
       expect(mockEvents[CoreEvent.EndUpdate]).toBeCalled()
+    })
+
+    it('perf', () => {
+      const elapsed = measure(() => {
+        for (let i = 0; i < 10000; i++) {
+          core.update()
+        }
+      }, 10)
+
+      fs.appendFileSync(
+        `/tmp/project-rts-perf-core.txt`,
+        `${new Date(Date.now()).toISOString()}: ${elapsed}\n`,
+      )
+
+      // expected <= 15.0
+      console.info('[core/perf]', elapsed)
     })
   })
 

@@ -12,15 +12,15 @@ export class EntityEngineer extends Entity {
     super()
 
     this.components.set(
-      ComponentPosition.name,
+      ComponentPosition,
       new ComponentPosition(position[0], position[1]),
     )
     this.components.set(
-      ComponentVelocity.name,
+      ComponentVelocity,
       new ComponentVelocity(velocity[0], velocity[1]),
     )
     this.components.set(
-      ComponentUI.name,
+      ComponentUI,
       new ComponentUI([{ name: 'Anti-air turret' }, { name: 'Anti-ground turret' }]),
     )
   }
@@ -30,6 +30,6 @@ export class EntityEngineer extends Entity {
 
     const { texture } = assets.resources['electricity']
 
-    this.components.set(ComponentGraphics.name, new ComponentGraphics(16, 16, texture))
+    this.components.set(ComponentGraphics, new ComponentGraphics(16, 16, texture))
   }
 }

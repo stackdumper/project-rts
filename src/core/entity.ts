@@ -10,7 +10,7 @@ export abstract class Entity {
   public id: string = nanoid()
 
   /** Entity.components store entity data for use by systems */
-  public components: Map<string, Component> = new Map()
+  public components: Map<Function, Component> = new Map()
 
   /** Entity.initialize is used to initialize entity during Core.addEntity */
   public initialize(core: Core) {}

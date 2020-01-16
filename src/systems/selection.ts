@@ -11,7 +11,7 @@ export class SystemSelection extends System {
   private clearSelection = (selection: ResourceSelection) => {
     if (selection.selected) {
       const graphics = selection.selected.components.get(
-        ComponentGraphics.name,
+        ComponentGraphics,
       ) as ComponentGraphics
 
       if (graphics) {
@@ -29,9 +29,7 @@ export class SystemSelection extends System {
       this.clearSelection(selection)
 
       for (const entity of core.entities.values()) {
-        const graphics = entity.components.get(
-          ComponentGraphics.name,
-        ) as ComponentGraphics
+        const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
 
         if (graphics) {
           const box = graphics.sprite.getBounds(true)
