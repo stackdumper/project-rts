@@ -11,8 +11,8 @@ export class SystemVelocity extends System {
       // how to avoid 'as'?
       const clock = core.getResource(ResourceClock) as ResourceClock
 
-      const position = entity.components.get(ComponentPosition.name) as ComponentPosition
-      const velocity = entity.components.get(ComponentVelocity.name) as ComponentVelocity
+      const position = entity.components.get(ComponentPosition) as ComponentPosition
+      const velocity = entity.components.get(ComponentVelocity) as ComponentVelocity
 
       if (position && velocity) {
         position.x += velocity.x * clock.dt

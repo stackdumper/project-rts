@@ -15,8 +15,8 @@ export enum CoreEvent {
  */
 export class Core {
   public entities: Map<string, Entity>
-  public systems: Map<string, System>
-  public resources: Map<string, Resource>
+  public systems: Map<Function, System>
+  public resources: Map<Function, Resource>
 
   /**
    * Core.events provide event bus for use by systems
@@ -42,7 +42,7 @@ export class Core {
   public addResource(resource: Resource) {
     resource.initialize(this)
 
-    this.resources.set(resource.constructor.name, resource)
+    this.resources.set(resource.constructor, resource)
 
     this.events.emit(CoreEvent.AddResource, resource)
   }
@@ -51,11 +51,11 @@ export class Core {
    * Core.getResource returns a resource by it's constructor.
    * Throws an error if such resource does not exist.
    */
-  public getResource<T extends Function>(resourceClass: T): Resource {
-    const t = this.resources.get(resourceClass.name)
+  public getResource<T extends Function>(constructor: T): Resource {
+    const t = this.resources.get(constructor)
 
     if (!t) {
-      throw new Error(`[Core.getResource] unable to find resource: ${resourceClass.name}`)
+      throw new Error(`[Core.getResource] unable to find resource: ${constructor}`)
     }
 
     return t
@@ -69,7 +69,7 @@ export class Core {
   public addSystem(system: System) {
     system.initialize(this)
 
-    this.systems.set(system.constructor.name, system)
+    this.systems.set(system.constructor, system)
 
     this.events.emit(CoreEvent.AddSystem, system)
   }

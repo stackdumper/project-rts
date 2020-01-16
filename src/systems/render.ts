@@ -12,7 +12,7 @@ export class SystemRender extends System {
 
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
-      const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
+      const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
 
       if (graphics) {
         viewport.addChild(graphics.sprite)
@@ -21,7 +21,7 @@ export class SystemRender extends System {
 
     // on remove entity
     core.events.addListener(CoreEvent.RemoveEntity, (entity: Entity) => {
-      const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
+      const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
 
       if (graphics) {
         viewport.removeChild(graphics.sprite)
@@ -34,8 +34,8 @@ export class SystemRender extends System {
 
     // update entities
     for (const entity of core.entities.values()) {
-      const graphics = entity.components.get(ComponentGraphics.name) as ComponentGraphics
-      const position = entity.components.get(ComponentPosition.name) as ComponentPosition
+      const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
+      const position = entity.components.get(ComponentPosition) as ComponentPosition
 
       if (graphics && position) {
         graphics.sprite.position.x = position.x

@@ -22,6 +22,24 @@ const mockEvents = Object.values(CoreEvent).reduce(
   {} as Record<CoreEvent, jest.Mock>,
 )
 
+const measure = (fn: () => any, numSamples = 10) => {
+  const getSample = () => {
+    const start = process.hrtime()
+
+    fn()
+
+    const end = process.hrtime(start)
+
+    return end[0] * 1000 + end[1] / 1000000
+  }
+
+  const samples = Array.from({ length: numSamples + 2 })
+    .map(() => getSample())
+    .splice(2)
+
+  return samples.reduce((acc, cur) => acc + cur, 0.0) / numSamples
+}
+
 // run tests
 describe('Core', () => {
   const core = new Core()
@@ -60,6 +78,16 @@ describe('Core', () => {
 
       expect(f).toThrow()
     })
+
+    it('perf', () => {
+      const elapsed = measure(() => {
+        for (let i = 0; i < 100000; i++) {
+          core.getResource(MockResource)
+        }
+      }, 10)
+
+      expect(elapsed).toBeLessThan(1.0)
+    })
   })
 
   describe('systems', () => {
@@ -83,6 +111,18 @@ describe('Core', () => {
       // check if events were called
       expect(mockEvents[CoreEvent.StartUpdate]).toBeCalled()
       expect(mockEvents[CoreEvent.EndUpdate]).toBeCalled()
+    })
+
+    it('perf', () => {
+      const elapsed = measure(() => {
+        for (let i = 0; i < 10000; i++) {
+          core.update()
+        }
+      }, 10)
+
+      console.log(elapsed)
+
+      expect(elapsed).toBeLessThan(15.0)
     })
   })
 
