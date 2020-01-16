@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js'
 import { System, Core } from '~/core'
 import {
   ResourceKeyboard,
@@ -5,22 +6,45 @@ import {
   ResourceScene,
   ResourceWheel,
 } from '~/resources'
-import { ComponentPosition } from '~/components'
 
 /**
  * SystemNavigation is responsible for navigation controls.
  */
 export class SystemNavigation extends System {
-  private speed = 5.0
+  private speed = 10.0
+
+  // PLEASE REFACTOR ME
+  private scale(viewport: PIXI.Container, scale: number) {
+    const x = window.innerWidth / 2
+    const y = window.innerHeight / 2
+
+    const wx = (x - viewport.x) / viewport.scale.x
+    const wy = (y - viewport.y) / viewport.scale.y
+
+    const s = viewport.scale.y * scale
+
+    if (s > 0.2 && s < 2) {
+      const px = wx * s + viewport.x
+      const py = wy * s + viewport.y
+
+      viewport.x -= px - x
+      viewport.y -= py - y
+
+      viewport.scale.x = s
+      viewport.scale.y = s
+    }
+  }
 
   public update(core: Core) {
     const { dt } = core.getResource(ResourceClock) as ResourceClock
     const { pressed } = core.getResource(ResourceKeyboard) as ResourceKeyboard
     const { viewport } = core.getResource(ResourceScene) as ResourceScene
+    const wheel = core.getResource(ResourceWheel) as ResourceWheel
 
     // set scale
-    const wheel = core.getResource(ResourceWheel) as ResourceWheel
-    viewport.scale.set(1 + wheel.y, 1 + wheel.y)
+    if (Math.abs(wheel.deltaY) > 2) {
+      this.scale(viewport, 1 + wheel.deltaY * 0.001)
+    }
 
     // calculate movement speed
     const speed = pressed.has(16) ? this.speed * 3 : this.speed
