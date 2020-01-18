@@ -1,5 +1,4 @@
-import * as PIXI from 'pixi.js'
-import { Entity } from '~/core'
+import { Entity, Core } from '~/core'
 import {
   ComponentPosition,
   ComponentGraphics,
@@ -7,12 +6,15 @@ import {
   ComponentSelectable,
 } from '~/components'
 import { EntityEngineer } from './engineer'
+import { ResourceAssets } from '~/resources'
 
 export class EntityLandFactory extends Entity {
   static title = 'Land Factory'
 
-  constructor() {
-    super()
+  public initialize(core: Core) {
+    super.initialize(core)
+
+    const assets = core.getResource(ResourceAssets) as ResourceAssets
 
     this.components.set(ComponentPosition, new ComponentPosition(0.0, 0.0))
     this.components.set(ComponentSelectable, new ComponentSelectable())
@@ -27,12 +29,7 @@ export class EntityLandFactory extends Entity {
     )
     this.components.set(
       ComponentGraphics,
-      new ComponentGraphics(
-        new PIXI.Graphics()
-          .beginFill(0xffffff)
-          .drawRect(0, 0, 128, 128)
-          .endFill(),
-      ),
+      new ComponentGraphics(assets.textures['land_factory'].texture, 128, 128),
     )
   }
 }

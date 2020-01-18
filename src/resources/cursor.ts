@@ -1,14 +1,13 @@
 import { Resource } from '~/core'
+import { Point } from '~/math'
 
 export class ResourceCursor extends Resource {
-  public x = 0.0
-  public y = 0.0
-  public clicked = false
+  public position: Point = new Point(0.0, 0.0)
+  public clicked: boolean = false
 
   public initialize() {
     window.addEventListener('mousemove', (e) => {
-      this.x = e.clientX
-      this.y = e.clientY
+      this.position.set(e.clientX, e.clientY)
     })
 
     window.addEventListener('mousedown', () => {

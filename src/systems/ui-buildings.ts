@@ -1,9 +1,5 @@
 import { System, Core, Entity } from '~/core'
-import {
-  ResourceSelection,
-  ResourceSelectionEvent,
-  ResourceBuildQueue,
-} from '~/resources'
+import { ResourceSelection, ResourceSelectionEvent, ResourcePlacement } from '~/resources'
 import { ComponentUI, ComponentUIBuilding } from '~/components'
 
 /**
@@ -24,12 +20,12 @@ export class SystemUIBuildings extends System {
     return element
   }
 
-  private onClick = (queue: ResourceBuildQueue, building: ComponentUIBuilding) => {
-    queue.entity = building.create()
+  private onClick = (placement: ResourcePlacement, building: ComponentUIBuilding) => {
+    placement.entity = building.create()
   }
 
   public initialize(core: Core) {
-    const queue = core.getResource(ResourceBuildQueue) as ResourceBuildQueue
+    const queue = core.getResource(ResourcePlacement) as ResourcePlacement
     const selection = core.getResource(ResourceSelection) as ResourceSelection
 
     // render ui when entity is selected

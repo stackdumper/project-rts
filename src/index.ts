@@ -10,7 +10,7 @@ import {
   ResourceKeyboard,
   ResourceCursor,
   ResourceWheel,
-  ResourceBuildQueue,
+  ResourcePlacement,
 } from './resources'
 import {
   SystemVelocity,
@@ -22,19 +22,19 @@ import {
   SystemSelection,
   SystemStats,
   SystemNavigation,
-  SystemRenderBuildQueue,
+  SystemPlacement,
 } from './systems'
-import { EntityCommander, EntityEngineer } from './entities'
+import { EntityCommander } from './entities'
 
 window.addEventListener('load', () => {
   // load resources
-  ResourceAssets.loadResources().then((assets) => {
+  ResourceAssets.loadResources().then((assets: any) => {
     const core = new CoreBuilder()
       // add resources
       .withResource(new ResourceKeyboard())
       .withResource(new ResourceCursor())
       .withResource(new ResourceWheel())
-      .withResource(new ResourceBuildQueue())
+      .withResource(new ResourcePlacement())
       .withResource(new ResourceAssets(assets))
       .withResource(new ResourceResources())
       .withResource(new ResourceMap(100, 40))
@@ -50,7 +50,7 @@ window.addEventListener('load', () => {
       .withSystem(new SystemUIBuildings())
       .withSystem(new SystemRender())
       .withSystem(new SystemRenderMap())
-      .withSystem(new SystemRenderBuildQueue())
+      .withSystem(new SystemPlacement())
       .withSystem(new SystemStats())
       .build()
 

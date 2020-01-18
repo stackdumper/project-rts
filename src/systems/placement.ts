@@ -1,12 +1,11 @@
-import * as PIXI from 'pixi.js'
 import { System, Core, Entity } from '~/core'
-import { ResourceBuildQueue, ResourceCursor, ResourceScene } from '~/resources'
+import { ResourcePlacement, ResourceCursor, ResourceScene } from '~/resources'
 import { ComponentPosition, ComponentGraphics } from '~/components'
 
 /**
- * SystemRenderBuildQueue is responsible for rendering build queue.
+ * SystemBuildShadow is responsible for showing build shadow.
  */
-export class SystemRenderBuildQueue extends System {
+export class SystemPlacement extends System {
   private displayed?: Entity
 
   private getShadowEntity(entity: Entity) {
@@ -17,8 +16,11 @@ export class SystemRenderBuildQueue extends System {
       if (key === ComponentGraphics) {
         const graphics = value as ComponentGraphics
 
-        const shadowGraphics = new ComponentGraphics(graphics.sprite.clone())
-
+        const shadowGraphics = new ComponentGraphics(
+          graphics.sprite.texture.clone(),
+          graphics.sprite.width,
+          graphics.sprite.height,
+        )
         shadowGraphics.sprite.alpha = 0.75
 
         shadowEntity.components.set(key, shadowGraphics)
@@ -36,12 +38,14 @@ export class SystemRenderBuildQueue extends System {
 
   public update(core: Core) {
     const scene = core.getResource(ResourceScene) as ResourceScene
-    const queue = core.getResource(ResourceBuildQueue) as ResourceBuildQueue
+    const placement = core.getResource(ResourcePlacement) as ResourcePlacement
     const cursor = core.getResource(ResourceCursor) as ResourceCursor
 
     // add shadow entity
-    if (!this.displayed && queue.entity) {
-      this.displayed = this.getShadowEntity(queue.entity)
+    if (!this.displayed && placement.entity) {
+      placement.entity.initialize(core)
+
+      this.displayed = this.getShadowEntity(placement.entity)
 
       core.addEntity(this.displayed)
     }
@@ -55,7 +59,7 @@ export class SystemRenderBuildQueue extends System {
         ComponentPosition,
       ) as ComponentPosition
 
-      const pos = scene.viewport.toLocal(new PIXI.Point(cursor.x, cursor.y))
+      const pos = scene.viewport.toLocal(cursor.position)
 
       position.x = pos.x - graphics.sprite.width / 2
       position.y = pos.y - graphics.sprite.height / 2
@@ -63,71 +67,27 @@ export class SystemRenderBuildQueue extends System {
 
     // remove shadow entity and add real entity once clicked
     if (this.displayed && cursor.clicked) {
-      const graphics = queue.entity!.components.get(
+      const graphics = placement.entity!.components.get(
         ComponentGraphics,
       ) as ComponentGraphics
-      const position = queue.entity!.components.get(
+      const position = placement.entity!.components.get(
         ComponentPosition,
       ) as ComponentPosition
 
       // set real entity position to cursor
-      const nextPosition = scene.viewport.toLocal(new PIXI.Point(cursor.x, cursor.y))
+      const nextPosition = scene.viewport.toLocal(cursor.position)
       position.x = nextPosition.x - graphics.sprite.width / 2
       position.y = nextPosition.y - graphics.sprite.width / 2
 
       // add real entity to scene
-      core.addEntity(queue.entity!)
+      core.addEntity(placement.entity!)
 
       // remove shadow entity from scene
       core.removeEntity(this.displayed)
 
       // clean queue and displayed
-      queue.entity = undefined
+      placement.entity = undefined
       this.displayed = undefined
     }
-
-    // if entity was added to queue, add it's shadow to scene
-
-    // update shadow's position
-
-    // if clicked, add entity and remove shadow
-
-    // if (!this.displayed && resource.entity) {
-    //   console.log('add')
-
-    //   const entity = this.createEntity()
-
-    //   this.displayed = entity
-
-    //   core.addEntity(entity)
-
-    //   window.addEventListener('click', () => {
-    //     console.log('remove')
-
-    //     if (resource.entity) {
-    //       core.removeEntity(entity)
-
-    //       core.addEntity(resource.entity!)
-
-    //       resource.entity = undefined
-    //     }
-
-    //     this.displayed = undefined
-    //   })
-    // }
-
-    // if (this.displayed) {
-    //   const graphics = this.displayed.components.get(
-    //     ComponentGraphics,
-    //   ) as ComponentGraphics
-    //   const position = this.displayed.components.get(
-    //     ComponentPosition,
-    //   ) as ComponentPosition
-
-    //   const pos = scene.viewport.toLocal(new PIXI.Point(cursor.x, cursor.y))
-
-    //   position.x = pos.x - graphics.sprite.width / 2
-    //   position.y = pos.y - graphics.sprite.height / 2
-    // }
   }
 }

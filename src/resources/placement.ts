@@ -1,5 +1,5 @@
 import { Resource, Entity } from '~/core'
 
-export class ResourceBuildQueue extends Resource {
+export class ResourcePlacement extends Resource {
   public entity?: Entity
 }

@@ -1,3 +1,4 @@
 export const assets = {
-  electricity: require('./electricity.png'),
+  land_factory: require('./land_factory.png'),
+  engineer: require('./engineer.png'),
 }

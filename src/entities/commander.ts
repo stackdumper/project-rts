@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { Entity } from '~/core'
+import { Entity, Core } from '~/core'
 import {
   ComponentPosition,
   ComponentVelocity,
@@ -12,8 +12,8 @@ import { EntityLandFactory } from '.'
 export class EntityCommander extends Entity {
   static title = 'Commander'
 
-  constructor() {
-    super()
+  public initialize(core: Core) {
+    super.initialize(core)
 
     this.components.set(ComponentPosition, new ComponentPosition(0.0, 0.0))
     this.components.set(ComponentVelocity, new ComponentVelocity(0.0, 0.0))
@@ -29,12 +29,7 @@ export class EntityCommander extends Entity {
     )
     this.components.set(
       ComponentGraphics,
-      new ComponentGraphics(
-        new PIXI.Graphics()
-          .beginFill(0xffffff)
-          .drawRect(0, 0, 32, 32)
-          .endFill(),
-      ),
+      new ComponentGraphics(PIXI.Texture.WHITE, 32, 32),
     )
   }
 }
