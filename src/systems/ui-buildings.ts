@@ -21,7 +21,9 @@ export class SystemUIBuildings extends System {
   }
 
   private onClick = (placement: ResourcePlacement, building: ComponentUIBuilding) => {
-    placement.entity = building.create()
+    const entity = building.create()
+
+    placement.entity = entity
   }
 
   public initialize(core: Core) {

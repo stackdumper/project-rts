@@ -23,6 +23,7 @@ import {
   SystemStats,
   SystemNavigation,
   SystemPlacement,
+  SystemRenderSelection,
 } from './systems'
 import { EntityCommander } from './entities'
 
@@ -45,6 +46,7 @@ window.addEventListener('load', () => {
       .withSystem(new SystemResources())
       .withSystem(new SystemVelocity())
       .withSystem(new SystemSelection())
+      .withSystem(new SystemRenderSelection())
       .withSystem(new SystemNavigation())
       .withSystem(new SystemUIResources())
       .withSystem(new SystemUIBuildings())
@@ -58,14 +60,16 @@ window.addEventListener('load', () => {
     core.addEntity(new EntityCommander())
 
     // start game loop
-    const clock = core.getResource(ResourceClock) as ResourceClock
+    {
+      const clock = core.getResource(ResourceClock) as ResourceClock
 
-    Ticker.shared.add((dt) => {
-      // TODO: update dt
-      clock.dt = dt
+      Ticker.shared.add((dt) => {
+        // TODO: update dt
+        clock.dt = dt
 
-      // update core
-      core.update()
-    })
+        // update core
+        core.update()
+      })
+    }
   })
 })

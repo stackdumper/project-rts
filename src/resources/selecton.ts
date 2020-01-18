@@ -16,8 +16,10 @@ export class ResourceSelection extends Resource {
     this.selected = entity
   }
 
-  public deselectEntity = () => {
-    this.events.emit(ResourceSelectionEvent.EntityDeselected, this.selected)
-    this.selected = undefined
+  public clearSelection = () => {
+    if (this.selected) {
+      this.events.emit(ResourceSelectionEvent.EntityDeselected, this.selected)
+      this.selected = undefined
+    }
   }
 }
