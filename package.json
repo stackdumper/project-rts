@@ -35,7 +35,7 @@
     "prettier": "1.19.1",
     "stats.js": "0.17.0",
     "ts-jest": "24.3.0",
-    "typescript": "3.7.4"
+    "typescript": "3.7.5"
   },
   "dependencies": {
     "eventemitter3": "^4.0.0",
