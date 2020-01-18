@@ -6,8 +6,6 @@ export class ResourceWheel extends Resource {
 
   public initialize() {
     window.addEventListener('wheel', (e) => {
-      console.log(e.deltaY)
-
       this.deltaX = e.deltaX
       this.deltaY = e.deltaY
     })

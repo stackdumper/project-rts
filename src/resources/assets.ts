@@ -3,7 +3,7 @@ import { Resource } from '~/core'
 import { assets } from '~/assets'
 
 export class ResourceAssets extends Resource {
-  constructor(public resources: PIXI.IResourceDictionary) {
+  constructor(public textures: Record<keyof typeof assets, PIXI.LoaderResource>) {
     super()
   }
 

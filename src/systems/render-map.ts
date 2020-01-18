@@ -1,6 +1,6 @@
+import { Graphics } from 'pixi.js'
 import { System, Core } from '~/core'
 import { ResourceScene, ResourceMap } from '~/resources'
-import { Graphics } from 'pixi.js'
 
 export class SystemRenderMap extends System {
   private tileSize = 16

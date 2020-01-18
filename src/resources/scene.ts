@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-import { Viewport } from 'pixi-viewport'
 import { Resource } from '~/core'
 
 export class ResourceScene extends Resource {

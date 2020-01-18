@@ -1,5 +1,5 @@
 import { System, Core } from '~/core'
-import { ComponentGraphics } from '~/components'
+import { ComponentGraphics, ComponentSelectable } from '~/components'
 import { ResourceSelection } from '~/resources'
 
 /**
@@ -29,10 +29,14 @@ export class SystemSelection extends System {
       this.clearSelection(selection)
 
       for (const entity of core.entities.values()) {
+        // continue if not selectable
+        if (!entity.components.has(ComponentSelectable)) continue
+
+        // get graphics and check if intersects
         const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
 
         if (graphics) {
-          const box = graphics.sprite.getBounds(true)
+          const box = graphics.sprite.getBounds()
 
           // if click position is on entity, select it
           if (box.contains(e.clientX, e.clientY)) {

@@ -80,7 +80,7 @@ export class Core {
    * Triggers 'add-entity' event.
    */
   public addEntity(entity: Entity) {
-    entity.initialize(this)
+    if (!entity.initialized) entity.initialize(this)
 
     this.entities.set(entity.id, entity)
 
