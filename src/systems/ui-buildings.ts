@@ -1,6 +1,6 @@
-import { System, Core, Entity } from '~/core'
+import { System, Core, Entity, EntityBuilder } from '~/core'
 import { ResourceSelection, ResourceSelectionEvent, ResourcePlacement } from '~/resources'
-import { ComponentUI, ComponentUIBuilding } from '~/components'
+import { ComponentUI } from '~/components'
 
 /**
  * SystemUIBuildings is responsible for displaying selected unit build options in the bottom menu.
@@ -11,34 +11,30 @@ export class SystemUIBuildings extends System {
   )! as HTMLDivElement
 
   // create new building-cell html element
-  private createElement = (building: ComponentUIBuilding) => {
+  private createElement = (builder: EntityBuilder) => {
     const element = document.createElement('div')
 
-    element.textContent = building.title
+    element.textContent = builder?.name
     element.className = 'building-cell'
 
     return element
   }
 
-  private onClick = (placement: ResourcePlacement, building: ComponentUIBuilding) => {
-    const entity = building.create()
-
-    placement.entity = entity
-  }
-
   public initialize(core: Core) {
-    const queue = core.getResource(ResourcePlacement) as ResourcePlacement
-    const selection = core.getResource(ResourceSelection) as ResourceSelection
+    const placement = core.getResource(ResourcePlacement)
+    const selection = core.getResource(ResourceSelection)
 
     // render ui when entity is selected
     selection.events.on(ResourceSelectionEvent.EntitySelected, (entity: Entity) => {
-      const ui = entity.components.get(ComponentUI) as ComponentUI
+      const ui = entity.components.get(ComponentUI)
 
       // render each ui option in bottom menu
-      ui?.buildings.forEach((building) => {
-        const element = this.createElement(building)
+      ui?.buildings.forEach((builder) => {
+        const element = this.createElement(builder)
 
-        element.onclick = this.onClick.bind(this, queue, building)
+        element.onclick = () => {
+          placement.builder = builder
+        }
 
         this.container.appendChild(element)
       })

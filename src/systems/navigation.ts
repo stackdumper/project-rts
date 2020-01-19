@@ -36,10 +36,10 @@ export class SystemNavigation extends System {
   }
 
   public update(core: Core) {
-    const { dt } = core.getResource(ResourceClock) as ResourceClock
-    const { pressed } = core.getResource(ResourceKeyboard) as ResourceKeyboard
-    const { viewport } = core.getResource(ResourceScene) as ResourceScene
-    const wheel = core.getResource(ResourceWheel) as ResourceWheel
+    const { dt } = core.getResource(ResourceClock)
+    const { pressed } = core.getResource(ResourceKeyboard)
+    const { viewport } = core.getResource(ResourceScene)
+    const wheel = core.getResource(ResourceWheel)
 
     // set scale
     if (Math.abs(wheel.deltaY) > 2) {

@@ -1,22 +1,17 @@
-import { Entity, Core } from '~/core'
+import { EntityBuilder } from '~/core'
 import {
   ComponentPosition,
   ComponentVelocity,
   ComponentGraphics,
-  ComponentSelectable,
   ComponentDimensions,
+  ComponentSelectable,
+  ComponentUI,
 } from '~/components'
 
-export class EntityEngineer extends Entity {
-  static title = 'Engineer'
-
-  public initialize(core: Core) {
-    super.initialize(core)
-
-    this.components.set(ComponentPosition, new ComponentPosition(0.0, 0.0))
-    this.components.set(ComponentVelocity, new ComponentVelocity(0.0, 0.0))
-    this.components.set(ComponentSelectable, new ComponentSelectable())
-    this.components.set(ComponentGraphics, new ComponentGraphics('engineer'))
-    this.components.set(ComponentDimensions, new ComponentDimensions(24, 24))
-  }
-}
+export const engineer = new EntityBuilder('Engineer')
+  .withComponent(new ComponentPosition(0.0, 0.0))
+  .withComponent(new ComponentVelocity(0.0, 0.0))
+  .withComponent(new ComponentGraphics('engineer'))
+  .withComponent(new ComponentDimensions(20, 20))
+  .withComponent(new ComponentSelectable())
+  .withComponent(new ComponentUI([]))

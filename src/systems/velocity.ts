@@ -7,13 +7,13 @@ import { ComponentPosition, ComponentVelocity } from '~/components'
  */
 export class SystemVelocity extends System {
   public update(core: Core) {
-    const clock = core.getResource(ResourceClock) as ResourceClock
+    const clock = core.getResource(ResourceClock)
 
     for (const entity of core.entities.values()) {
-      const position = entity.components.get(ComponentPosition) as ComponentPosition
+      const position = entity.components.get(ComponentPosition)
       if (!position) continue
 
-      const velocity = entity.components.get(ComponentVelocity) as ComponentVelocity
+      const velocity = entity.components.get(ComponentVelocity)
       if (!velocity) continue
 
       position.x += velocity.x * clock.dt

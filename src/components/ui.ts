@@ -1,12 +1,8 @@
 import { Component, Entity } from '~/core'
-
-export interface ComponentUIBuilding {
-  title: string
-  create: () => Entity
-}
+import { EntityBuilder } from '~/core/entity-builder'
 
 export class ComponentUI extends Component {
-  constructor(public buildings: ComponentUIBuilding[]) {
+  constructor(public buildings: EntityBuilder[]) {
     super()
   }
 }

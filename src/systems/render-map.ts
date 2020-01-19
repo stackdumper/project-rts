@@ -14,8 +14,8 @@ export class SystemRenderMap extends System {
   }
 
   public initialize(core: Core) {
-    const { viewport } = core.getResource(ResourceScene) as ResourceScene
-    const { map } = core.getResource(ResourceMap) as ResourceMap
+    const { viewport } = core.getResource(ResourceScene)
+    const { map } = core.getResource(ResourceMap)
 
     const tiles = new Graphics()
 

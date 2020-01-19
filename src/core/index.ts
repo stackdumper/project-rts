@@ -1,6 +1,8 @@
 export { Core, CoreEvent } from './core'
 export { CoreBuilder } from './core-builder'
 export { Entity } from './entity'
+export { EntityBuilder } from './entity-builder'
 export { System } from './system'
 export { Resource } from './resource'
 export { Component } from './component'
+export { ConstructorMap } from './storage'

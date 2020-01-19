@@ -23,8 +23,8 @@ export class SystemResources extends System {
   }
 
   public update(core: Core) {
-    const { energy, mass } = core.getResource(ResourceResources) as ResourceResources
-    const { dt } = core.getResource(ResourceClock) as ResourceClock
+    const { energy, mass } = core.getResource(ResourceResources)
+    const { dt } = core.getResource(ResourceClock)
 
     energy.update(this.incrementResource(energy, dt))
     mass.update(this.incrementResource(mass, dt))
