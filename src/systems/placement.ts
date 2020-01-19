@@ -1,6 +1,6 @@
 import { System, Core, Entity } from '~/core'
 import { ResourcePlacement, ResourceCursor, ResourceScene } from '~/resources'
-import { ComponentPosition, ComponentGraphics } from '~/components'
+import { ComponentPosition, ComponentGraphics, ComponentDimensions } from '~/components'
 
 /**
  * SystemBuildShadow is responsible for showing build shadow.
@@ -11,19 +11,21 @@ export class SystemPlacement extends System {
   private getShadowEntity(entity: Entity) {
     const shadowEntity = new Entity()
 
-    // filter components, allow graphics and position
+    // filter components, allow graphics, dimensions and position
     for (const [key, value] of entity.components) {
       if (key === ComponentGraphics) {
         const graphics = value as ComponentGraphics
 
-        const shadowGraphics = new ComponentGraphics(
-          graphics.sprite.texture.clone(),
-          graphics.sprite.width,
-          graphics.sprite.height,
-        )
-        shadowGraphics.sprite.alpha = 0.75
+        shadowEntity.components.set(key, new ComponentGraphics(graphics.texture, 0.75))
+      }
 
-        shadowEntity.components.set(key, shadowGraphics)
+      if (key === ComponentDimensions) {
+        const dimensions = value as ComponentDimensions
+
+        shadowEntity.components.set(
+          key,
+          new ComponentDimensions(dimensions.width, dimensions.height),
+        )
       }
 
       if (key === ComponentPosition) {
@@ -52,17 +54,14 @@ export class SystemPlacement extends System {
 
     // update shadow entity position
     if (this.displayed) {
-      const graphics = this.displayed.components.get(
-        ComponentGraphics,
-      ) as ComponentGraphics
       const position = this.displayed.components.get(
         ComponentPosition,
       ) as ComponentPosition
 
       const pos = scene.viewport.toLocal(cursor.position)
 
-      position.x = pos.x - graphics.sprite.width / 2
-      position.y = pos.y - graphics.sprite.height / 2
+      position.x = pos.x
+      position.y = pos.y
     }
 
     // remove shadow entity and add real entity once clicked
@@ -76,8 +75,8 @@ export class SystemPlacement extends System {
 
       // set real entity position to cursor
       const nextPosition = scene.viewport.toLocal(cursor.position)
-      position.x = nextPosition.x - graphics.sprite.width / 2
-      position.y = nextPosition.y - graphics.sprite.width / 2
+      position.x = nextPosition.x
+      position.y = nextPosition.y
 
       // add real entity to scene
       core.addEntity(placement.entity!)

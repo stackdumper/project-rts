@@ -8,7 +8,7 @@ import {
 } from '~/resources'
 
 /**
- * SystemNavigation is responsible for navigation controls.
+ * SystemNavigation is responsible for map navigation controls.
  */
 export class SystemNavigation extends System {
   private speed = 10.0

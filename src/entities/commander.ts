@@ -1,4 +1,3 @@
-import * as PIXI from 'pixi.js'
 import { Entity, Core } from '~/core'
 import {
   ComponentPosition,
@@ -6,6 +5,7 @@ import {
   ComponentGraphics,
   ComponentUI,
   ComponentSelectable,
+  ComponentDimensions,
 } from '~/components'
 import { EntityLandFactory } from '.'
 
@@ -27,9 +27,7 @@ export class EntityCommander extends Entity {
         },
       ]),
     )
-    this.components.set(
-      ComponentGraphics,
-      new ComponentGraphics(PIXI.Texture.WHITE, 32, 32),
-    )
+    this.components.set(ComponentGraphics, new ComponentGraphics('engineer'))
+    this.components.set(ComponentDimensions, new ComponentDimensions(32, 32))
   }
 }

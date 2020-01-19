@@ -2,6 +2,9 @@ import { Graphics } from 'pixi.js'
 import { System, Core } from '~/core'
 import { ResourceScene, ResourceMap } from '~/resources'
 
+/**
+ * SystemRenderMap is responsible for rendering game map.
+ */
 export class SystemRenderMap extends System {
   private tileSize = 16
   private colors = {

@@ -2,7 +2,7 @@ import { System, Core } from '~/core'
 import { ResourceClock, ResourceResources, TResource, CResource } from '~/resources'
 
 /**
- * SystemResources is responseible for resource consumption and production.
+ * SystemResources is responseible for managing resource consumption and production.
  */
 export class SystemResources extends System {
   private incrementResource(resource: CResource, dt: number): TResource {
