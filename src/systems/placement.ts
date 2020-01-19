@@ -18,7 +18,9 @@ export class SystemPlacement extends System {
 
     const graphics = builder.components.get(ComponentGraphics)
     if (graphics) {
-      shadowEntity.components.add(new ComponentGraphics(graphics.texture, 0.75))
+      shadowEntity.components.add(
+        new ComponentGraphics(graphics.texture, { ...graphics.options }),
+      )
     }
 
     const dimensions = builder.components.get(ComponentDimensions)

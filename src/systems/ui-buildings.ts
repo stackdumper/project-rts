@@ -27,9 +27,10 @@ export class SystemUIBuildings extends System {
     // render ui when entity is selected
     selection.events.on(ResourceSelectionEvent.EntitySelected, (entity: Entity) => {
       const ui = entity.components.get(ComponentUI)
+      if (!ui) return
 
       // render each ui option in bottom menu
-      ui?.buildings.forEach((builder) => {
+      ui.buildings.forEach((builder) => {
         const element = this.createElement(builder)
 
         element.onclick = () => {

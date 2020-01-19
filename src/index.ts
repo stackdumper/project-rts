@@ -26,6 +26,7 @@ import {
   SystemRenderSelection,
 } from './systems'
 import { entities } from './entities'
+import { ComponentPosition, ComponentDimensions } from './components'
 
 window.addEventListener('load', () => {
   // load resources
@@ -57,7 +58,17 @@ window.addEventListener('load', () => {
       .build()
 
     // add commander
-    core.addEntity(entities.commander.build())
+    // ADD 100 COMMANDERS!!!
+    for (let z = 0; z < 10; z++) {
+      for (let j = 0; j < 10; j++) {
+        const entity = entities.commander.build()
+        core.addEntity(entity)
+
+        const position = entity.components.get(ComponentPosition)
+        position.x = 100 + 40 * j
+        position.y = 100 + 40 * z
+      }
+    }
 
     // start game loop
     {
