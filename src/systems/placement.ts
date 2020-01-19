@@ -11,14 +11,23 @@ export class SystemPlacement extends System {
   private getShadowEntity(entity: Entity) {
     const shadowEntity = new Entity()
 
-    // filter components, allow graphics, dimensions and position
+    // filter components
     for (const [key, value] of entity.components) {
+      // allow position
+      if (key === ComponentPosition) {
+        const position = value as ComponentPosition
+
+        shadowEntity.components.set(key, new ComponentPosition(position.x, position.y))
+      }
+
+      // allow graphics
       if (key === ComponentGraphics) {
         const graphics = value as ComponentGraphics
 
         shadowEntity.components.set(key, new ComponentGraphics(graphics.texture, 0.75))
       }
 
+      // allow dimensions
       if (key === ComponentDimensions) {
         const dimensions = value as ComponentDimensions
 
@@ -26,12 +35,6 @@ export class SystemPlacement extends System {
           key,
           new ComponentDimensions(dimensions.width, dimensions.height),
         )
-      }
-
-      if (key === ComponentPosition) {
-        const position = value as ComponentPosition
-
-        shadowEntity.components.set(key, new ComponentPosition(position.x, position.y))
       }
     }
 
@@ -58,10 +61,15 @@ export class SystemPlacement extends System {
         ComponentPosition,
       ) as ComponentPosition
 
-      const pos = scene.viewport.toLocal(cursor.position)
+      // transform on-screen cursor coordinates to local viewport coordinates
+      // @ts-ignore
+      const { x: localX, y: localY } = scene.viewport.toLocal({
+        x: cursor.position.x,
+        y: cursor.position.y,
+      })
 
-      position.x = pos.x
-      position.y = pos.y
+      position.x = localX
+      position.y = localY
     }
 
     // remove shadow entity and add real entity once clicked
@@ -73,10 +81,16 @@ export class SystemPlacement extends System {
         ComponentPosition,
       ) as ComponentPosition
 
+      // transform on-screen cursor coordinates to local viewport coordinates
+      // @ts-ignore
+      const { x: localX, y: localY } = scene.viewport.toLocal({
+        x: cursor.position.x,
+        y: cursor.position.y,
+      })
+
       // set real entity position to cursor
-      const nextPosition = scene.viewport.toLocal(cursor.position)
-      position.x = nextPosition.x
-      position.y = nextPosition.y
+      position.x = localX
+      position.y = localY
 
       // add real entity to scene
       core.addEntity(placement.entity!)

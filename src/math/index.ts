@@ -1,1 +1,1 @@
-export { Point } from './point'
+export { Vector2 } from './vector2'
