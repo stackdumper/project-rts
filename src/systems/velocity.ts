@@ -7,17 +7,17 @@ import { ComponentPosition, ComponentVelocity } from '~/components'
  */
 export class SystemVelocity extends System {
   public update(core: Core) {
+    const clock = core.getResource(ResourceClock) as ResourceClock
+
     for (const entity of core.entities.values()) {
-      // how to avoid 'as'?
-      const clock = core.getResource(ResourceClock) as ResourceClock
-
       const position = entity.components.get(ComponentPosition) as ComponentPosition
-      const velocity = entity.components.get(ComponentVelocity) as ComponentVelocity
+      if (!position) continue
 
-      if (position && velocity) {
-        position.x += velocity.x * clock.dt
-        position.y += velocity.y * clock.dt
-      }
+      const velocity = entity.components.get(ComponentVelocity) as ComponentVelocity
+      if (!velocity) continue
+
+      position.x += velocity.x * clock.dt
+      position.y += velocity.y * clock.dt
     }
   }
 }

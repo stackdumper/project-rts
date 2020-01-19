@@ -5,6 +5,7 @@ import { ResourceResources } from '~/resources'
  * SystemUIResources is responsible for showing resources in the top left menu.
  */
 export class SystemUIResources extends System {
+  // woah
   private bars = {
     energyShadow: document.querySelector(
       '#resource-energy .bar-container-shadow',

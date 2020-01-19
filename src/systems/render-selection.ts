@@ -1,8 +1,11 @@
 import * as PIXI from 'pixi.js'
 import { System, Core, Entity } from '~/core'
 import { ResourceSelection, ResourceSelectionEvent, ResourceScene } from '~/resources'
-import { ComponentPosition, ComponentGraphics } from '~/components'
+import { ComponentPosition, ComponentGraphics, ComponentDimensions } from '~/components'
 
+/**
+ * SystemRenderSelection is responsible for rendering a box around selected entities.
+ */
 export class SystemRenderSelection extends System {
   private box?: PIXI.Graphics
   private options = {
@@ -18,8 +21,8 @@ export class SystemRenderSelection extends System {
       .beginFill(0x0abde3, 0.1)
       .lineStyle(thickness, 0x48dbfb)
       .drawRect(
-        -(padding + thickness) / 2,
-        -(padding + thickness) / 2,
+        -width / 2 - (padding + thickness) / 2,
+        -height / 2 - (padding + thickness) / 2,
         width + padding + thickness,
         height + padding + thickness,
       )
@@ -34,12 +37,24 @@ export class SystemRenderSelection extends System {
     selection.events.addListener(
       ResourceSelectionEvent.EntitySelected,
       (entity: Entity) => {
-        const position = entity.components.get(ComponentPosition) as ComponentPosition
-        const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
+        // skip if has no graphics
+        if (!entity.components.has(ComponentGraphics)) return
 
-        this.box = this.createBox(graphics.sprite.width, graphics.sprite.height)
+        // get position to adjust box position
+        const position = entity.components.get(ComponentPosition) as ComponentPosition
+        if (!position) return
+
+        // get dimensions to adjust box dimensions
+        const dimensions = entity.components.get(
+          ComponentDimensions,
+        ) as ComponentDimensions
+        if (!dimensions) return
+
+        // create box and adjust position
+        this.box = this.createBox(dimensions.width, dimensions.height)
         this.box.position.set(position.x, position.y)
 
+        // add box to viewport
         scene.viewport.addChild(this.box)
       },
     )
@@ -48,6 +63,7 @@ export class SystemRenderSelection extends System {
     selection.events.addListener(
       ResourceSelectionEvent.EntityDeselected,
       (entity: Entity) => {
+        // remove box if present
         if (this.box) {
           scene.viewport.removeChild(this.box)
         }

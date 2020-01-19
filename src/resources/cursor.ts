@@ -1,8 +1,8 @@
 import { Resource } from '~/core'
-import { Point } from '~/math'
+import { Vector2 } from '~/math'
 
 export class ResourceCursor extends Resource {
-  public position: Point = new Point(0.0, 0.0)
+  public position: Vector2 = new Vector2(0.0, 0.0)
   public clicked: boolean = false
 
   public initialize() {
