@@ -1,4 +1,4 @@
-import { Entity, System, Resource } from '.'
+import { Entity, System, Resource, ConstructorMap } from '.'
 import EventEmitter from 'eventemitter3'
 
 export enum CoreEvent {
@@ -15,8 +15,8 @@ export enum CoreEvent {
  */
 export class Core {
   public entities: Map<string, Entity>
-  public systems: Map<Function, System>
-  public resources: Map<Function, Resource>
+  public systems: ConstructorMap<System>
+  public resources: ConstructorMap<Resource>
 
   /**
    * Core.events provide event bus for use by systems
@@ -28,8 +28,8 @@ export class Core {
    */
   constructor() {
     this.entities = new Map()
-    this.systems = new Map()
-    this.resources = new Map()
+    this.systems = new ConstructorMap()
+    this.resources = new ConstructorMap()
 
     this.events = new EventEmitter()
   }
@@ -42,7 +42,7 @@ export class Core {
   public addResource(resource: Resource) {
     resource.initialize(this)
 
-    this.resources.set(resource.constructor, resource)
+    this.resources.add(resource)
 
     this.events.emit(CoreEvent.AddResource, resource)
   }
@@ -51,13 +51,14 @@ export class Core {
    * Core.getResource returns a resource by it's constructor.
    * Throws an error if such resource does not exist.
    */
-  public getResource<T extends Function>(constructor: T): Resource {
-    const t = this.resources.get(constructor)
+  public getResource<T extends Resource>(resource: new (...args: any) => T) {
+    const t = this.resources.get(resource)
 
     if (!t) {
-      throw new Error(`[Core.getResource] unable to find resource: ${constructor}`)
+      throw new Error(`[Core.getResource] unable to find resource: ${resource}`)
     }
 
+    // @ts-ignore
     return t
   }
 
@@ -69,7 +70,7 @@ export class Core {
   public addSystem(system: System) {
     system.initialize(this)
 
-    this.systems.set(system.constructor, system)
+    this.systems.add(system)
 
     this.events.emit(CoreEvent.AddSystem, system)
   }

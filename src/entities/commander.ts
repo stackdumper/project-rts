@@ -1,33 +1,18 @@
-import { Entity, Core } from '~/core'
+import { EntityBuilder } from '~/core'
 import {
   ComponentPosition,
   ComponentVelocity,
   ComponentGraphics,
-  ComponentUI,
-  ComponentSelectable,
   ComponentDimensions,
+  ComponentSelectable,
+  ComponentUI,
 } from '~/components'
-import { EntityLandFactory } from '.'
+import { landFactory } from './land-factory'
 
-export class EntityCommander extends Entity {
-  static title = 'Commander'
-
-  public initialize(core: Core) {
-    super.initialize(core)
-
-    this.components.set(ComponentPosition, new ComponentPosition(0.0, 0.0))
-    this.components.set(ComponentVelocity, new ComponentVelocity(0.0, 0.0))
-    this.components.set(ComponentSelectable, new ComponentSelectable())
-    this.components.set(
-      ComponentUI,
-      new ComponentUI([
-        {
-          title: EntityLandFactory.title,
-          create: () => new EntityLandFactory(),
-        },
-      ]),
-    )
-    this.components.set(ComponentGraphics, new ComponentGraphics('engineer'))
-    this.components.set(ComponentDimensions, new ComponentDimensions(32, 32))
-  }
-}
+export const commander = new EntityBuilder('Commander')
+  .withComponent(new ComponentPosition(0.0, 0.0))
+  .withComponent(new ComponentVelocity(0.0, 0.0))
+  .withComponent(new ComponentGraphics('engineer'))
+  .withComponent(new ComponentDimensions(32, 32))
+  .withComponent(new ComponentSelectable())
+  .withComponent(new ComponentUI([landFactory]))

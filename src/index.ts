@@ -25,7 +25,7 @@ import {
   SystemPlacement,
   SystemRenderSelection,
 } from './systems'
-import { EntityCommander } from './entities'
+import { entities } from './entities'
 
 window.addEventListener('load', () => {
   // load resources
@@ -57,14 +57,14 @@ window.addEventListener('load', () => {
       .build()
 
     // add commander
-    core.addEntity(new EntityCommander())
+    core.addEntity(entities.commander.build())
 
     // start game loop
     {
-      const clock = core.getResource(ResourceClock) as ResourceClock
+      const clock = core.getResource(ResourceClock)
 
       Ticker.shared.add((dt) => {
-        // TODO: update dt
+        // update dt
         clock.dt = dt
 
         // update core

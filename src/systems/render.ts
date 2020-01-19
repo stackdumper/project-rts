@@ -11,15 +11,15 @@ export class SystemRender extends System {
 
   // create event listeners
   public initialize(core: Core) {
-    const { textures } = core.getResource(ResourceAssets) as ResourceAssets
-    const { viewport } = core.getResource(ResourceScene) as ResourceScene
+    const { textures } = core.getResource(ResourceAssets)
+    const { viewport } = core.getResource(ResourceScene)
 
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
-      const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
+      const graphics = entity.components.get(ComponentGraphics)
       if (!graphics) return
 
-      const dimensions = entity.components.get(ComponentDimensions) as ComponentDimensions
+      const dimensions = entity.components.get(ComponentDimensions)
       if (!dimensions) return
 
       // create sprite
@@ -28,6 +28,7 @@ export class SystemRender extends System {
       // adjust dimeinsions
       sprite.width = dimensions.width
       sprite.height = dimensions.height
+      sprite.alpha = graphics.alpha
       sprite.anchor.set(0.5, 0.5)
 
       // add to viewport
@@ -39,7 +40,7 @@ export class SystemRender extends System {
 
     // on remove entity
     core.events.addListener(CoreEvent.RemoveEntity, (entity: Entity) => {
-      const graphics = entity.components.get(ComponentGraphics) as ComponentGraphics
+      const graphics = entity.components.get(ComponentGraphics)
 
       if (graphics) {
         const sprite = this.sprites.get(entity.id)!
@@ -52,15 +53,16 @@ export class SystemRender extends System {
   }
 
   public update(core: Core) {
-    const { app } = core.getResource(ResourceScene) as ResourceScene
+    const { app } = core.getResource(ResourceScene)
 
     // update entities
     for (const entity of core.entities.values()) {
       // skip if doesn't have graphics
       if (!entity.components.has(ComponentGraphics)) continue
+      if (!entity.components.has(ComponentDimensions)) continue
 
       // sync positions
-      const position = entity.components.get(ComponentPosition) as ComponentPosition
+      const position = entity.components.get(ComponentPosition)
       if (position) {
         const sprite = this.sprites.get(entity.id)!
 

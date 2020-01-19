@@ -1,5 +1,5 @@
-import { Resource, Entity } from '~/core'
+import { Resource, EntityBuilder } from '~/core'
 
 export class ResourcePlacement extends Resource {
-  public entity?: Entity
+  public builder?: EntityBuilder
 }

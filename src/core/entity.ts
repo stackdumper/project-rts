@@ -1,5 +1,5 @@
 import nanoid from 'nanoid'
-import { Core, Component } from '.'
+import { Core, Component, ConstructorMap } from '.'
 
 /**
  * Entity represents a single entity inside of the game physical and/or graphical world.
@@ -15,7 +15,7 @@ export class Entity {
   public id: string = nanoid()
 
   /** Entity.components store entity data for use by systems */
-  public components: Map<Function, Component> = new Map()
+  public components: ConstructorMap<Component> = new ConstructorMap()
 
   /** Entity.initialize is used to initialize entity during Core.addEntity */
   public initialize(core: Core) {

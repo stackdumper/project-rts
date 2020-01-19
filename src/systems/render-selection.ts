@@ -30,8 +30,8 @@ export class SystemRenderSelection extends System {
   }
 
   public initialize(core: Core) {
-    const selection = core.getResource(ResourceSelection) as ResourceSelection
-    const scene = core.getResource(ResourceScene) as ResourceScene
+    const selection = core.getResource(ResourceSelection)
+    const scene = core.getResource(ResourceScene)
 
     // add selection box
     selection.events.addListener(
@@ -41,13 +41,11 @@ export class SystemRenderSelection extends System {
         if (!entity.components.has(ComponentGraphics)) return
 
         // get position to adjust box position
-        const position = entity.components.get(ComponentPosition) as ComponentPosition
+        const position = entity.components.get(ComponentPosition)
         if (!position) return
 
         // get dimensions to adjust box dimensions
-        const dimensions = entity.components.get(
-          ComponentDimensions,
-        ) as ComponentDimensions
+        const dimensions = entity.components.get(ComponentDimensions)
         if (!dimensions) return
 
         // create box and adjust position

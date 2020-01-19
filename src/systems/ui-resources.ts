@@ -47,7 +47,7 @@ export class SystemUIResources extends System {
   }
 
   public update(core: Core) {
-    const resources = core.getResource(ResourceResources) as ResourceResources
+    const resources = core.getResource(ResourceResources)
 
     // resource current
     this.bars.energyCurrent.textContent = resources.energy.current.toFixed(0)
