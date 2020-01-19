@@ -11,7 +11,12 @@ import {
 export const engineer = new EntityBuilder('Engineer')
   .withComponent(new ComponentPosition(0.0, 0.0))
   .withComponent(new ComponentVelocity(0.0, 0.0))
-  .withComponent(new ComponentGraphics('engineer'))
+  .withComponent(
+    new ComponentGraphics('engineer', {
+      scale: 1.2,
+      scaleMode: 'NEAREST',
+    }),
+  )
   .withComponent(new ComponentDimensions(20, 20))
   .withComponent(new ComponentSelectable())
   .withComponent(new ComponentUI([]))

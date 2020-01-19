@@ -6,6 +6,7 @@ import {
   ComponentDimensions,
 } from '~/components'
 import { ResourceSelection, ResourceScene } from '~/resources'
+import { Vector2 } from 'three/src/math/Vector2'
 
 /**
  * SystemSelection is used to add selected entities to selected resource.
@@ -41,11 +42,13 @@ export class SystemSelection extends System {
         })
 
         // check intersection
+        const { x, y } = position
+        const { max, min } = dimensions
         const intersects =
-          localX > position.x - dimensions.width / 2 &&
-          localY > position.y - dimensions.height / 2 &&
-          localX < position.x + dimensions.width / 2 &&
-          localY < position.y + dimensions.height / 2
+          localX > x + min.x &&
+          localY > y + min.y &&
+          localX < x + max.x &&
+          localY < y + max.y
 
         // select entity if intersects
         if (intersects) {

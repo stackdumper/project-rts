@@ -25,10 +25,15 @@ export class SystemRender extends System {
       // create sprite
       const sprite = new PIXI.Sprite(textures[graphics.texture].texture)
 
-      // adjust dimeinsions
+      // adjust params
       sprite.width = dimensions.width
       sprite.height = dimensions.height
-      sprite.alpha = graphics.alpha
+      sprite.alpha = graphics.options.alpha
+      sprite.scale.x *= graphics.options.scale
+      sprite.scale.y *= graphics.options.scale
+      sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES[graphics.options.scaleMode]
+      sprite.texture.baseTexture.resolution = graphics.options.resolution
+      sprite.rotation = graphics.options.rotation
       sprite.anchor.set(0.5, 0.5)
 
       // add to viewport

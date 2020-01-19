@@ -9,22 +9,22 @@ import { ComponentPosition, ComponentGraphics, ComponentDimensions } from '~/com
 export class SystemRenderSelection extends System {
   private box?: PIXI.Graphics
   private options = {
-    thickness: 3,
-    padding: 5,
+    thickness: 2.5,
+    padding: 4,
   }
 
   // create selection box
-  private createBox = (width: number, height: number) => {
+  private createBox = ({ min, max, width, height }: ComponentDimensions) => {
     const { thickness, padding } = this.options
 
     return new PIXI.Graphics()
-      .beginFill(0x0abde3, 0.1)
-      .lineStyle(thickness, 0x48dbfb)
+      .beginFill(0x25ccf7, 0.1)
+      .lineStyle(thickness, 0x25ccf7)
       .drawRect(
-        -width / 2 - (padding + thickness) / 2,
-        -height / 2 - (padding + thickness) / 2,
-        width + padding + thickness,
-        height + padding + thickness,
+        min.x - padding,
+        min.y - padding,
+        width + padding * 2,
+        height + padding * 2,
       )
       .endFill()
   }
@@ -49,7 +49,7 @@ export class SystemRenderSelection extends System {
         if (!dimensions) return
 
         // create box and adjust position
-        this.box = this.createBox(dimensions.width, dimensions.height)
+        this.box = this.createBox(dimensions)
         this.box.position.set(position.x, position.y)
 
         // add box to viewport
