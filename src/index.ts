@@ -14,7 +14,7 @@ import {
 } from './resources'
 import {
   SystemVelocity,
-  SystemRender,
+  SystemRenderEntities,
   SystemResources,
   SystemUIResources,
   SystemRenderMap,
@@ -24,10 +24,14 @@ import {
   SystemNavigation,
   SystemPlacement,
   SystemRenderSelection,
+  SystemWeaponry,
+  SystemProjectile,
+  SystemHealth,
 } from './systems'
 import { entities } from './entities'
-import { ComponentPosition, ComponentDimensions } from './components'
+import { ComponentPosition, ComponentOwnership } from './components'
 
+// TODO: ComponentTarget
 window.addEventListener('load', () => {
   // load resources
   ResourceAssets.loadResources().then((assets: any) => {
@@ -46,35 +50,42 @@ window.addEventListener('load', () => {
       // add systems
       .withSystem(new SystemResources())
       .withSystem(new SystemVelocity())
+      .withSystem(new SystemWeaponry())
+      .withSystem(new SystemProjectile())
+      .withSystem(new SystemHealth())
       .withSystem(new SystemSelection())
       .withSystem(new SystemRenderSelection())
       .withSystem(new SystemNavigation())
       .withSystem(new SystemUIResources())
       .withSystem(new SystemUIBuildings())
-      .withSystem(new SystemRender())
+      .withSystem(new SystemRenderEntities())
       .withSystem(new SystemRenderMap())
       .withSystem(new SystemPlacement())
       .withSystem(new SystemStats())
       .build()
 
     // add commander
-    // ADD 100 COMMANDERS!!!
-    for (let z = 0; z < 10; z++) {
-      for (let j = 0; j < 10; j++) {
+    new Array(2)
+      .fill(0)
+      .map((_, i) => i + 1)
+      .forEach((i) => {
         const entity = entities.commander.build()
-        core.addEntity(entity)
 
         const position = entity.components.get(ComponentPosition)
-        position.x = 100 + 40 * j
-        position.y = 100 + 40 * z
-      }
-    }
+        position.x = 300 * i - 1
+        position.y = 300
+
+        const ownership = entity.components.get(ComponentOwnership)
+        ownership.playerID = i
+
+        core.addEntity(entity)
+      })
 
     // start game loop
     {
       const clock = core.getResource(ResourceClock)
 
-      Ticker.shared.add((dt) => {
+      Ticker.shared.add((dt, asd) => {
         // update dt
         clock.dt = dt
 

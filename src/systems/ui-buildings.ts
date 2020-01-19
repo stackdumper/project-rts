@@ -1,6 +1,6 @@
 import { System, Core, Entity, EntityBuilder } from '~/core'
 import { ResourceSelection, ResourceSelectionEvent, ResourcePlacement } from '~/resources'
-import { ComponentUI } from '~/components'
+import { ComponentUI, ComponentOwnership } from '~/components'
 
 /**
  * SystemUIBuildings is responsible for displaying selected unit build options in the bottom menu.
@@ -29,11 +29,15 @@ export class SystemUIBuildings extends System {
       const ui = entity.components.get(ComponentUI)
       if (!ui) return
 
+      const ownership = entity.components.get(ComponentOwnership)
+      if (!ownership) return
+
       // render each ui option in bottom menu
       ui.buildings.forEach((builder) => {
         const element = this.createElement(builder)
 
         element.onclick = () => {
+          builder.components.get(ComponentOwnership).playerID = ownership.playerID
           placement.builder = builder
         }
 

@@ -38,6 +38,7 @@
     "typescript": "3.7.5"
   },
   "dependencies": {
+    "@pixi/filter-multi-color-replace": "^3.0.3",
     "eventemitter3": "^4.0.0",
     "nanoid": "^2.1.9",
     "pixi.js": "^5.2.0",

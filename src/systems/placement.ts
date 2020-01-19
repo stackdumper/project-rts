@@ -1,6 +1,11 @@
 import { System, Core, Entity, EntityBuilder } from '~/core'
 import { ResourcePlacement, ResourceCursor, ResourceScene } from '~/resources'
-import { ComponentPosition, ComponentGraphics, ComponentDimensions } from '~/components'
+import {
+  ComponentPosition,
+  ComponentGraphics,
+  ComponentDimensions,
+  ComponentOwnership,
+} from '~/components'
 
 /**
  * SystemBuildShadow is responsible for showing build shadow.
@@ -10,6 +15,11 @@ export class SystemPlacement extends System {
 
   private getShadowEntity(builder: EntityBuilder) {
     const shadowEntity = new Entity()
+
+    const ownership = builder.components.get(ComponentOwnership)
+    if (ownership) {
+      shadowEntity.components.add(new ComponentOwnership(ownership.playerID))
+    }
 
     const position = builder.components.get(ComponentPosition)
     if (position) {

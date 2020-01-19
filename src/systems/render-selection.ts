@@ -1,7 +1,12 @@
 import * as PIXI from 'pixi.js'
 import { System, Core, Entity } from '~/core'
 import { ResourceSelection, ResourceSelectionEvent, ResourceScene } from '~/resources'
-import { ComponentPosition, ComponentGraphics, ComponentDimensions } from '~/components'
+import {
+  ComponentPosition,
+  ComponentGraphics,
+  ComponentDimensions,
+  ComponentOwnership,
+} from '~/components'
 
 /**
  * SystemRenderSelection is responsible for rendering a box around selected entities.
@@ -12,14 +17,18 @@ export class SystemRenderSelection extends System {
     thickness: 2.5,
     padding: 4,
   }
+  private colors = [0xffffff, 0x1b9cfc, 0xfc427b]
 
   // create selection box
-  private createBox = ({ min, max, width, height }: ComponentDimensions) => {
+  private createBox = (
+    { min, width, height }: ComponentDimensions,
+    { playerID }: ComponentOwnership,
+  ) => {
     const { thickness, padding } = this.options
 
     return new PIXI.Graphics()
-      .beginFill(0x25ccf7, 0.1)
-      .lineStyle(thickness, 0x25ccf7)
+      .beginFill(this.colors[playerID], 0.1)
+      .lineStyle(thickness, this.colors[playerID])
       .drawRect(
         min.x - padding,
         min.y - padding,
@@ -48,8 +57,11 @@ export class SystemRenderSelection extends System {
         const dimensions = entity.components.get(ComponentDimensions)
         if (!dimensions) return
 
+        const ownership = entity.components.get(ComponentOwnership)
+        if (!ownership) return
+
         // create box and adjust position
-        this.box = this.createBox(dimensions)
+        this.box = this.createBox(dimensions, ownership)
         this.box.position.set(position.x, position.y)
 
         // add box to viewport

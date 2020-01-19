@@ -1,13 +1,21 @@
 import * as PIXI from 'pixi.js'
+import { MultiColorReplaceFilter } from '@pixi/filter-multi-color-replace'
 import { System, Core, Entity, CoreEvent } from '~/core'
-import { ComponentGraphics, ComponentPosition, ComponentDimensions } from '~/components'
+import {
+  ComponentGraphics,
+  ComponentPosition,
+  ComponentDimensions,
+  ComponentOwnership,
+} from '~/components'
 import { ResourceScene, ResourceAssets } from '~/resources'
 
 /**
- * SystemRender is used to render game content into pixi.js scene.
+ * SystemRenderEntities is used to render game content into pixi.js scene.
  */
-export class SystemRender extends System {
+export class SystemRenderEntities extends System {
+  private containers = new Map<number, PIXI.Container>()
   private sprites = new Map<string, PIXI.Sprite>()
+  private colors = [0xffffff, 0x1b9cfc, 0xfc427b]
 
   // create event listeners
   public initialize(core: Core) {
@@ -16,6 +24,22 @@ export class SystemRender extends System {
 
     // on add entity
     core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
+      const ownership = entity.components.get(ComponentOwnership)
+      if (!ownership) return
+
+      // add container for this player if not exists
+      let container = this.containers.get(ownership.playerID)
+      if (!container) {
+        container = new PIXI.Container()
+        container.filters = [
+          new MultiColorReplaceFilter([
+            [this.colors[0], this.colors[ownership.playerID]],
+          ]),
+        ]
+        viewport.addChild(container)
+        this.containers.set(ownership.playerID, container)
+      }
+
       const graphics = entity.components.get(ComponentGraphics)
       if (!graphics) return
 
@@ -37,7 +61,7 @@ export class SystemRender extends System {
       sprite.anchor.set(0.5, 0.5)
 
       // add to viewport
-      viewport.addChild(sprite)
+      container.addChild(sprite)
 
       // save to map
       this.sprites.set(entity.id, sprite)
@@ -46,14 +70,16 @@ export class SystemRender extends System {
     // on remove entity
     core.events.addListener(CoreEvent.RemoveEntity, (entity: Entity) => {
       const graphics = entity.components.get(ComponentGraphics)
+      if (!graphics) return
 
-      if (graphics) {
-        const sprite = this.sprites.get(entity.id)!
+      const ownership = entity.components.get(ComponentOwnership)
+      if (!ownership) return
 
-        viewport.removeChild(sprite)
+      const container = this.containers.get(ownership.playerID)!
+      const sprite = this.sprites.get(entity.id)!
 
-        this.sprites.delete(entity.id)
-      }
+      container.removeChild(sprite)
+      this.sprites.delete(entity.id)
     })
   }
 
