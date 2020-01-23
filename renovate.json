@@ -1,6 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/renovatebot/renovate/master/renovate-schema.json",
   "groupName": "all",
+  "timezone": "Europe/Kiev",
+  "schedule": ["before 6am on Monday"],
   "extends": [
     "config:base"
   ]
