@@ -25,7 +25,7 @@
     "check": "prettier --check './!(node_modules|dist)/**/*.{ts,tsx,js,jsx}' && tsc --noEmit -p ."
   },
   "devDependencies": {
-    "@types/jest": "24.9.0",
+    "@types/jest": "24.9.1",
     "@types/nanoid": "2.1.0",
     "@types/stats.js": "0.17.0",
     "jest": "24.9.0",
