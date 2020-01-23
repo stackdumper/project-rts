@@ -1,86 +1,77 @@
-import { Ticker } from 'pixi.js'
-import { CoreBuilder } from './core'
+import * as PIXI from 'pixi.js'
+import { Core } from '~/core'
 import {
-  ResourceClock,
-  ResourceAssets,
-  ResourceScene,
-  ResourceResources,
-  ResourceMap,
-  ResourceSelection,
+  ComponentPosition,
+  ComponentVelocity,
+  ComponentDimensions,
+  ComponentSelectable,
+  ComponentGraphics,
+} from '~/components'
+import {
   ResourceKeyboard,
   ResourceCursor,
   ResourceWheel,
-  ResourcePlacement,
-} from './resources'
+  ResourceAssets,
+  ResourceResources,
+  ResourceMap,
+  ResourceClock,
+  ResourceSelection,
+  ResourceScene,
+} from '~/resources'
 import {
   SystemVelocity,
-  SystemRender,
+  SystemRenderMap,
   SystemResources,
   SystemUIResources,
-  SystemRenderMap,
-  SystemUIBuildings,
-  SystemSelection,
-  SystemStats,
   SystemNavigation,
-  SystemPlacement,
+  SystemRender,
+  SystemSelection,
   SystemRenderSelection,
-} from './systems'
-import { entities } from './entities'
-import { ComponentPosition, ComponentDimensions } from './components'
+} from '~/systems'
 
-window.addEventListener('load', () => {
-  // load resources
-  ResourceAssets.loadResources().then((assets: any) => {
-    const core = new CoreBuilder()
-      // add resources
-      .withResource(new ResourceKeyboard())
-      .withResource(new ResourceCursor())
-      .withResource(new ResourceWheel())
-      .withResource(new ResourcePlacement())
-      .withResource(new ResourceAssets(assets))
-      .withResource(new ResourceResources())
-      .withResource(new ResourceMap(100, 40))
-      .withResource(new ResourceClock())
-      .withResource(new ResourceSelection())
-      .withResource(new ResourceScene())
-      // add systems
-      .withSystem(new SystemResources())
-      .withSystem(new SystemVelocity())
-      .withSystem(new SystemSelection())
-      .withSystem(new SystemRenderSelection())
-      .withSystem(new SystemNavigation())
-      .withSystem(new SystemUIResources())
-      .withSystem(new SystemUIBuildings())
-      .withSystem(new SystemRender())
-      .withSystem(new SystemRenderMap())
-      .withSystem(new SystemPlacement())
-      .withSystem(new SystemStats())
-      .build()
+window.addEventListener('load', async () => {
+  const core = new Core()
 
-    // add commander
-    // ADD 100 COMMANDERS!!!
-    for (let z = 0; z < 10; z++) {
-      for (let j = 0; j < 10; j++) {
-        const entity = entities.commander.build()
-        core.addEntity(entity)
+  // register components
+  core.addComponent(ComponentPosition)
+  core.addComponent(ComponentVelocity)
+  core.addComponent(ComponentDimensions)
+  core.addComponent(ComponentSelectable)
+  core.addComponent(ComponentGraphics)
 
-        const position = entity.components.get(ComponentPosition)
-        position.x = 100 + 40 * j
-        position.y = 100 + 40 * z
-      }
-    }
+  // add resources
+  await core.addResource(new ResourceKeyboard())
+  await core.addResource(new ResourceCursor())
+  await core.addResource(new ResourceWheel())
+  await core.addResource(new ResourceAssets())
+  await core.addResource(new ResourceResources())
+  await core.addResource(new ResourceMap(100, 40))
+  await core.addResource(new ResourceClock())
+  await core.addResource(new ResourceSelection())
+  await core.addResource(new ResourceScene())
 
-    // start game loop
-    {
-      const clock = core.getResource(ResourceClock)
+  // add systems
+  core.addSystem(new SystemVelocity())
+  core.addSystem(new SystemResources())
+  core.addSystem(new SystemRenderMap())
+  core.addSystem(new SystemUIResources())
+  core.addSystem(new SystemNavigation())
+  core.addSystem(new SystemRender())
+  core.addSystem(new SystemSelection())
+  core.addSystem(new SystemRenderSelection())
 
-      Ticker.shared.add((dt) => {
-        // update dt
-        clock.dt = dt
+  // add entities
+  for (const _ of Array(100)) {
+    core.addEntity([
+      new ComponentPosition(Math.random(), Math.random()),
+      new ComponentVelocity(Math.random(), Math.random()),
+      new ComponentGraphics('commander'),
+      new ComponentDimensions(32, 32),
+      new ComponentSelectable(),
+    ])
+  }
 
-        // update core
-        core.update()
-      })
-    }
+  PIXI.Ticker.shared.add(() => {
+    core.dispatch()
   })
 })

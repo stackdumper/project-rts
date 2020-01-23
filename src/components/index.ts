@@ -1,6 +1,6 @@
 export { ComponentPosition } from './position'
 export { ComponentVelocity } from './velocity'
 export { ComponentGraphics } from './graphics'
-export { ComponentUI } from './ui'
+// export { ComponentUI } from './ui'
 export { ComponentSelectable } from './selectable'
 export { ComponentDimensions } from './dimensions'

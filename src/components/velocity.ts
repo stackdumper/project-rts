@@ -1,7 +1,7 @@
 import { Component } from '~/core'
 
-export class ComponentVelocity extends Component {
-  constructor(public x: number, public y: number) {
-    super()
-  }
+export class ComponentVelocity implements Component {
+  static id = 'velocity'
+
+  constructor(public x: number, public y: number) {}
 }

@@ -1,71 +1,68 @@
 import * as PIXI from 'pixi.js'
-import { System, Core, Entity } from '~/core'
-import { ResourceSelection, ResourceSelectionEvent, ResourceScene } from '~/resources'
-import { ComponentPosition, ComponentGraphics, ComponentDimensions } from '~/components'
+import { System, Entity, ComponentStorage } from '~/core'
+import { ComponentPosition, ComponentDimensions } from '~/components'
+import { ResourceSelection, ResourceScene } from '~/resources'
 
 /**
- * SystemRenderSelection is responsible for rendering a box around selected entities.
+ * SystemRenderSelection is used to render a square around selected entity.
  */
 export class SystemRenderSelection extends System {
-  private box?: PIXI.Graphics
-  private options = {
-    thickness: 2.5,
-    padding: 4,
+  static id = 'render-selection'
+  static query = {
+    entities: true,
+    components: [ComponentPosition, ComponentDimensions],
+    resources: [ResourceSelection, ResourceScene],
   }
 
-  // create selection box
-  private createBox = ({ min, max, width, height }: ComponentDimensions) => {
-    const { thickness, padding } = this.options
+  private renderedEntity?: Entity
+  private renderedGraphics?: PIXI.Graphics
 
-    return new PIXI.Graphics()
-      .beginFill(0x25ccf7, 0.1)
-      .lineStyle(thickness, 0x25ccf7)
-      .drawRect(
-        min.x - padding,
-        min.y - padding,
-        width + padding * 2,
-        height + padding * 2,
-      )
-      .endFill()
-  }
+  public dispatch(
+    _: Set<Entity>,
+    [sposition, sdimensions]: [
+      ComponentStorage<ComponentPosition>,
+      ComponentStorage<ComponentDimensions>,
+    ],
+    [selection, scene]: [ResourceSelection, ResourceScene],
+  ) {
+    // remove box
+    if (!selection.entity || selection.entity !== this.renderedEntity) {
+      scene.viewport.removeChild(this.renderedGraphics!)
 
-  public initialize(core: Core) {
-    const selection = core.getResource(ResourceSelection)
-    const scene = core.getResource(ResourceScene)
+      this.renderedGraphics = undefined
 
-    // add selection box
-    selection.events.addListener(
-      ResourceSelectionEvent.EntitySelected,
-      (entity: Entity) => {
-        // skip if has no graphics
-        if (!entity.components.has(ComponentGraphics)) return
+      this.renderedEntity = undefined
+    }
 
-        // get position to adjust box position
-        const position = entity.components.get(ComponentPosition)
-        if (!position) return
+    // add box
+    if (selection.entity && selection.entity !== this.renderedEntity) {
+      const position = sposition.get(selection.entity!)!
+      const dimensions = sdimensions.get(selection.entity!)!
 
-        // get dimensions to adjust box dimensions
-        const dimensions = entity.components.get(ComponentDimensions)
-        if (!dimensions) return
+      this.renderedEntity = selection.entity
 
-        // create box and adjust position
-        this.box = this.createBox(dimensions)
-        this.box.position.set(position.x, position.y)
+      this.renderedGraphics = new PIXI.Graphics()
+        .beginFill(0xffffff, 0.1)
+        .lineStyle(2, 0xffffff, 0.2)
+        .drawRoundedRect(
+          dimensions.min.x,
+          dimensions.min.y,
+          dimensions.width,
+          dimensions.height,
+          3,
+        )
+        .endFill()
 
-        // add box to viewport
-        scene.viewport.addChild(this.box)
-      },
-    )
+      this.renderedGraphics.position.set(position.x, position.y)
 
-    // remove selection box
-    selection.events.addListener(
-      ResourceSelectionEvent.EntityDeselected,
-      (entity: Entity) => {
-        // remove box if present
-        if (this.box) {
-          scene.viewport.removeChild(this.box)
-        }
-      },
-    )
+      scene.viewport.addChild(this.renderedGraphics)
+    }
+
+    // reposition box
+    if (selection.entity && selection.entity === this.renderedEntity) {
+      const position = sposition.get(this.renderedEntity)!
+
+      this.renderedGraphics!.position.set(position.x, position.y)
+    }
   }
 }

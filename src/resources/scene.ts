@@ -2,8 +2,9 @@ import * as PIXI from 'pixi.js'
 import { Resource } from '~/core'
 
 export class ResourceScene extends Resource {
-  private view = document.getElementById('root')! as HTMLCanvasElement
+  static id = 'scene'
 
+  public view = document.getElementById('root')! as HTMLCanvasElement
   public app: PIXI.Application
   public viewport: PIXI.Container
 

@@ -10,6 +10,8 @@ interface ComponentGraphicsOptions {
 }
 
 export class ComponentGraphics extends Component {
+  static id = 'graphics'
+
   public texture: keyof ResourceAssets['textures']
   public options: ComponentGraphicsOptions
 

@@ -3,11 +3,9 @@ import { Resource } from '~/core'
 import { assets } from '~/assets'
 
 export class ResourceAssets extends Resource {
-  constructor(public textures: Record<keyof typeof assets, PIXI.LoaderResource>) {
-    super()
-  }
+  public textures!: Record<keyof typeof assets, PIXI.LoaderResource>
 
-  static loadResources(): Promise<PIXI.IResourceDictionary> {
+  public initialize() {
     return new Promise((resolve, reject) => {
       const loader = new PIXI.Loader()
 
@@ -17,7 +15,12 @@ export class ResourceAssets extends Resource {
       }
 
       loader
-        .on('complete', () => resolve(loader.resources))
+        .on('complete', () => {
+          // @ts-ignore
+          this.textures = loader.resources
+
+          resolve()
+        })
         .on('error', (error) => reject(error))
         .load()
     })

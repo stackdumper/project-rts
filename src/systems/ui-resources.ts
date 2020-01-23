@@ -1,10 +1,17 @@
-import { System, Core } from '~/core'
+import { System } from '~/core'
 import { ResourceResources } from '~/resources'
 
 /**
  * SystemUIResources is responsible for showing resources in the top left menu.
  */
 export class SystemUIResources extends System {
+  static id = 'ui-resources'
+  static query = {
+    entities: false,
+    components: [],
+    resources: [ResourceResources],
+  }
+
   // woah
   private bars = {
     energyShadow: document.querySelector(
@@ -46,9 +53,7 @@ export class SystemUIResources extends System {
     )! as HTMLDivElement,
   }
 
-  public update(core: Core) {
-    const resources = core.getResource(ResourceResources)
-
+  public dispatch(_: any, __: any, [resources]: [ResourceResources]) {
     // resource current
     this.bars.energyCurrent.textContent = resources.energy.current.toFixed(0)
     this.bars.massCurrent.textContent = resources.mass.current.toFixed(0)
