@@ -34,7 +34,7 @@
     "parcel-plugin-clean-dist": "0.0.6",
     "prettier": "1.19.1",
     "stats.js": "0.17.0",
-    "ts-jest": "24.3.0",
+    "ts-jest": "25.0.0",
     "typescript": "3.7.5"
   },
   "dependencies": {
