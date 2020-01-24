@@ -7,6 +7,8 @@ type TMap = {
 }
 
 export class ResourceMap extends Resource {
+  static id = 'map'
+
   public map: TMap
 
   constructor(private width = 10, private height = 10) {

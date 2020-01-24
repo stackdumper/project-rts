@@ -1,6 +1,8 @@
 import { Resource } from '~/core'
 
 export class ResourceKeyboard extends Resource {
+  static id = 'keyboard'
+
   public pressed = new Set<number>()
 
   public initialize() {

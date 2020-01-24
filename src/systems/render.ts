@@ -1,82 +1,73 @@
 import * as PIXI from 'pixi.js'
-import { System, Core, Entity, CoreEvent } from '~/core'
-import { ComponentGraphics, ComponentPosition, ComponentDimensions } from '~/components'
-import { ResourceScene, ResourceAssets } from '~/resources'
+import { System, Entity, ComponentStorage } from '~/core'
+import { ResourceScene, ResourceAssets, ResourcePlayers } from '~/resources'
+import {
+  ComponentGraphics,
+  ComponentPosition,
+  ComponentDimensions,
+  ComponentOwnership,
+} from '~/components'
 
 /**
  * SystemRender is used to render game content into pixi.js scene.
  */
 export class SystemRender extends System {
-  private sprites = new Map<string, PIXI.Sprite>()
-
-  // create event listeners
-  public initialize(core: Core) {
-    const { textures } = core.getResource(ResourceAssets)
-    const { viewport } = core.getResource(ResourceScene)
-
-    // on add entity
-    core.events.addListener(CoreEvent.AddEntity, (entity: Entity) => {
-      const graphics = entity.components.get(ComponentGraphics)
-      if (!graphics) return
-
-      const dimensions = entity.components.get(ComponentDimensions)
-      if (!dimensions) return
-
-      // create sprite
-      const sprite = new PIXI.Sprite(textures[graphics.texture].texture)
-
-      // adjust params
-      sprite.width = dimensions.width
-      sprite.height = dimensions.height
-      sprite.alpha = graphics.options.alpha
-      sprite.scale.x *= graphics.options.scale
-      sprite.scale.y *= graphics.options.scale
-      sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES[graphics.options.scaleMode]
-      sprite.texture.baseTexture.resolution = graphics.options.resolution
-      sprite.rotation = graphics.options.rotation
-      sprite.anchor.set(0.5, 0.5)
-
-      // add to viewport
-      viewport.addChild(sprite)
-
-      // save to map
-      this.sprites.set(entity.id, sprite)
-    })
-
-    // on remove entity
-    core.events.addListener(CoreEvent.RemoveEntity, (entity: Entity) => {
-      const graphics = entity.components.get(ComponentGraphics)
-
-      if (graphics) {
-        const sprite = this.sprites.get(entity.id)!
-
-        viewport.removeChild(sprite)
-
-        this.sprites.delete(entity.id)
-      }
-    })
+  static id = 'render'
+  static query = {
+    entities: true,
+    components: [
+      ComponentGraphics,
+      ComponentPosition,
+      ComponentDimensions,
+      ComponentOwnership,
+    ],
+    resources: [ResourceScene, ResourceAssets, ResourcePlayers],
   }
 
-  public update(core: Core) {
-    const { app } = core.getResource(ResourceScene)
+  private sprites = new Map<string, PIXI.Sprite>()
 
-    // update entities
-    for (const entity of core.entities.values()) {
-      // skip if doesn't have graphics
-      if (!entity.components.has(ComponentGraphics)) continue
-      if (!entity.components.has(ComponentDimensions)) continue
-
-      // sync positions
-      const position = entity.components.get(ComponentPosition)
-      if (position) {
-        const sprite = this.sprites.get(entity.id)!
-
-        sprite.position.x = position.x
-        sprite.position.y = position.y
+  public dispatch(
+    _: Set<Entity>,
+    [sgraphics, sposition, sdimensions, sownership]: [
+      ComponentStorage<ComponentGraphics>,
+      ComponentStorage<ComponentPosition>,
+      ComponentStorage<ComponentDimensions>,
+      ComponentStorage<ComponentOwnership>,
+    ],
+    [scene, assets, players]: [ResourceScene, ResourceAssets, ResourcePlayers],
+  ) {
+    // remove deleted entities
+    for (const [entity, sprite] of this.sprites) {
+      if (!sgraphics.has(entity)) {
+        scene.viewport.removeChild(sprite)
       }
     }
 
-    // render scene
-    app.render()
+    // add missing entities
+    for (const [
+      entity,
+      [graphics, position, dimensions, ownership],
+    ] of ComponentStorage.join(sgraphics, sposition, sdimensions, sownership)) {
+      let sprite = this.sprites.get(entity)
+
+      // console.log(entity)
+      if (!sprite) {
+        sprite = new PIXI.Sprite(assets.textures[graphics.texture].texture)
+
+        // set dimensions
+        sprite.width = dimensions.width
+        sprite.height = dimensions.height
+        sprite.anchor.set(0.5, 0.5)
+
+        // set color
+        sprite.tint = players.get(ownership.playerID)!.color
+
+        this.sprites.set(entity, sprite)
+        scene.viewport.addChild(sprite)
+      }
+
+      sprite!.position.x = position.x
+      sprite!.position.y = position.y
+    }
   }
 }

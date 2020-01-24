@@ -1,10 +1,9 @@
-import { Core } from './core'
+import { ID, Core } from '.'
 
-/**
- * Resource provides a single shared resource for read/write by System(s).
- */
-export class Resource {
-  public id = 'test'
+export abstract class Resource {
+  static id: ID
 
-  public initialize(core: Core) {}
+  public initialize(core: Core): any {}
+
+  constructor(...args: any[]) {}
 }

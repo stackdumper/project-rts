@@ -1,86 +1,104 @@
-import { Ticker } from 'pixi.js'
-import { CoreBuilder } from './core'
+import * as PIXI from 'pixi.js'
+import { Core } from '~/core'
 import {
-  ResourceClock,
-  ResourceAssets,
-  ResourceScene,
-  ResourceResources,
-  ResourceMap,
-  ResourceSelection,
+  ComponentPosition,
+  ComponentVelocity,
+  ComponentDimensions,
+  ComponentSelectable,
+  ComponentGraphics,
+  ComponentOwnership,
+  ComponentMobile,
+  ComponentDestination,
+} from '~/components'
+import {
   ResourceKeyboard,
   ResourceCursor,
   ResourceWheel,
-  ResourcePlacement,
-} from './resources'
+  ResourceAssets,
+  ResourceResources,
+  ResourceMap,
+  ResourceClock,
+  ResourceSelection,
+  ResourceScene,
+  ResourcePlayers,
+} from '~/resources'
 import {
   SystemVelocity,
-  SystemRender,
+  SystemRenderMap,
   SystemResources,
   SystemUIResources,
-  SystemRenderMap,
-  SystemUIBuildings,
-  SystemSelection,
-  SystemStats,
   SystemNavigation,
-  SystemPlacement,
+  SystemRender,
+  SystemSelection,
   SystemRenderSelection,
-} from './systems'
-import { entities } from './entities'
-import { ComponentPosition, ComponentDimensions } from './components'
+  SystemOrderDestination,
+  SystemFollowDestination,
+  SystemRenderDestination,
+} from '~/systems'
+import { entities } from '~/entities'
 
-window.addEventListener('load', () => {
-  // load resources
-  ResourceAssets.loadResources().then((assets: any) => {
-    const core = new CoreBuilder()
-      // add resources
-      .withResource(new ResourceKeyboard())
-      .withResource(new ResourceCursor())
-      .withResource(new ResourceWheel())
-      .withResource(new ResourcePlacement())
-      .withResource(new ResourceAssets(assets))
-      .withResource(new ResourceResources())
-      .withResource(new ResourceMap(100, 40))
-      .withResource(new ResourceClock())
-      .withResource(new ResourceSelection())
-      .withResource(new ResourceScene())
-      // add systems
-      .withSystem(new SystemResources())
-      .withSystem(new SystemVelocity())
-      .withSystem(new SystemSelection())
-      .withSystem(new SystemRenderSelection())
-      .withSystem(new SystemNavigation())
-      .withSystem(new SystemUIResources())
-      .withSystem(new SystemUIBuildings())
-      .withSystem(new SystemRender())
-      .withSystem(new SystemRenderMap())
-      .withSystem(new SystemPlacement())
-      .withSystem(new SystemStats())
-      .build()
+const createCore = async () => {
+  const core = new Core()
 
-    // add commander
-    // ADD 100 COMMANDERS!!!
-    for (let z = 0; z < 10; z++) {
-      for (let j = 0; j < 10; j++) {
-        const entity = entities.commander.build()
-        core.addEntity(entity)
+  // register components
+  core.addComponent(ComponentPosition)
+  core.addComponent(ComponentVelocity)
+  core.addComponent(ComponentDimensions)
+  core.addComponent(ComponentSelectable)
+  core.addComponent(ComponentGraphics)
+  core.addComponent(ComponentOwnership)
+  core.addComponent(ComponentMobile)
+  core.addComponent(ComponentDestination)
 
-        const position = entity.components.get(ComponentPosition)
-        position.x = 100 + 40 * j
-        position.y = 100 + 40 * z
-      }
-    }
+  // add resources
+  await core.addResource(new ResourceKeyboard())
+  await core.addResource(new ResourceCursor())
+  await core.addResource(new ResourceWheel())
+  await core.addResource(new ResourceAssets())
+  await core.addResource(new ResourceResources())
+  await core.addResource(new ResourceMap(100, 40))
+  await core.addResource(new ResourceClock())
+  await core.addResource(new ResourceSelection())
+  await core.addResource(new ResourceScene())
+  await core.addResource(
+    new ResourcePlayers([
+      [1, { nickname: 'stackdumper', color: 0x1b9cfc }],
+      [2, { nickname: 'ololo', color: 0xfc427b }],
+    ]),
+  )
 
-    // start game loop
-    {
-      const clock = core.getResource(ResourceClock)
+  // add systems
+  core.addSystem(new SystemVelocity())
+  core.addSystem(new SystemResources())
+  core.addSystem(new SystemRenderMap())
+  core.addSystem(new SystemUIResources())
+  core.addSystem(new SystemNavigation())
+  core.addSystem(new SystemRender())
+  core.addSystem(new SystemSelection())
+  core.addSystem(new SystemRenderSelection())
+  core.addSystem(new SystemOrderDestination())
+  core.addSystem(new SystemFollowDestination())
+  core.addSystem(new SystemRenderDestination())
 
-      Ticker.shared.add((dt) => {
-        // update dt
-        clock.dt = dt
+  return core
+}
 
-        // update core
-        core.update()
-      })
-    }
+window.addEventListener('load', async () => {
+  const core = await createCore()
+
+  // add commanders
+  const players = core.getResource(ResourcePlayers)
+
+  for (const playerID of players.keys()) {
+    core.addEntity(entities.commander(playerID))
+  }
+
+  // start game loop
+  const clock = core.getResource(ResourceClock)
+
+  PIXI.Ticker.shared.add((dt) => {
+    clock.dt = dt
+
+    core.dispatch()
   })
 })

@@ -11,6 +11,13 @@ import {
  * SystemNavigation is responsible for map navigation controls.
  */
 export class SystemNavigation extends System {
+  static id = 'navigation'
+  static query = {
+    entities: false,
+    components: [],
+    resources: [ResourceKeyboard, ResourceClock, ResourceScene, ResourceWheel],
+  }
+
   private speed = 10.0
 
   // PLEASE REFACTOR ME
@@ -35,12 +42,16 @@ export class SystemNavigation extends System {
     }
   }
 
-  public update(core: Core) {
-    const { dt } = core.getResource(ResourceClock)
-    const { pressed } = core.getResource(ResourceKeyboard)
-    const { viewport } = core.getResource(ResourceScene)
-    const wheel = core.getResource(ResourceWheel)
-
+  public dispatch(
+    _: any,
+    __: any,
+    [{ pressed }, { dt }, { viewport }, wheel]: [
+      ResourceKeyboard,
+      ResourceClock,
+      ResourceScene,
+      ResourceWheel,
+    ],
+  ) {
     // set scale
     if (Math.abs(wheel.deltaY) > 2) {
       this.scale(viewport, 1 + wheel.deltaY * 0.001)

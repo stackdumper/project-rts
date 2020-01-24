@@ -1,13 +1,33 @@
-import { Core } from './core'
+import { ID, Entity, Core, Component, ComponentStorage, Resource } from '.'
 
-/**
- * System represents a single chunk of logic inside of the game.
- * System can update Entity(ies) and Resource(s).
- */
 export abstract class System {
-  /** System.initialize is used for one-time initialization during Core.addSystem */
+  /** unique system id */
+  static id: ID
+
+  /** System constructor, can accept arbitrary arguments. */
+  constructor(...args: any[]) {}
+
+  /**
+   * System dispatch dependencies.
+   * Components will be replaced with ComponentStorages.
+   */
+  static query: {
+    entities: boolean
+    components: typeof Component[]
+    resources: typeof Resource[]
+  } = {
+    entities: false,
+    components: [],
+    resources: [],
+  }
+
+  /** One-time system initialization.  */
   public initialize(core: Core) {}
 
-  /** System.update is used to update system during Core.update */
-  public update(core: Core) {}
+  /** Primary citizen in a system, executed on each core dispatch. */
+  public dispatch(
+    entities: Set<Entity>,
+    components: ComponentStorage[],
+    resources: Resource[],
+  ) {}
 }

@@ -1,5 +1,7 @@
 import { Resource } from '~/core'
 
 export class ResourceClock extends Resource {
-  public dt: number = 0
+  static id = 'clock'
+
+  public dt: number = 1.0
 }

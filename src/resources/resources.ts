@@ -40,6 +40,8 @@ export class CResource {
 }
 
 export class ResourceResources extends Resource {
+  static id = 'resources'
+
   public energy = new CResource({
     current: 0,
     max: 7500,

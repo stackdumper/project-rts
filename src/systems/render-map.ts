@@ -6,6 +6,8 @@ import { ResourceScene, ResourceMap } from '~/resources'
  * SystemRenderMap is responsible for rendering game map.
  */
 export class SystemRenderMap extends System {
+  static id = 'render-map'
+
   private tileSize = 16
   private colors = {
     texture: 0x222f3e,
@@ -14,8 +16,8 @@ export class SystemRenderMap extends System {
   }
 
   public initialize(core: Core) {
-    const { viewport } = core.getResource(ResourceScene)
-    const { map } = core.getResource(ResourceMap)
+    const { viewport } = core.resources.get(ResourceScene.id)! as ResourceScene
+    const { map } = core.resources.get(ResourceMap.id)! as ResourceMap
 
     const tiles = new Graphics()
 
