@@ -1,6 +1,6 @@
 import { System, Entity, ComponentStorage } from '~/core'
-import { ResourceClock } from '~/resources'
 import { ComponentPosition, ComponentVelocity } from '~/components'
+import { ResourceClock } from '~/resources'
 
 /**
  * SystemVelocity is used to apply velocities to entities positions.

@@ -1,7 +1,6 @@
 import { Component } from '~/core'
+import { Vector2 } from '~/math'
 
-export class ComponentPosition implements Component {
+export class ComponentPosition extends Vector2 implements Component {
   static id = 'position'
-
-  constructor(public x: number, public y: number) {}
 }

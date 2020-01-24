@@ -5,10 +5,8 @@ type Player = {
   color: number
 }
 
-export class ResourcePlayers extends Resource {
+export class ResourcePlayers extends Map<number, Player> implements Resource {
   static id = 'players'
 
-  constructor(public players: Map<number, Player>) {
-    super()
-  }
+  public initialize() {}
 }

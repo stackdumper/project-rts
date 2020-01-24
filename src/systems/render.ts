@@ -1,12 +1,12 @@
 import * as PIXI from 'pixi.js'
 import { System, Entity, ComponentStorage } from '~/core'
+import { ResourceScene, ResourceAssets, ResourcePlayers } from '~/resources'
 import {
   ComponentGraphics,
   ComponentPosition,
   ComponentDimensions,
   ComponentOwnership,
 } from '~/components'
-import { ResourceScene, ResourceAssets, ResourcePlayers } from '~/resources'
 
 /**
  * SystemRender is used to render game content into pixi.js scene.
@@ -60,7 +60,7 @@ export class SystemRender extends System {
         sprite.anchor.set(0.5, 0.5)
 
         // set color
-        sprite.tint = players.players.get(ownership.playerID)!.color
+        sprite.tint = players.get(ownership.playerID)!.color
 
         this.sprites.set(entity, sprite)
         scene.viewport.addChild(sprite)

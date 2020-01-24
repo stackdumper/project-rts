@@ -27,7 +27,10 @@ export class SystemRenderSelection extends System {
     [selection, scene, players]: [ResourceSelection, ResourceScene, ResourcePlayers],
   ) {
     // remove box
-    if (!selection.entity || selection.entity !== this.renderedEntity) {
+    if (
+      (!selection.entity && this.renderedEntity) ||
+      selection.entity !== this.renderedEntity
+    ) {
       scene.viewport.removeChild(this.renderedGraphics!)
 
       this.renderedGraphics = undefined
@@ -53,7 +56,7 @@ export class SystemRenderSelection extends System {
           3,
         )
         .endFill()
-      this.renderedGraphics.tint = players.players.get(ownership.playerID)!.color
+      this.renderedGraphics.tint = players.get(ownership.playerID)!.color
       this.renderedGraphics.position.set(position.x, position.y)
 
       scene.viewport.addChild(this.renderedGraphics)

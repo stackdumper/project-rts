@@ -7,6 +7,8 @@ import {
   ComponentSelectable,
   ComponentGraphics,
   ComponentOwnership,
+  ComponentMobile,
+  ComponentDestination,
 } from '~/components'
 import {
   ResourceKeyboard,
@@ -29,6 +31,9 @@ import {
   SystemRender,
   SystemSelection,
   SystemRenderSelection,
+  SystemOrderDestination,
+  SystemFollowDestination,
+  SystemRenderDestination,
 } from '~/systems'
 import { entities } from '~/entities'
 
@@ -42,6 +47,8 @@ const createCore = async () => {
   core.addComponent(ComponentSelectable)
   core.addComponent(ComponentGraphics)
   core.addComponent(ComponentOwnership)
+  core.addComponent(ComponentMobile)
+  core.addComponent(ComponentDestination)
 
   // add resources
   await core.addResource(new ResourceKeyboard())
@@ -54,12 +61,10 @@ const createCore = async () => {
   await core.addResource(new ResourceSelection())
   await core.addResource(new ResourceScene())
   await core.addResource(
-    new ResourcePlayers(
-      new Map([
-        [1, { nickname: 'stackdumper', color: 0x1b9cfc }],
-        [2, { nickname: 'ololo', color: 0xfc427b }],
-      ]),
-    ),
+    new ResourcePlayers([
+      [1, { nickname: 'stackdumper', color: 0x1b9cfc }],
+      [2, { nickname: 'ololo', color: 0xfc427b }],
+    ]),
   )
 
   // add systems
@@ -71,6 +76,9 @@ const createCore = async () => {
   core.addSystem(new SystemRender())
   core.addSystem(new SystemSelection())
   core.addSystem(new SystemRenderSelection())
+  core.addSystem(new SystemOrderDestination())
+  core.addSystem(new SystemFollowDestination())
+  core.addSystem(new SystemRenderDestination())
 
   return core
 }
@@ -81,7 +89,7 @@ window.addEventListener('load', async () => {
   // add commanders
   const players = core.getResource(ResourcePlayers)
 
-  for (const playerID of players.players.keys()) {
+  for (const playerID of players.keys()) {
     core.addEntity(entities.commander(playerID))
   }
 

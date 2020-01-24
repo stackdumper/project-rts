@@ -5,6 +5,8 @@ import {
   ComponentSelectable,
   ComponentGraphics,
   ComponentOwnership,
+  ComponentMobile,
+  ComponentDestination,
 } from '~/components'
 
 export const entities = {
@@ -14,6 +16,7 @@ export const entities = {
     new ComponentVelocity(0.0, 0.0),
     new ComponentGraphics('commander'),
     new ComponentDimensions(32, 32),
+    new ComponentMobile(0.3),
     new ComponentSelectable(),
   ],
 }
