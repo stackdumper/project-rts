@@ -30,8 +30,9 @@ import {
   SystemSelection,
   SystemRenderSelection,
 } from '~/systems'
+import { entities } from '~/entities'
 
-window.addEventListener('load', async () => {
+const createCore = async () => {
   const core = new Core()
 
   // register components
@@ -71,22 +72,25 @@ window.addEventListener('load', async () => {
   core.addSystem(new SystemSelection())
   core.addSystem(new SystemRenderSelection())
 
-  // add commanders
+  return core
+}
 
-  for (const i of Array(2)
-    .fill(0)
-    .map((_, i) => i + 1)) {
-    core.addEntity([
-      new ComponentOwnership(i),
-      new ComponentPosition(100 + i * 400, 300.0),
-      new ComponentVelocity(0.0, 0.0),
-      new ComponentGraphics('commander'),
-      new ComponentDimensions(32, 32),
-      new ComponentSelectable(),
-    ])
+window.addEventListener('load', async () => {
+  const core = await createCore()
+
+  // add commanders
+  const players = core.getResource(ResourcePlayers)
+
+  for (const playerID of players.players.keys()) {
+    core.addEntity(entities.commander(playerID))
   }
 
-  PIXI.Ticker.shared.add(() => {
+  // start game loop
+  const clock = core.getResource(ResourceClock)
+
+  PIXI.Ticker.shared.add((dt) => {
+    clock.dt = dt
+
     core.dispatch()
   })
 })

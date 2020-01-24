@@ -1,63 +1,47 @@
-import { System, Entity, ComponentStorage } from '~/core'
-import { ResourceSelection, ResourceCursor, ResourceScene } from '~/resources'
-import {
-  ComponentPosition,
-  ComponentGraphics,
-  ComponentSelectable,
-  ComponentDimensions,
-} from '~/components'
+import { System, ComponentStorage, Core } from '~/core'
+import { ResourceSelection, ResourceScene } from '~/resources'
+import { ComponentPosition, ComponentSelectable, ComponentDimensions } from '~/components'
 
 /**
  * SystemSelection is used to add selected entities to selected resource.
  */
 export class SystemSelection extends System {
   static id = 'selection'
-  static query = {
-    entities: true,
-    components: [
-      ComponentSelectable,
-      ComponentGraphics,
-      ComponentPosition,
-      ComponentDimensions,
-    ],
-    resources: [ResourceCursor, ResourceScene, ResourceSelection],
-  }
 
-  public dispatch(
-    _: Set<Entity>,
-    components: [
-      ComponentStorage<ComponentSelectable>,
-      ComponentStorage<ComponentGraphics>,
-      ComponentStorage<ComponentPosition>,
-      ComponentStorage<ComponentDimensions>,
-    ],
-    [cursor, scene, selection]: [ResourceCursor, ResourceScene, ResourceSelection],
-  ) {
-    // run on click
-    if (!cursor.clicked) return
+  public initialize(core: Core) {
+    const scene = core.getResource(ResourceScene)
 
-    // unselect entity
-    selection.entity = undefined
+    scene.viewport.interactive = true
+    scene.viewport.addListener('mousedown', (e) => {
+      e.stopPropagation()
 
-    // transform on-screen click coordinates to viewport local coordinates
-    // @ts-ignore
-    const { x: clickX, y: clickY } = scene.viewport.toLocal(cursor.position)
+      // get selection resource
+      const selection = core.getResource(ResourceSelection)
 
-    for (const [entity, [__, _, position, dimensions]] of ComponentStorage.join(
-      ...components,
-    )) {
-      // check intersection
-      const intersects =
-        clickX > position.x + dimensions.min.x &&
-        clickY > position.y + dimensions.min.y &&
-        clickX < position.x + dimensions.max.x &&
-        clickY < position.y + dimensions.max.y
+      // reset selection
+      selection.entity = undefined
 
-      // if intersects, set as selected
-      if (intersects) {
-        selection.entity = entity
-        break
+      // transform global on-screen click coordinates to local ones
+      // @ts-ignored
+      const { x: clickX, y: clickY } = scene.viewport.toLocal(e.data.originalEvent)
+
+      // check intersection for each entity
+      for (const [entity, [_, position, dimensions]] of ComponentStorage.join(
+        core.getComponent(ComponentSelectable),
+        core.getComponent(ComponentPosition),
+        core.getComponent(ComponentDimensions),
+      )) {
+        const intersects =
+          clickX > position.x + dimensions.min.x &&
+          clickY > position.y + dimensions.min.y &&
+          clickX < position.x + dimensions.max.x &&
+          clickY < position.y + dimensions.max.y
+
+        if (intersects) {
+          selection.entity = entity
+          break
+        }
       }
-    }
+    })
   }
 }

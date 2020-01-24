@@ -21,6 +21,17 @@ export class Core {
     this.components.set(component.id, new Map())
   }
 
+  public getComponent<T extends Component>(
+    component: (new (...a: any) => T) & typeof Component,
+  ): ComponentStorage<T> {
+    return this.components.get(component.id)! as ComponentStorage<T>
+  }
+
+  public setComponent(entity: Entity, component: Component) {
+    // @ts-ignore
+    return this.components.get(component.constructor.id)!.set(entity, component)
+  }
+
   public addEntity(components: Component[]) {
     const entity = nanoid()
 
@@ -52,6 +63,12 @@ export class Core {
 
     // @ts-ignore
     this.resources.set(resource.constructor.id, resource)
+  }
+
+  public getResource<T extends Resource>(
+    resource: (new (...a: any) => T) & typeof Resource,
+  ): T {
+    return this.resources.get(resource.id)! as T
   }
 
   public addSystem(system: System) {
