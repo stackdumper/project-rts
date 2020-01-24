@@ -6,6 +6,7 @@ import {
   ComponentDimensions,
   ComponentSelectable,
   ComponentGraphics,
+  ComponentOwnership,
 } from '~/components'
 import {
   ResourceKeyboard,
@@ -17,6 +18,7 @@ import {
   ResourceClock,
   ResourceSelection,
   ResourceScene,
+  ResourcePlayers,
 } from '~/resources'
 import {
   SystemVelocity,
@@ -38,6 +40,7 @@ window.addEventListener('load', async () => {
   core.addComponent(ComponentDimensions)
   core.addComponent(ComponentSelectable)
   core.addComponent(ComponentGraphics)
+  core.addComponent(ComponentOwnership)
 
   // add resources
   await core.addResource(new ResourceKeyboard())
@@ -49,6 +52,14 @@ window.addEventListener('load', async () => {
   await core.addResource(new ResourceClock())
   await core.addResource(new ResourceSelection())
   await core.addResource(new ResourceScene())
+  await core.addResource(
+    new ResourcePlayers(
+      new Map([
+        [1, { nickname: 'stackdumper', color: 0x1b9cfc }],
+        [2, { nickname: 'ololo', color: 0xfc427b }],
+      ]),
+    ),
+  )
 
   // add systems
   core.addSystem(new SystemVelocity())
@@ -60,11 +71,15 @@ window.addEventListener('load', async () => {
   core.addSystem(new SystemSelection())
   core.addSystem(new SystemRenderSelection())
 
-  // add entities
-  for (const _ of Array(100)) {
+  // add commanders
+
+  for (const i of Array(2)
+    .fill(0)
+    .map((_, i) => i + 1)) {
     core.addEntity([
-      new ComponentPosition(Math.random(), Math.random()),
-      new ComponentVelocity(Math.random(), Math.random()),
+      new ComponentOwnership(i),
+      new ComponentPosition(100 + i * 400, 300.0),
+      new ComponentVelocity(0.0, 0.0),
       new ComponentGraphics('commander'),
       new ComponentDimensions(32, 32),
       new ComponentSelectable(),

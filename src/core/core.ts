@@ -1,6 +1,5 @@
 import nanoid from 'nanoid'
-import { Action, ID, Entity, Component, ComponentStorage, System, Resource } from '.'
-import EventEmitter from 'eventemitter3'
+import { ID, Entity, Component, ComponentStorage, System, Resource } from '.'
 
 export class Core {
   public entities = new Set<Entity>()
@@ -18,9 +17,6 @@ export class Core {
     }
   >()
 
-  // events
-  public events = new EventEmitter<Action>()
-
   public addComponent(component: typeof Component) {
     this.components.set(component.id, new Map())
   }
@@ -37,9 +33,6 @@ export class Core {
     // add entity
     this.entities.add(entity)
 
-    // fire event
-    this.events.emit(Action.AddEntity, entity)
-
     return entity
   }
 
@@ -51,9 +44,6 @@ export class Core {
     for (const component of this.components.values()) {
       component.delete(entity)
     }
-
-    // fire event
-    this.events.emit(Action.RemoveEntity, entity)
   }
 
   public async addResource(resource: Resource) {
