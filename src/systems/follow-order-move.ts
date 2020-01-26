@@ -1,50 +1,48 @@
 import { System, Entity, ComponentStorage } from '~/core'
 import {
   ComponentVelocity,
-  ComponentDestination,
   ComponentPosition,
   ComponentMobile,
+  ComponentOrders,
 } from '~/components'
 
 /**
- * SystemFollowDestination is used to make entities follow their destinations.
+ * SystemFollowOrderMove is responsible for making entities follor move order.
  */
-export class SystemFollowDestination extends System {
+export class SystemFollowOrderMove extends System {
   static id = 'follow-destination'
   static query = {
     entities: false,
-    components: [
-      ComponentDestination,
-      ComponentMobile,
-      ComponentPosition,
-      ComponentVelocity,
-    ],
+    components: [ComponentOrders, ComponentMobile, ComponentPosition, ComponentVelocity],
     resources: [],
   }
 
   public dispatch(
     _: Set<Entity>,
     components: [
-      ComponentStorage<ComponentDestination>,
+      ComponentStorage<ComponentOrders>,
       ComponentStorage<ComponentMobile>,
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentVelocity>,
     ],
     [],
   ) {
-    for (const [
-      entity,
-      [destination, mobile, position, velocity],
-    ] of ComponentStorage.join(...components)) {
+    for (const [entity, [orders, mobile, position, velocity]] of ComponentStorage.join(
+      ...components,
+    )) {
+      if (!orders.current || orders.current.action !== 'move') continue
+
       // check if destination is reached
-      const distance = destination.distanceToSquared(position)
+      const distance = orders.current.position.distanceToSquared(position)
       if (distance < 2) {
-        components[0].delete(entity)
         velocity.set(0.0, 0.0)
+
+        components[0].get(entity)!.shift()
+
         continue
       }
 
-      const direction = destination
+      const direction = orders.current.position
         .clone()
         .sub(position)
         .normalize()

@@ -1,17 +1,18 @@
 import { System, Core } from '~/core'
-import { ResourceScene, ResourceSelection } from '~/resources'
-import { ComponentMobile, ComponentDestination } from '~/components'
+import { ResourceScene, ResourceSelection, ResourceKeyboard } from '~/resources'
+import { ComponentMobile, ComponentOrders } from '~/components'
 import { Vector2 } from '~/math'
 
 /**
- * SystemVelocity is used to apply velocities to entities positions.
+ * SystemOrderMove is responsible for activating move orders.
  */
-export class SystemOrderDestination extends System {
+export class SystemOrderMove extends System {
   static id = 'order-destination'
 
   public initialize(core: Core) {
     const scene = core.getResource(ResourceScene)
     const selection = core.getResource(ResourceSelection)
+    const keyboard = core.getResource(ResourceKeyboard)
 
     // disable default right-click context menu
     window.addEventListener('contextmenu', (e) => {
@@ -32,10 +33,22 @@ export class SystemOrderDestination extends System {
       // @ts-ignore
       const { x, y } = scene.viewport.toLocal(e.data.originalEvent)
 
-      // set entity target
-      core
-        .getComponent(ComponentDestination)
-        .set(selection.entity, new ComponentDestination(x, y))
+      // add movemeent order
+      const orders = core.getComponent(ComponentOrders).get(selection.entity)!
+
+      // if shift is pressed, add order to the queue
+      // if not, override previous orders
+      if (keyboard.pressed.has(16)) {
+        orders.push({
+          action: 'move',
+          position: new Vector2(x, y),
+        })
+      } else {
+        orders.set({
+          action: 'move',
+          position: new Vector2(x, y),
+        })
+      }
     })
   }
 }

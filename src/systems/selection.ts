@@ -1,5 +1,5 @@
 import { System, ComponentStorage, Core } from '~/core'
-import { ResourceSelection, ResourceScene } from '~/resources'
+import { ResourceSelection, ResourceScene, ResourcePlacement } from '~/resources'
 import { ComponentPosition, ComponentSelectable, ComponentDimensions } from '~/components'
 
 /**
@@ -10,9 +10,14 @@ export class SystemSelection extends System {
 
   public initialize(core: Core) {
     const scene = core.getResource(ResourceScene)
+    const placement = core.getResource(ResourcePlacement)
 
     scene.viewport.interactive = true
     scene.viewport.addListener('mousedown', (e) => {
+      // skip if placement is in process
+      if (placement.template !== undefined) return
+
+      // stop event propagating to children
       e.stopPropagation()
 
       // get selection resource

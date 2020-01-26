@@ -58,6 +58,7 @@ export class SystemRender extends System {
         sprite.width = dimensions.width
         sprite.height = dimensions.height
         sprite.anchor.set(0.5, 0.5)
+        sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
         // set color
         sprite.tint = players.get(ownership.playerID)!.color
