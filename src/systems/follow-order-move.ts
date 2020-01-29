@@ -31,6 +31,7 @@ export class SystemFollowOrderMove extends System {
       ...components,
     )) {
       if (orders.current && orders.current.action === 'move') {
+        // if not reached, move
         const distance = orders.current.position.distanceToSquared(position)
 
         if (distance > 2) {
@@ -42,6 +43,7 @@ export class SystemFollowOrderMove extends System {
 
           velocity.set(direction.x, direction.y)
         } else {
+          // if reached, remove order
           velocity.set(0.0, 0.0)
 
           components[0].get(entity)!.shift()

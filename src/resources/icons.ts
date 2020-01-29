@@ -1,42 +1,32 @@
 import * as PIXI from 'pixi.js'
-import { Resource, Core } from '~/core'
-import { ResourceScene } from './scene'
+import { Resource } from '~/core'
 
 export class ResourceIcons extends Map<keyof typeof ResourceIcons.graphics, PIXI.Texture>
   implements Resource {
   static id = 'icons'
 
   static graphics = {
-    commander: new PIXI.Graphics()
-      .beginFill(0xffffff, 1)
-      .lineStyle(1, 0x000000)
-      .moveTo(0, 6) // rotated square
-      .lineTo(6, 0)
-      .lineTo(12, 6)
-      .lineTo(6, 12)
-      .lineTo(0, 6)
-      .endFill()
-      .lineStyle(1, 0x000000) // m in center
-      .moveTo(3, 4)
-      .lineTo(3, 7)
-      .moveTo(6, 4)
-      .lineTo(6, 7)
-      .moveTo(9, 4)
-      .lineTo(9, 7)
-      .moveTo(3, 5)
-      .lineTo(10, 5)
-      .endFill(),
+    commander: require('~/assets/commander.png'),
+    engineer: require('~/assets/engineer.png'),
+    landFactory: require('~/assets/land-factory.png'),
   }
 
-  public initialize(core: Core) {
-    const scene = core.getResource(ResourceScene)
+  public initialize() {
+    return new Promise((resolve, reject) => {
+      for (const [key, value] of Object.entries(ResourceIcons.graphics)) {
+        PIXI.Loader.shared.add(key, value)
+      }
 
-    for (const [key, value] of Object.entries(ResourceIcons.graphics)) {
-      this.set(
-        // @ts-ignore
-        key,
-        scene.app.renderer.generateTexture(value, PIXI.SCALE_MODES.NEAREST, 1),
-      )
-    }
+      PIXI.Loader.shared
+        .load((_, resources) => {
+          Object.keys(resources).forEach((key) => {
+            // @ts-ignore
+            this.set(key, resources[key]!.texture)
+          })
+
+          resolve()
+        })
+        .on('error', reject)
+    })
   }
 }

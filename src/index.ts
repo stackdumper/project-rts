@@ -44,6 +44,7 @@ import {
   SystemRenderPlacement,
   SystemOrderBuild,
   SystemFollowOrderBuild,
+  SystemRenderIcons,
 } from '~/systems'
 import { entities } from '~/entities'
 
@@ -72,7 +73,7 @@ const createCore = async () => {
   await core.addResource(new ResourceIcons())
   await core.addResource(new ResourceTextures())
   await core.addResource(new ResourceResources())
-  await core.addResource(new ResourceMap(200, 200))
+  await core.addResource(new ResourceMap(50, 50))
   await core.addResource(new ResourceClock())
   await core.addResource(new ResourceSelection())
   await core.addResource(new ResourcePlacement())
@@ -86,7 +87,7 @@ const createCore = async () => {
   // add systems
   core.addSystem(new SystemVelocity())
   core.addSystem(new SystemProduction())
-  // core.addSystem(new SystemRenderMap())
+  core.addSystem(new SystemRenderMap())
   core.addSystem(new SystemUIResources())
   core.addSystem(new SystemNavigation())
   core.addSystem(new SystemRender())
@@ -97,6 +98,7 @@ const createCore = async () => {
   core.addSystem(new SystemFollowOrderMove())
   core.addSystem(new SystemFollowOrderBuild())
   core.addSystem(new SystemRenderOrders())
+  core.addSystem(new SystemRenderIcons())
   core.addSystem(new SystemUIBuildOptions())
   core.addSystem(new SystemRenderPlacement())
 

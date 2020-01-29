@@ -14,6 +14,7 @@ export class SystemRenderOrders extends System {
     resources: [ResourceSelection],
   }
 
+  // colors for each order type
   private colors = {
     move: 0x1b9cfc,
     construct: 0xeab543,
@@ -22,11 +23,13 @@ export class SystemRenderOrders extends System {
   private graphics = new PIXI.Graphics()
 
   private drawGraphics(orders: ComponentOrders, position: ComponentPosition) {
+    // start at the entity position
     this.graphics.moveTo(position.x, position.y)
 
     for (const order of orders.orders) {
       const { x, y } = order.position
 
+      // draw line to the order position
       this.graphics
         .beginFill(this.colors['move'], 0.2)
         .lineStyle(2, this.colors['move'], 0.5)
@@ -36,8 +39,10 @@ export class SystemRenderOrders extends System {
         .lineStyle(2, this.colors[order.action], 0.5)
 
       if (order.action === 'move') {
+        // draw destination circle
         this.graphics.drawCircle(order.position.x, order.position.y, 5)
       } else if (order.action === 'construct') {
+        // draw building rectangle
         const dimensions = order.template.getComponent(ComponentDimensions)
 
         this.graphics.drawRect(
@@ -52,6 +57,7 @@ export class SystemRenderOrders extends System {
     }
   }
 
+  // add orders graphics to the scene
   public initialize(core: Core) {
     const scene = core.getResource(ResourceScene)
 
@@ -65,11 +71,13 @@ export class SystemRenderOrders extends System {
   ) {
     const orders = selection.entity ? components[0].get(selection.entity)! : undefined
 
+    // clear orders if entity is being selected or is deselected
     if (selection.entity || (!selection.entity && this.renderedEntity)) {
       this.graphics.clear()
       this.renderedEntity = undefined
     }
 
+    // draw orders if entity is selected
     if (selection.entity) {
       const position = components[1].get(selection.entity!)
 

@@ -1,10 +1,10 @@
 import { Component } from '~/core'
-import { ResourceAssets } from '~/resources'
+import { ResourceIcons } from '~/resources'
 
 export class ComponentIcon extends Component {
   static id = 'icon'
 
-  constructor(public texture: keyof ResourceAssets['textures']) {
+  constructor(public icon: keyof typeof ResourceIcons.graphics, public scale = 1) {
     super()
   }
 }

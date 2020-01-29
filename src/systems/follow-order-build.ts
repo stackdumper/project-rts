@@ -72,6 +72,8 @@ export class SystemFollowOrderBuild extends System {
         } else if (entity) {
           const draft = Draft.get(entity)!
 
+          // if not yet completed,
+          // fill draft with mass and energy
           if (draft.mass < draft.totalMass || draft.energy < draft.totalEnergy) {
             const neededMass =
               draft.totalMass / (draft.time / engineering.rate) / (60 * clock.dt)
@@ -89,6 +91,7 @@ export class SystemFollowOrderBuild extends System {
               draft.energy += neededEnergy
             }
           } else {
+            // if completed, remove order
             Draft.delete(entity)
             orders.shift()
           }

@@ -12,7 +12,7 @@ class TestSystem extends System {
   static id = 'test-system'
 
   static query = {
-    entities: true,
+    core: true,
     components: [TestComponent],
     resources: [TestResource],
   }

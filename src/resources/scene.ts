@@ -15,6 +15,7 @@ export class ResourceScene extends Resource {
   })
   public containers = {
     viewport: new PIXI.Container(),
+    icons: new PIXI.Container(),
     map: new PIXI.Container(),
     land: new PIXI.Container(),
     ground: new PIXI.Container(),
@@ -32,6 +33,7 @@ export class ResourceScene extends Resource {
 
     // add containers to stage
     this.app.stage.addChild(this.containers.viewport)
+    this.app.stage.addChild(this.containers.icons)
     this.containers.viewport.addChild(this.containers.map)
     this.containers.viewport.addChild(this.containers.land)
     this.containers.viewport.addChild(this.containers.ground)
