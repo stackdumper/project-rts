@@ -5,18 +5,21 @@ import {
   ComponentVelocity,
   ComponentDimensions,
   ComponentSelectable,
-  ComponentGraphics,
   ComponentOwnership,
   ComponentMobile,
   ComponentDraft,
   ComponentBuildOptions,
   ComponentOrders,
+  ComponentEngineering,
+  ComponentProducer,
+  ComponentIcon,
 } from '~/components'
 import {
   ResourceKeyboard,
   ResourceCursor,
   ResourceWheel,
-  ResourceAssets,
+  ResourceIcons,
+  ResourceTextures,
   ResourceResources,
   ResourceMap,
   ResourceClock,
@@ -28,7 +31,7 @@ import {
 import {
   SystemVelocity,
   SystemRenderMap,
-  SystemResources,
+  SystemProduction,
   SystemUIResources,
   SystemNavigation,
   SystemRender,
@@ -39,6 +42,8 @@ import {
   SystemRenderOrders,
   SystemUIBuildOptions,
   SystemRenderPlacement,
+  SystemOrderBuild,
+  SystemFollowOrderBuild,
 } from '~/systems'
 import { entities } from '~/entities'
 
@@ -49,24 +54,27 @@ const createCore = async () => {
   core.addComponent(ComponentPosition)
   core.addComponent(ComponentVelocity)
   core.addComponent(ComponentDimensions)
+  core.addComponent(ComponentIcon)
   core.addComponent(ComponentSelectable)
-  core.addComponent(ComponentGraphics)
   core.addComponent(ComponentOwnership)
   core.addComponent(ComponentMobile)
   core.addComponent(ComponentDraft)
   core.addComponent(ComponentBuildOptions)
   core.addComponent(ComponentOrders)
+  core.addComponent(ComponentEngineering)
+  core.addComponent(ComponentProducer)
 
   // add resources
   await core.addResource(new ResourceKeyboard())
   await core.addResource(new ResourceCursor())
   await core.addResource(new ResourceWheel())
-  await core.addResource(new ResourceAssets())
+  await core.addResource(new ResourceScene())
+  await core.addResource(new ResourceIcons())
+  await core.addResource(new ResourceTextures())
   await core.addResource(new ResourceResources())
-  await core.addResource(new ResourceMap(100, 40))
+  await core.addResource(new ResourceMap(200, 200))
   await core.addResource(new ResourceClock())
   await core.addResource(new ResourceSelection())
-  await core.addResource(new ResourceScene())
   await core.addResource(new ResourcePlacement())
   await core.addResource(
     new ResourcePlayers([
@@ -77,15 +85,17 @@ const createCore = async () => {
 
   // add systems
   core.addSystem(new SystemVelocity())
-  core.addSystem(new SystemResources())
-  core.addSystem(new SystemRenderMap())
+  core.addSystem(new SystemProduction())
+  // core.addSystem(new SystemRenderMap())
   core.addSystem(new SystemUIResources())
   core.addSystem(new SystemNavigation())
   core.addSystem(new SystemRender())
   core.addSystem(new SystemSelection())
   core.addSystem(new SystemRenderSelection())
   core.addSystem(new SystemOrderMove())
+  core.addSystem(new SystemOrderBuild())
   core.addSystem(new SystemFollowOrderMove())
+  core.addSystem(new SystemFollowOrderBuild())
   core.addSystem(new SystemRenderOrders())
   core.addSystem(new SystemUIBuildOptions())
   core.addSystem(new SystemRenderPlacement())

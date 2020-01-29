@@ -8,20 +8,23 @@ import { ResourceClock } from '~/resources'
 export class SystemVelocity extends System {
   static id = 'velocity'
   static query = {
-    entities: true,
+    core: false,
     components: [ComponentPosition, ComponentVelocity],
     resources: [ResourceClock],
   }
 
   public dispatch(
-    _: Set<Entity>,
-    [pos, vel]: [
+    _: never,
+    [Position, Velocity]: [
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentVelocity>,
     ],
     [clock]: [ResourceClock],
   ) {
-    for (const [position, velocity] of ComponentStorage.join(pos, vel).values()) {
+    for (const [position, velocity] of ComponentStorage.join(
+      Position,
+      Velocity,
+    ).values()) {
       position.x += velocity.x * clock.dt
       position.y += velocity.y * clock.dt
     }

@@ -7,7 +7,7 @@ import { ResourceResources } from '~/resources'
 export class SystemUIResources extends System {
   static id = 'ui-resources'
   static query = {
-    entities: false,
+    core: false,
     components: [],
     resources: [ResourceResources],
   }
@@ -53,7 +53,7 @@ export class SystemUIResources extends System {
     )! as HTMLDivElement,
   }
 
-  public dispatch(_: any, __: any, [resources]: [ResourceResources]) {
+  public dispatch(_: never, __: [], [resources]: [ResourceResources]) {
     // resource current
     this.bars.energyCurrent.textContent = resources.energy.current.toFixed(0)
     this.bars.massCurrent.textContent = resources.mass.current.toFixed(0)
@@ -86,9 +86,13 @@ export class SystemUIResources extends System {
     // accent resource is full
     if (energyPercentage === 100) {
       this.bars.energyShadow.style.boxShadow = '0 0 5px -0.4px #F79F1F'
+    } else {
+      this.bars.energyShadow.style.boxShadow = ''
     }
     if (massPercentage === 100) {
       this.bars.massShadow.style.boxShadow = '0 0 5px -0.4px #009432'
+    } else {
+      this.bars.massShadow.style.boxShadow = ''
     }
   }
 }

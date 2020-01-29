@@ -12,11 +12,11 @@ export abstract class System {
    * Components will be replaced with ComponentStorages.
    */
   static query: {
-    entities: boolean
+    core: boolean
     components: typeof Component[]
     resources: typeof Resource[]
   } = {
-    entities: false,
+    core: false,
     components: [],
     resources: [],
   }
@@ -25,9 +25,5 @@ export abstract class System {
   public initialize(core: Core) {}
 
   /** Primary citizen in a system, executed on each core dispatch. */
-  public dispatch(
-    entities: Set<Entity>,
-    components: ComponentStorage[],
-    resources: Resource[],
-  ) {}
+  public dispatch(core: Core, components: ComponentStorage[], resources: Resource[]) {}
 }

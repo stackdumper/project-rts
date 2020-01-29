@@ -9,7 +9,7 @@ import { EntityTemplate } from '~/utils'
 export class SystemUIBuildOptions extends System {
   static id = 'ui-build-options'
   static query = {
-    entities: true,
+    core: false,
     components: [ComponentBuildOptions],
     resources: [ResourceSelection, ResourcePlacement],
   }
@@ -30,8 +30,8 @@ export class SystemUIBuildOptions extends System {
   }
 
   public dispatch(
-    _: Set<Entity>,
-    [sbuildOptions]: [ComponentStorage<ComponentBuildOptions>],
+    _: never,
+    [BuildOptions]: [ComponentStorage<ComponentBuildOptions>],
     [selection, placement]: [ResourceSelection, ResourcePlacement],
   ) {
     // clear
@@ -47,7 +47,7 @@ export class SystemUIBuildOptions extends System {
     if (!this.renderedEntity && selection.entity) {
       this.renderedEntity = selection.entity
 
-      const buildOptions = sbuildOptions.get(selection.entity)
+      const buildOptions = BuildOptions.get(selection.entity)
       if (buildOptions) {
         for (const template of buildOptions.templates) {
           const element = this.createElement(template)

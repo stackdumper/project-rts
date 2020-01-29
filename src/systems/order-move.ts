@@ -15,12 +15,12 @@ export class SystemOrderMove extends System {
     const keyboard = core.getResource(ResourceKeyboard)
 
     // disable default right-click context menu
-    window.addEventListener('contextmenu', (e) => {
+    scene.view.addEventListener('contextmenu', (e) => {
       e.preventDefault()
     })
 
     // listen to right clicks on viewport
-    scene.viewport.addListener('rightclick', (e) => {
+    scene.view.addEventListener('contextmenu', (e) => {
       // skip if no entity is selected
       if (!selection.entity) return
 
@@ -31,7 +31,7 @@ export class SystemOrderMove extends System {
       e.stopPropagation()
 
       // @ts-ignore
-      const { x, y } = scene.viewport.toLocal(e.data.originalEvent)
+      const { x, y } = scene.containers.viewport.toLocal(e)
 
       // add movemeent order
       const orders = core.getComponent(ComponentOrders).get(selection.entity)!

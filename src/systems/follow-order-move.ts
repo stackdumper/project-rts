@@ -10,15 +10,15 @@ import {
  * SystemFollowOrderMove is responsible for making entities follor move order.
  */
 export class SystemFollowOrderMove extends System {
-  static id = 'follow-destination'
+  static id = 'follow-order-move'
   static query = {
-    entities: false,
+    core: false,
     components: [ComponentOrders, ComponentMobile, ComponentPosition, ComponentVelocity],
     resources: [],
   }
 
   public dispatch(
-    _: Set<Entity>,
+    _: never,
     components: [
       ComponentStorage<ComponentOrders>,
       ComponentStorage<ComponentMobile>,
@@ -30,25 +30,23 @@ export class SystemFollowOrderMove extends System {
     for (const [entity, [orders, mobile, position, velocity]] of ComponentStorage.join(
       ...components,
     )) {
-      if (!orders.current || orders.current.action !== 'move') continue
+      if (orders.current && orders.current.action === 'move') {
+        const distance = orders.current.position.distanceToSquared(position)
 
-      // check if destination is reached
-      const distance = orders.current.position.distanceToSquared(position)
-      if (distance < 2) {
-        velocity.set(0.0, 0.0)
+        if (distance > 2) {
+          const direction = orders.current.position
+            .clone()
+            .sub(position)
+            .normalize()
+            .multiplyScalar(mobile.speed)
 
-        components[0].get(entity)!.shift()
+          velocity.set(direction.x, direction.y)
+        } else {
+          velocity.set(0.0, 0.0)
 
-        continue
+          components[0].get(entity)!.shift()
+        }
       }
-
-      const direction = orders.current.position
-        .clone()
-        .sub(position)
-        .normalize()
-        .multiplyScalar(mobile.speed)
-
-      velocity.set(direction.x, direction.y)
     }
   }
 }

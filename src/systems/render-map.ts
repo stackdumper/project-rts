@@ -1,4 +1,4 @@
-import { Graphics } from 'pixi.js'
+import * as PIXI from 'pixi.js'
 import { System, Core } from '~/core'
 import { ResourceScene, ResourceMap } from '~/resources'
 
@@ -16,29 +16,29 @@ export class SystemRenderMap extends System {
   }
 
   public initialize(core: Core) {
-    const { viewport } = core.resources.get(ResourceScene.id)! as ResourceScene
-    const { map } = core.resources.get(ResourceMap.id)! as ResourceMap
+    const { app, containers } = core.getResource(ResourceScene)
+    const { textures, navigation, resources } = core.getResource(ResourceMap).map
 
-    const tiles = new Graphics()
-
-    for (let x = 0; x < map.textures.length; x++) {
-      for (let y = 0; y < map.textures[x].length; y++) {
-        const tile = map.textures[x][y]
-        const navigation = map.navigation[x][y]
-        const resource = map.resources[x][y]
-
+    const graphics = new PIXI.Graphics()
+    for (let x = 0; x < textures.length; x++) {
+      for (let y = 0; y < textures[x].length; y++) {
         const color =
-          (resource && this.colors.resource) ||
-          (navigation && this.colors.navigation) ||
-          (tile && this.colors.texture)
+          (resources[x][y] && this.colors.resource) ||
+          (navigation[x][y] && this.colors.navigation) ||
+          (textures[x][y] && this.colors.texture)
 
-        tiles
+        graphics
           .beginFill(color)
           .drawRect(this.tileSize * x, this.tileSize * y, this.tileSize, this.tileSize)
           .endFill()
       }
     }
 
-    viewport.addChild(tiles)
+    const sprite = new PIXI.Sprite(
+      app.renderer.generateTexture(graphics, PIXI.SCALE_MODES.NEAREST, 1),
+    )
+
+    sprite.cacheAsBitmap = true
+    containers.map.addChild(sprite)
   }
 }

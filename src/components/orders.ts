@@ -1,4 +1,4 @@
-import { Component } from '~/core'
+import { Component, Entity } from '~/core'
 import { EntityTemplate } from '~/utils'
 import { Vector2 } from '~/math'
 
@@ -8,16 +8,17 @@ type Order =
       position: Vector2
     }
   | {
-      action: 'build'
-      template: EntityTemplate
+      action: 'construct'
       position: Vector2
+      template: EntityTemplate
+      playerID: number
+      entity?: Entity
     }
 
 export class ComponentOrders extends Component {
   static id = 'orders'
 
   public orders = new Array<Order>()
-  public iteration = 0
 
   get current() {
     return this.orders[0]
@@ -28,15 +29,15 @@ export class ComponentOrders extends Component {
   }
 
   public push(order: Order) {
-    this.iteration += 1
-
     return this.orders.push(order)
   }
 
   public shift() {
-    this.iteration += 1
-
     return this.orders.shift()
+  }
+
+  public unshift(order: Order) {
+    this.orders.unshift(order)
   }
 
   public clone() {
