@@ -68,8 +68,8 @@ export class SystemUIResources extends System {
 
     // resource consumption
     this.bars.energyConsumption.textContent =
-      '-' + resources.energy.consumption.toString()
-    this.bars.massConsumption.textContent = '-' + resources.mass.consumption.toString()
+      '-' + resources.energy.consumption.toFixed(0)
+    this.bars.massConsumption.textContent = '-' + resources.mass.consumption.toFixed(0)
 
     // resource fill
     const energyPercentage = (resources.energy.current / resources.energy.max) * 100

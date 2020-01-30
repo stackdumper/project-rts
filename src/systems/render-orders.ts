@@ -32,7 +32,7 @@ export class SystemRenderOrders extends System {
       // draw line to the order position
       this.graphics
         .beginFill(this.colors['move'], 0.2)
-        .lineStyle(2, this.colors['move'], 0.5)
+        .lineStyle(8, this.colors['move'], 0.5)
         .lineTo(x, y)
         .endFill()
         .beginFill(this.colors[order.action], 0.2)

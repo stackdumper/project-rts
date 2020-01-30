@@ -1,7 +1,12 @@
 import * as PIXI from 'pixi.js'
 import { System, ComponentStorage } from '~/core'
 import { ResourceScene, ResourcePlayers, ResourceIcons } from '~/resources'
-import { ComponentPosition, ComponentOwnership, ComponentIcon } from '~/components'
+import {
+  ComponentPosition,
+  ComponentOwnership,
+  ComponentIcon,
+  ComponentDraft,
+} from '~/components'
 
 /**
  * SystemRenderIcons is responsible for rendering icons.
@@ -10,7 +15,7 @@ export class SystemRenderIcons extends System {
   static id = 'render-icons'
   static query = {
     core: false,
-    components: [ComponentPosition, ComponentIcon, ComponentOwnership],
+    components: [ComponentPosition, ComponentIcon, ComponentOwnership, ComponentDraft],
     resources: [ResourceScene, ResourceIcons, ResourcePlayers],
   }
 
@@ -18,10 +23,11 @@ export class SystemRenderIcons extends System {
 
   public dispatch(
     _: never,
-    [Position, Icon, Ownership]: [
+    [Position, Icon, Ownership, Draft]: [
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentIcon>,
       ComponentStorage<ComponentOwnership>,
+      ComponentStorage<ComponentDraft>,
     ],
     [scene, icons, players]: [ResourceScene, ResourceIcons, ResourcePlayers],
   ) {
@@ -29,6 +35,14 @@ export class SystemRenderIcons extends System {
       // remove deleted entities
       if (!Icon.has(entity)) {
         scene.containers.icons.removeChild(sprite)
+      } else {
+        const draft = Draft.get(entity)
+        if (draft) {
+          sprite.alpha =
+            0.2 +
+            (draft.energy / draft.totalEnergy) * 0.4 +
+            (draft.mass / draft.totalMass) * 0.4
+        }
       }
     }
 
