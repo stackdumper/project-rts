@@ -13,6 +13,7 @@ import {
   ComponentEngineering,
   ComponentProducer,
   ComponentIcon,
+  ComponentProductionOptions,
 } from '~/components'
 import {
   ResourceKeyboard,
@@ -46,7 +47,7 @@ import {
   SystemFollowOrderBuild,
   SystemRenderIcons,
 } from '~/systems'
-import { entities } from '~/entities'
+import * as entities from '~/entities'
 
 const createCore = async () => {
   const core = new Core()
@@ -61,6 +62,7 @@ const createCore = async () => {
   core.addComponent(ComponentMobile)
   core.addComponent(ComponentDraft)
   core.addComponent(ComponentBuildOptions)
+  core.addComponent(ComponentProductionOptions)
   core.addComponent(ComponentOrders)
   core.addComponent(ComponentEngineering)
   core.addComponent(ComponentProducer)

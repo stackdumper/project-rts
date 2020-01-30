@@ -6,9 +6,11 @@ export class ResourceIcons extends Map<keyof typeof ResourceIcons.graphics, PIXI
   static id = 'icons'
 
   static graphics = {
-    commander: require('~/assets/commander.png'),
-    engineer: require('~/assets/engineer.png'),
-    landFactory: require('~/assets/land-factory.png'),
+    commander: require('~/icons/commander.png'),
+    engineer: require('~/icons/engineer.png'),
+    generator: require('~/icons/generator.png'),
+    extractor: require('~/icons/extractor.png'),
+    landFactory: require('~/icons/land-factory.png'),
   }
 
   public initialize() {

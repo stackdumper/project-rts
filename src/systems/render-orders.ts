@@ -78,7 +78,7 @@ export class SystemRenderOrders extends System {
     }
 
     // draw orders if entity is selected
-    if (selection.entity) {
+    if (selection.entity && orders) {
       const position = components[1].get(selection.entity!)
 
       this.drawGraphics(orders!, position!)
