@@ -55,17 +55,16 @@ describe('core', () => {
 
     expect(system.dispatch).toBeCalled()
 
-    const [entities, components, resources]: [
-      Set<Entity>,
+    const [c, components, resources]: [
+      Core,
       Map<Entity, Component>[],
       Resource[],
       // @ts-ignore
     ] = system.dispatch.mock.calls[0]
 
-    expect(entities.size).toBe(1)
+    expect(c).toBeTruthy()
     expect(components.length).toBe(1)
     expect(components[0].size).toBe(1)
-    expect(components[0].get(Array.from(entities.values())[0])).toBe(component)
     expect(resources.length).toBe(1)
     expect(resources[0]).toBe(resource)
   })
