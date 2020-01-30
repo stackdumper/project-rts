@@ -1,33 +1,25 @@
 import { Resource } from '~/core'
 
-type TMap = {
-  textures: number[][]
-  resources: number[][]
-  navigation: number[][]
-}
-
 export class ResourceMap extends Resource {
   static id = 'map'
 
-  public map: TMap
+  public textures: number[][]
+  public resources: number[][]
+  public navigation: number[][]
 
-  constructor(private width = 10, private height = 10) {
+  constructor(public width = 10, public height = 10) {
     super()
 
-    this.map = {
-      textures: new Array(this.width).fill(1).map(() => new Array(this.height).fill(1)),
+    this.textures = new Array(this.width)
+      .fill(1)
+      .map(() => new Array(this.height).fill(1))
 
-      resources: new Array(this.width)
-        .fill(0)
-        .map(() =>
-          new Array(this.height).fill(0).map(() => Number(Math.random() >= 0.999)),
-        ),
+    this.resources = new Array(this.width)
+      .fill(0)
+      .map(() => new Array(this.height).fill(0).map(() => Number(Math.random() >= 0.999)))
 
-      navigation: new Array(this.width)
-        .fill(0)
-        .map(() =>
-          new Array(this.height).fill(0).map(() => Number(Math.random() >= 0.98)),
-        ),
-    }
+    this.navigation = new Array(this.width)
+      .fill(0)
+      .map(() => new Array(this.height).fill(0).map(() => Number(Math.random() >= 0.98)))
   }
 }
