@@ -1,5 +1,5 @@
 import { System, ComponentStorage, Core } from '~/core'
-import { ResourceSelection, ResourceScene } from '~/resources'
+import { ResourceSelection, ResourceScene, ResourcePlacement } from '~/resources'
 import { ComponentPosition, ComponentSelectable, ComponentDimensions } from '~/components'
 
 /**
@@ -10,9 +10,15 @@ export class SystemSelection extends System {
 
   public initialize(core: Core) {
     const scene = core.getResource(ResourceScene)
+    const placement = core.getResource(ResourcePlacement)
 
-    scene.viewport.interactive = true
-    scene.viewport.addListener('mousedown', (e) => {
+    scene.view.addEventListener('mousedown', (e) => {
+      if (e.which === 3) return
+
+      // skip if placement is in process
+      if (placement.template !== undefined) return
+
+      // stop event propagating to children
       e.stopPropagation()
 
       // get selection resource
@@ -23,7 +29,7 @@ export class SystemSelection extends System {
 
       // transform global on-screen click coordinates to local ones
       // @ts-ignored
-      const { x: clickX, y: clickY } = scene.viewport.toLocal(e.data.originalEvent)
+      const { x: clickX, y: clickY } = scene.containers.viewport.toLocal(e)
 
       // check intersection for each entity
       for (const [entity, [_, position, dimensions]] of ComponentStorage.join(
@@ -39,6 +45,7 @@ export class SystemSelection extends System {
 
         if (intersects) {
           selection.entity = entity
+
           break
         }
       }

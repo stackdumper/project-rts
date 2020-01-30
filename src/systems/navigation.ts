@@ -13,7 +13,7 @@ import {
 export class SystemNavigation extends System {
   static id = 'navigation'
   static query = {
-    entities: false,
+    core: false,
     components: [],
     resources: [ResourceKeyboard, ResourceClock, ResourceScene, ResourceWheel],
   }
@@ -43,14 +43,16 @@ export class SystemNavigation extends System {
   }
 
   public dispatch(
-    _: any,
-    __: any,
-    [{ pressed }, { dt }, { viewport }, wheel]: [
-      ResourceKeyboard,
-      ResourceClock,
-      ResourceScene,
-      ResourceWheel,
-    ],
+    _: never,
+    __: [],
+    [
+      { pressed },
+      { dt },
+      {
+        containers: { viewport },
+      },
+      wheel,
+    ]: [ResourceKeyboard, ResourceClock, ResourceScene, ResourceWheel],
   ) {
     // set scale
     if (Math.abs(wheel.deltaY) > 2) {

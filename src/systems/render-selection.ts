@@ -9,7 +9,7 @@ import { ResourceSelection, ResourceScene, ResourcePlayers } from '~/resources'
 export class SystemRenderSelection extends System {
   static id = 'render-selection'
   static query = {
-    entities: true,
+    core: false,
     components: [ComponentPosition, ComponentDimensions, ComponentOwnership],
     resources: [ResourceSelection, ResourceScene, ResourcePlayers],
   }
@@ -18,8 +18,8 @@ export class SystemRenderSelection extends System {
   private renderedGraphics?: PIXI.Graphics
 
   public dispatch(
-    _: Set<Entity>,
-    [sposition, sdimensions, sownership]: [
+    _: never,
+    [Position, Dimensions, Ownership]: [
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentDimensions>,
       ComponentStorage<ComponentOwnership>,
@@ -31,7 +31,7 @@ export class SystemRenderSelection extends System {
       (!selection.entity && this.renderedEntity) ||
       selection.entity !== this.renderedEntity
     ) {
-      scene.viewport.removeChild(this.renderedGraphics!)
+      scene.containers.viewport.removeChild(this.renderedGraphics!)
 
       this.renderedGraphics = undefined
 
@@ -40,9 +40,9 @@ export class SystemRenderSelection extends System {
 
     // add box
     if (selection.entity && selection.entity !== this.renderedEntity) {
-      const position = sposition.get(selection.entity!)!
-      const dimensions = sdimensions.get(selection.entity!)!
-      const ownership = sownership.get(selection.entity)!
+      const position = Position.get(selection.entity!)!
+      const dimensions = Dimensions.get(selection.entity!)!
+      const ownership = Ownership.get(selection.entity)!
 
       this.renderedEntity = selection.entity
       this.renderedGraphics = new PIXI.Graphics()
@@ -59,12 +59,12 @@ export class SystemRenderSelection extends System {
       this.renderedGraphics.tint = players.get(ownership.playerID)!.color
       this.renderedGraphics.position.set(position.x, position.y)
 
-      scene.viewport.addChild(this.renderedGraphics)
+      scene.containers.viewport.addChild(this.renderedGraphics)
     }
 
     // reposition box
     if (selection.entity && selection.entity === this.renderedEntity) {
-      const position = sposition.get(this.renderedEntity)!
+      const position = Position.get(this.renderedEntity)!
 
       this.renderedGraphics!.position.set(position.x, position.y)
     }

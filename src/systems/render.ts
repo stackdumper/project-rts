@@ -1,11 +1,12 @@
 import * as PIXI from 'pixi.js'
-import { System, Entity, ComponentStorage } from '~/core'
-import { ResourceScene, ResourceAssets, ResourcePlayers } from '~/resources'
+import { System, ComponentStorage } from '~/core'
+import { ResourceScene, ResourcePlayers, ResourceTextures } from '~/resources'
 import {
-  ComponentGraphics,
   ComponentPosition,
   ComponentDimensions,
   ComponentOwnership,
+  ComponentDraft,
+  ComponentMobile,
 } from '~/components'
 
 /**
@@ -14,60 +15,79 @@ import {
 export class SystemRender extends System {
   static id = 'render'
   static query = {
-    entities: true,
+    core: false,
     components: [
-      ComponentGraphics,
       ComponentPosition,
       ComponentDimensions,
       ComponentOwnership,
+      ComponentDraft,
+      ComponentMobile,
     ],
-    resources: [ResourceScene, ResourceAssets, ResourcePlayers],
+    resources: [ResourceScene, ResourceTextures, ResourcePlayers],
   }
 
   private sprites = new Map<string, PIXI.Sprite>()
 
   public dispatch(
-    _: Set<Entity>,
-    [sgraphics, sposition, sdimensions, sownership]: [
-      ComponentStorage<ComponentGraphics>,
+    _: never,
+    [Position, Dimensions, Ownership, Draft, Mobile]: [
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentDimensions>,
       ComponentStorage<ComponentOwnership>,
+      ComponentStorage<ComponentDraft>,
+      ComponentStorage<ComponentMobile>,
     ],
-    [scene, assets, players]: [ResourceScene, ResourceAssets, ResourcePlayers],
+    [scene, textures, players]: [ResourceScene, ResourceTextures, ResourcePlayers],
   ) {
-    // remove deleted entities
     for (const [entity, sprite] of this.sprites) {
-      if (!sgraphics.has(entity)) {
-        scene.viewport.removeChild(sprite)
+      // remove deleted entities
+      if (!Dimensions.has(entity)) {
+        scene.containers.land.removeChild(sprite)
+      }
+
+      // if draft, set opaque
+      const draft = Draft.get(entity)
+      if (draft) {
+        sprite.alpha =
+          (draft.energy / draft.totalEnergy) * 0.5 + (draft.mass / draft.totalMass) * 0.5
       }
     }
 
     // add missing entities
-    for (const [
-      entity,
-      [graphics, position, dimensions, ownership],
-    ] of ComponentStorage.join(sgraphics, sposition, sdimensions, sownership)) {
+    for (const [entity, [position, dimensions, ownership]] of ComponentStorage.join(
+      Position,
+      Dimensions,
+      Ownership,
+    )) {
       let sprite = this.sprites.get(entity)
 
-      // console.log(entity)
       if (!sprite) {
-        sprite = new PIXI.Sprite(assets.textures[graphics.texture].texture)
+        let type: keyof typeof scene.containers
+        if (Mobile.has(entity)) {
+          type = 'land'
+        } else {
+          type = 'ground'
+        }
+
+        sprite = new PIXI.Sprite(textures.get(Mobile.has(entity) ? 'land' : 'ground'))
 
         // set dimensions
         sprite.width = dimensions.width
         sprite.height = dimensions.height
         sprite.anchor.set(0.5, 0.5)
+        sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
         // set color
         sprite.tint = players.get(ownership.playerID)!.color
 
         this.sprites.set(entity, sprite)
-        scene.viewport.addChild(sprite)
+        scene.containers[type].addChild(sprite)
       }
 
       sprite!.position.x = position.x
       sprite!.position.y = position.y
     }
+
+    // scene.app.render()
   }
 }

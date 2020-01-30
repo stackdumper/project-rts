@@ -1,7 +1,9 @@
 import { Component } from '~/core'
 
-export class ComponentMobile implements Component {
+export class ComponentMobile extends Component {
   static id = 'mobile'
 
-  constructor(public speed = 1.0) {}
+  constructor(public speed = 1.0) {
+    super()
+  }
 }

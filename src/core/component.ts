@@ -5,6 +5,10 @@ export abstract class Component {
   static id: ID
 
   constructor(...args: any[]) {}
+
+  public clone(): this {
+    return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
+  }
 }
 
 /** ComponentStorage is used to store components with Entity as key */
@@ -24,6 +28,7 @@ export class ComponentStorage<C extends Component = Component> extends Map<Entit
 }
 
 namespace ComponentStorage {
+  // @ts-ignore
   interface S<X> extends ComponentStorage<X> {}
 
   export interface Join {

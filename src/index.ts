@@ -5,37 +5,49 @@ import {
   ComponentVelocity,
   ComponentDimensions,
   ComponentSelectable,
-  ComponentGraphics,
   ComponentOwnership,
   ComponentMobile,
-  ComponentDestination,
+  ComponentDraft,
+  ComponentBuildOptions,
+  ComponentOrders,
+  ComponentEngineering,
+  ComponentProducer,
+  ComponentIcon,
+  ComponentProductionOptions,
 } from '~/components'
 import {
   ResourceKeyboard,
   ResourceCursor,
   ResourceWheel,
-  ResourceAssets,
+  ResourceIcons,
+  ResourceTextures,
   ResourceResources,
   ResourceMap,
   ResourceClock,
   ResourceSelection,
   ResourceScene,
   ResourcePlayers,
+  ResourcePlacement,
 } from '~/resources'
 import {
   SystemVelocity,
   SystemRenderMap,
-  SystemResources,
+  SystemProduction,
   SystemUIResources,
   SystemNavigation,
   SystemRender,
   SystemSelection,
   SystemRenderSelection,
-  SystemOrderDestination,
-  SystemFollowDestination,
-  SystemRenderDestination,
+  SystemOrderMove,
+  SystemFollowOrderMove,
+  SystemRenderOrders,
+  SystemUIBuildOptions,
+  SystemRenderPlacement,
+  SystemOrderBuild,
+  SystemFollowOrderBuild,
+  SystemRenderIcons,
 } from '~/systems'
-import { entities } from '~/entities'
+import * as entities from '~/entities'
 
 const createCore = async () => {
   const core = new Core()
@@ -44,22 +56,29 @@ const createCore = async () => {
   core.addComponent(ComponentPosition)
   core.addComponent(ComponentVelocity)
   core.addComponent(ComponentDimensions)
+  core.addComponent(ComponentIcon)
   core.addComponent(ComponentSelectable)
-  core.addComponent(ComponentGraphics)
   core.addComponent(ComponentOwnership)
   core.addComponent(ComponentMobile)
-  core.addComponent(ComponentDestination)
+  core.addComponent(ComponentDraft)
+  core.addComponent(ComponentBuildOptions)
+  core.addComponent(ComponentProductionOptions)
+  core.addComponent(ComponentOrders)
+  core.addComponent(ComponentEngineering)
+  core.addComponent(ComponentProducer)
 
   // add resources
   await core.addResource(new ResourceKeyboard())
   await core.addResource(new ResourceCursor())
   await core.addResource(new ResourceWheel())
-  await core.addResource(new ResourceAssets())
+  await core.addResource(new ResourceScene())
+  await core.addResource(new ResourceIcons())
+  await core.addResource(new ResourceTextures())
   await core.addResource(new ResourceResources())
-  await core.addResource(new ResourceMap(100, 40))
+  await core.addResource(new ResourceMap(50, 50))
   await core.addResource(new ResourceClock())
   await core.addResource(new ResourceSelection())
-  await core.addResource(new ResourceScene())
+  await core.addResource(new ResourcePlacement())
   await core.addResource(
     new ResourcePlayers([
       [1, { nickname: 'stackdumper', color: 0x1b9cfc }],
@@ -69,16 +88,21 @@ const createCore = async () => {
 
   // add systems
   core.addSystem(new SystemVelocity())
-  core.addSystem(new SystemResources())
+  core.addSystem(new SystemProduction())
   core.addSystem(new SystemRenderMap())
   core.addSystem(new SystemUIResources())
   core.addSystem(new SystemNavigation())
   core.addSystem(new SystemRender())
   core.addSystem(new SystemSelection())
   core.addSystem(new SystemRenderSelection())
-  core.addSystem(new SystemOrderDestination())
-  core.addSystem(new SystemFollowDestination())
-  core.addSystem(new SystemRenderDestination())
+  core.addSystem(new SystemOrderMove())
+  core.addSystem(new SystemOrderBuild())
+  core.addSystem(new SystemFollowOrderMove())
+  core.addSystem(new SystemFollowOrderBuild())
+  core.addSystem(new SystemRenderOrders())
+  core.addSystem(new SystemRenderIcons())
+  core.addSystem(new SystemUIBuildOptions())
+  core.addSystem(new SystemRenderPlacement())
 
   return core
 }
@@ -90,7 +114,11 @@ window.addEventListener('load', async () => {
   const players = core.getResource(ResourcePlayers)
 
   for (const playerID of players.keys()) {
-    core.addEntity(entities.commander(playerID))
+    const commander = core.addEntity(entities.commander.build(playerID))
+
+    core
+      .getComponent(ComponentPosition)
+      .set(commander, new ComponentPosition(300 * playerID, 300))
   }
 
   // start game loop

@@ -1,5 +1,5 @@
 import { Component } from '~/core'
 
-export class ComponentSelectable implements Component {
+export class ComponentSelectable extends Component {
   static id = 'selectable'
 }

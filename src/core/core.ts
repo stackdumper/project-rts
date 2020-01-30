@@ -11,7 +11,7 @@ export class Core {
   public queries = new Map<
     ID,
     {
-      entities: Set<Entity>
+      core?: Core
       components: Map<Entity, Component>[]
       resources: Resource[]
     }
@@ -81,7 +81,7 @@ export class Core {
     this.systems.set(id, system)
 
     // gather entities
-    const entities = this.entities
+    const core = query.core ? this : undefined
 
     // gather components
     const components = query.components.map(
@@ -92,15 +92,15 @@ export class Core {
     const resources = query.resources.map((resource) => this.resources.get(resource.id)!)
 
     // pre-calculate query
-    this.queries.set(id, { entities, components, resources })
+    this.queries.set(id, { core, components, resources })
   }
 
   public dispatch() {
     for (const system of this.systems.values()) {
       // @ts-ignore
-      const { entities, components, resources } = this.queries.get(system.constructor.id)!
+      const { core, components, resources } = this.queries.get(system.constructor.id)!
 
-      system.dispatch(entities, components, resources)
+      system.dispatch(core!, components, resources)
     }
   }
 }
