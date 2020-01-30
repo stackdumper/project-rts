@@ -75,7 +75,7 @@ const createCore = async () => {
   await core.addResource(new ResourceIcons())
   await core.addResource(new ResourceTextures())
   await core.addResource(new ResourceResources())
-  await core.addResource(new ResourceMap(50, 50))
+  await core.addResource(new ResourceMap(128, 128))
   await core.addResource(new ResourceClock())
   await core.addResource(new ResourceSelection())
   await core.addResource(new ResourcePlacement())
@@ -118,7 +118,7 @@ window.addEventListener('load', async () => {
 
     core
       .getComponent(ComponentPosition)
-      .set(commander, new ComponentPosition(300 * playerID, 300))
+      .set(commander, new ComponentPosition(64 * 16, 64 * 16))
   }
 
   // start game loop
