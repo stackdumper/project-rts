@@ -27,9 +27,9 @@ export class SystemOrderBuild extends System {
         const { x, y } = scene.containers.viewport.toLocal(e.data.originalEvent)
         const position = new Vector2(x, y)
           .clone()
-          .divideScalar(20)
+          .divideScalar(16)
           .round()
-          .multiplyScalar(20)
+          .multiplyScalar(16)
 
         // add new order to builder orders queue
         const orders = core.getComponent(ComponentOrders).get(placement.builder!)!

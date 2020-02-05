@@ -20,6 +20,6 @@ export class ResourceMap extends Resource {
 
     this.navigation = new Array(this.width)
       .fill(0)
-      .map(() => new Array(this.height).fill(0).map(() => Number(Math.random() >= 0.98)))
+      .map(() => new Array(this.height).fill(0).map(() => Number(Math.random() >= 0.993)))
   }
 }

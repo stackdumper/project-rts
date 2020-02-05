@@ -14,6 +14,7 @@ import {
   ComponentProducer,
   ComponentIcon,
   ComponentProductionOptions,
+  ComponentTexture,
 } from '~/components'
 import {
   ResourceKeyboard,
@@ -37,7 +38,6 @@ import {
   SystemNavigation,
   SystemRender,
   SystemSelection,
-  SystemRenderSelection,
   SystemOrderMove,
   SystemFollowOrderMove,
   SystemRenderOrders,
@@ -46,6 +46,8 @@ import {
   SystemOrderBuild,
   SystemFollowOrderBuild,
   SystemRenderIcons,
+  SystemUIProductionOptions,
+  SystemFollowOrderProduce,
 } from '~/systems'
 import * as entities from '~/entities'
 
@@ -57,6 +59,7 @@ const createCore = async () => {
   core.addComponent(ComponentVelocity)
   core.addComponent(ComponentDimensions)
   core.addComponent(ComponentIcon)
+  core.addComponent(ComponentTexture)
   core.addComponent(ComponentSelectable)
   core.addComponent(ComponentOwnership)
   core.addComponent(ComponentMobile)
@@ -94,14 +97,15 @@ const createCore = async () => {
   core.addSystem(new SystemNavigation())
   core.addSystem(new SystemRender())
   core.addSystem(new SystemSelection())
-  core.addSystem(new SystemRenderSelection())
   core.addSystem(new SystemOrderMove())
   core.addSystem(new SystemOrderBuild())
   core.addSystem(new SystemFollowOrderMove())
   core.addSystem(new SystemFollowOrderBuild())
+  core.addSystem(new SystemFollowOrderProduce())
   core.addSystem(new SystemRenderOrders())
   core.addSystem(new SystemRenderIcons())
   core.addSystem(new SystemUIBuildOptions())
+  core.addSystem(new SystemUIProductionOptions())
   core.addSystem(new SystemRenderPlacement())
 
   return core

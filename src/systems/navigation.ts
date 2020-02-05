@@ -5,6 +5,7 @@ import {
   ResourceClock,
   ResourceScene,
   ResourceWheel,
+  ResourceCursor,
 } from '~/resources'
 
 /**
@@ -15,15 +16,22 @@ export class SystemNavigation extends System {
   static query = {
     core: false,
     components: [],
-    resources: [ResourceKeyboard, ResourceClock, ResourceScene, ResourceWheel],
+    resources: [
+      ResourceKeyboard,
+      ResourceClock,
+      ResourceScene,
+      ResourceWheel,
+      ResourceCursor,
+    ],
   }
 
   private speed = 10.0
 
-  // PLEASE REFACTOR ME
-  private scale(viewport: PIXI.Container, scale: number) {
-    const x = window.innerWidth / 2
-    const y = window.innerHeight / 2
+  private scale(cursor: ResourceCursor, viewport: PIXI.Container, scale: number) {
+    // const x = window.innerWidth / 2
+    // const y = window.innerHeight / 2
+
+    let { x, y } = cursor.position
 
     const wx = (x - viewport.x) / viewport.scale.x
     const wy = (y - viewport.y) / viewport.scale.y
@@ -52,11 +60,12 @@ export class SystemNavigation extends System {
         containers: { viewport },
       },
       wheel,
-    ]: [ResourceKeyboard, ResourceClock, ResourceScene, ResourceWheel],
+      cursor,
+    ]: [ResourceKeyboard, ResourceClock, ResourceScene, ResourceWheel, ResourceCursor],
   ) {
     // set scale
     if (Math.abs(wheel.deltaY) > 2) {
-      this.scale(viewport, 1 + wheel.deltaY * 0.001)
+      this.scale(cursor, viewport, 1 + wheel.deltaY * 0.001)
     }
 
     // calculate movement speed

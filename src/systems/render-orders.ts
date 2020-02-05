@@ -27,6 +27,8 @@ export class SystemRenderOrders extends System {
     this.graphics.moveTo(position.x, position.y)
 
     for (const order of orders.orders) {
+      if (!('position' in order)) continue
+
       const { x, y } = order.position
 
       // draw line to the order position

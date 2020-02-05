@@ -84,7 +84,7 @@ export class SystemRenderPlacement extends System {
       // @ts-ignore
       const { x, y } = scene.containers.viewport.toLocal(cursor.position)
 
-      this.renderedSprite!.position.set(Math.round(x / 20) * 20, Math.round(y / 20) * 20)
+      this.renderedSprite!.position.set(Math.round(x / 16) * 16, Math.round(y / 16) * 16)
     }
   }
 }

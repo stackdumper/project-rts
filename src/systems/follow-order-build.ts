@@ -58,7 +58,10 @@ export class SystemFollowOrderBuild extends System {
           template.getComponent(ComponentPosition).set(position.x, position.y)
 
           // add entity
-          const constructionEntity = core.addEntity(template.build(playerID))
+          const constructionEntity = core.addEntity([
+            ...template.build(playerID),
+            new ComponentDraft(),
+          ])
 
           // set entity
           orders.shift()
@@ -69,26 +72,28 @@ export class SystemFollowOrderBuild extends System {
             playerID,
             template,
           })
-        } else if (entity) {
+        } else if (entity && template) {
           const draft = Draft.get(entity)!
 
           // if not yet completed,
           // fill draft with mass and energy
-          if (draft.mass < draft.totalMass || draft.energy < draft.totalEnergy) {
-            const neededMass =
-              draft.totalMass / (draft.time / engineering.rate) / (60 * clock.dt)
-            const neededEnergy =
-              draft.totalEnergy / (draft.time / engineering.rate) / (60 * clock.dt)
+          if (draft.mass < template.cost.mass || draft.energy < template.cost.energy) {
+            const { cost } = template
+            const { mass, energy } = resources
 
-            if (
-              resources.mass.current >= neededMass &&
-              resources.energy.current >= neededEnergy
-            ) {
-              resources.mass.current -= neededMass
-              resources.energy.current -= neededEnergy
+            const neededMass =
+              cost.mass / (cost.time / engineering.rate) / (60 * clock.dt)
+            const neededEnergy =
+              cost.energy / (cost.time / engineering.rate) / (60 * clock.dt)
+
+            if (mass.current >= neededMass && energy.current >= neededEnergy) {
+              mass.current -= neededMass
+              energy.current -= neededEnergy
 
               draft.mass += neededMass
               draft.energy += neededEnergy
+              draft.percentage =
+                (draft.energy / cost.energy) * 0.5 + (draft.mass / cost.mass) * 0.5
             }
           } else {
             // if completed, remove order
