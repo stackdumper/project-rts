@@ -77,16 +77,19 @@ const createCore = async () => {
   await core.addResource(new ResourceScene())
   await core.addResource(new ResourceIcons())
   await core.addResource(new ResourceTextures())
-  await core.addResource(new ResourceResources())
+  await core.addResource(new ResourceResources([1, 2]))
   await core.addResource(new ResourceMap(128, 128))
   await core.addResource(new ResourceClock())
   await core.addResource(new ResourceSelection())
   await core.addResource(new ResourcePlacement())
   await core.addResource(
-    new ResourcePlayers([
-      [1, { nickname: 'stackdumper', color: 0x1b9cfc }],
-      [2, { nickname: 'ololo', color: 0xfc427b }],
-    ]),
+    new ResourcePlayers(
+      [
+        [1, { nickname: 'stackdumper', color: 0x1b9cfc }],
+        [2, { nickname: 'ololo', color: 0xfc427b }],
+      ],
+      1,
+    ),
   )
 
   // add systems
