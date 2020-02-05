@@ -3,8 +3,12 @@ import { ComponentOwnership } from './components'
 
 export class EntityTemplate {
   public components = new Map<string, Component>()
+  public meta = new Map<string, Component>()
 
-  constructor(public name: string) {}
+  constructor(
+    public name: string,
+    public cost: { mass: number; energy: number; time: number },
+  ) {}
 
   public withComponents(components: Component[]) {
     for (const component of components) {

@@ -1,6 +1,7 @@
 export { ComponentPosition } from './position'
 export { ComponentVelocity } from './velocity'
 export { ComponentIcon } from './icon'
+export { ComponentTexture } from './texture'
 export { ComponentSelectable } from './selectable'
 export { ComponentDimensions } from './dimensions'
 export { ComponentOwnership } from './ownership'

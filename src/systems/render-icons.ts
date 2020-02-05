@@ -1,6 +1,11 @@
 import * as PIXI from 'pixi.js'
 import { System, ComponentStorage } from '~/core'
-import { ResourceScene, ResourcePlayers, ResourceIcons } from '~/resources'
+import {
+  ResourceScene,
+  ResourcePlayers,
+  ResourceIcons,
+  ResourceSelection,
+} from '~/resources'
 import {
   ComponentPosition,
   ComponentOwnership,
@@ -16,7 +21,7 @@ export class SystemRenderIcons extends System {
   static query = {
     core: false,
     components: [ComponentPosition, ComponentIcon, ComponentOwnership, ComponentDraft],
-    resources: [ResourceScene, ResourceIcons, ResourcePlayers],
+    resources: [ResourceScene, ResourceIcons, ResourcePlayers, ResourceSelection],
   }
 
   private sprites = new Map<string, PIXI.Sprite>()
@@ -29,7 +34,12 @@ export class SystemRenderIcons extends System {
       ComponentStorage<ComponentOwnership>,
       ComponentStorage<ComponentDraft>,
     ],
-    [scene, icons, players]: [ResourceScene, ResourceIcons, ResourcePlayers],
+    [scene, icons, players, selection]: [
+      ResourceScene,
+      ResourceIcons,
+      ResourcePlayers,
+      ResourceSelection,
+    ],
   ) {
     for (const [entity, sprite] of this.sprites) {
       // remove deleted entities
@@ -38,11 +48,17 @@ export class SystemRenderIcons extends System {
       } else {
         const draft = Draft.get(entity)
         if (draft) {
-          sprite.alpha =
-            0.2 +
-            (draft.energy / draft.totalEnergy) * 0.4 +
-            (draft.mass / draft.totalMass) * 0.4
+          sprite.alpha = 0.2 + draft.percentage * 0.8
         }
+      }
+
+      // make icon white if selected
+      if (selection.entity === entity) {
+        sprite.tint = 0xffffff
+      } else if (sprite.tint === 0xffffff) {
+        const ownership = Ownership.get(entity)!
+
+        sprite.tint = players.get(ownership.playerID)!.color
       }
     }
 
@@ -59,6 +75,10 @@ export class SystemRenderIcons extends System {
 
         // set anchor
         sprite.anchor.set(0.5, 0.5)
+
+        // set dimensions
+        sprite.width = 32
+        sprite.height = 32
 
         // set scale
         sprite.scale.set(icon.scale)

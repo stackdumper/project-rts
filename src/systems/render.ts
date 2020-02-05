@@ -1,12 +1,18 @@
 import * as PIXI from 'pixi.js'
 import { System, ComponentStorage } from '~/core'
-import { ResourceScene, ResourcePlayers, ResourceTextures } from '~/resources'
+import {
+  ResourceScene,
+  ResourcePlayers,
+  ResourceTextures,
+  ResourceSelection,
+} from '~/resources'
 import {
   ComponentPosition,
   ComponentDimensions,
   ComponentOwnership,
   ComponentDraft,
   ComponentMobile,
+  ComponentTexture,
 } from '~/components'
 
 /**
@@ -21,23 +27,28 @@ export class SystemRender extends System {
       ComponentDimensions,
       ComponentOwnership,
       ComponentDraft,
-      ComponentMobile,
+      ComponentTexture,
     ],
-    resources: [ResourceScene, ResourceTextures, ResourcePlayers],
+    resources: [ResourceScene, ResourceTextures, ResourcePlayers, ResourceSelection],
   }
 
   private sprites = new Map<string, PIXI.Sprite>()
 
   public dispatch(
     _: never,
-    [Position, Dimensions, Ownership, Draft, Mobile]: [
+    [Position, Dimensions, Ownership, Draft, Texture]: [
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentDimensions>,
       ComponentStorage<ComponentOwnership>,
       ComponentStorage<ComponentDraft>,
-      ComponentStorage<ComponentMobile>,
+      ComponentStorage<ComponentTexture>,
     ],
-    [scene, textures, players]: [ResourceScene, ResourceTextures, ResourcePlayers],
+    [scene, textures, players, selection]: [
+      ResourceScene,
+      ResourceTextures,
+      ResourcePlayers,
+      ResourceSelection,
+    ],
   ) {
     for (const [entity, sprite] of this.sprites) {
       // remove deleted entities
@@ -48,28 +59,28 @@ export class SystemRender extends System {
       // if draft, set opaque
       const draft = Draft.get(entity)
       if (draft) {
-        sprite.alpha =
-          (draft.energy / draft.totalEnergy) * 0.5 + (draft.mass / draft.totalMass) * 0.5
+        sprite.alpha = draft.percentage
+      }
+
+      // make sprite white if selected
+      if (selection.entity === entity) {
+        sprite.tint = 0xffffff
+      } else if (sprite.tint === 0xffffff) {
+        const ownership = Ownership.get(entity)!
+
+        sprite.tint = players.get(ownership.playerID)!.color
       }
     }
 
     // add missing entities
-    for (const [entity, [position, dimensions, ownership]] of ComponentStorage.join(
-      Position,
-      Dimensions,
-      Ownership,
-    )) {
+    for (const [
+      entity,
+      [position, dimensions, ownership, texture],
+    ] of ComponentStorage.join(Position, Dimensions, Ownership, Texture)) {
       let sprite = this.sprites.get(entity)
 
       if (!sprite) {
-        let type: keyof typeof scene.containers
-        if (Mobile.has(entity)) {
-          type = 'land'
-        } else {
-          type = 'ground'
-        }
-
-        sprite = new PIXI.Sprite(textures.get(Mobile.has(entity) ? 'land' : 'ground'))
+        sprite = new PIXI.Sprite(textures.get(texture.texture))
 
         // set dimensions
         sprite.width = dimensions.width
@@ -81,7 +92,8 @@ export class SystemRender extends System {
         sprite.tint = players.get(ownership.playerID)!.color
 
         this.sprites.set(entity, sprite)
-        scene.containers[type].addChild(sprite)
+        // warn
+        scene.containers[texture.texture].addChild(sprite)
       }
 
       sprite!.position.x = position.x

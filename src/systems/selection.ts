@@ -31,6 +31,9 @@ export class SystemSelection extends System {
       // @ts-ignored
       const { x: clickX, y: clickY } = scene.containers.viewport.toLocal(e)
 
+      // FIXME: clear build menu
+      document.getElementById('bottom-menu')!.innerText = ''
+
       // check intersection for each entity
       for (const [entity, [_, position, dimensions]] of ComponentStorage.join(
         core.getComponent(ComponentSelectable),

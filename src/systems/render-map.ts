@@ -8,7 +8,7 @@ import { ResourceScene, ResourceMap } from '~/resources'
 export class SystemRenderMap extends System {
   static id = 'render-map'
 
-  private tileSize = 16
+  private tileSize = 32
   private chunkSize = 64
   private colors = {
     texture: 0x192129,

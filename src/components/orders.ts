@@ -14,6 +14,10 @@ type Order =
       playerID: number
       entity?: Entity
     }
+  | {
+      action: 'produce'
+      template: EntityTemplate
+    }
 
 export class ComponentOrders extends Component {
   static id = 'orders'

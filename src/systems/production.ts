@@ -1,15 +1,15 @@
 import { System, ComponentStorage } from '~/core'
 import { ResourceClock, ResourceResources } from '~/resources'
-import { ComponentProducer } from '~/components'
+import { ComponentProducer, ComponentDraft } from '~/components'
 
 /**
- * SystemProduction is responsible for adding produced energy to energy resource.
+ * SystemProduction is responsible for calculating produced and consumed mass and energy.
  */
 export class SystemProduction extends System {
-  static id = 'resources'
+  static id = 'production'
   static query = {
     core: false,
-    components: [ComponentProducer],
+    components: [ComponentProducer, ComponentDraft],
     resources: [ResourceResources, ResourceClock],
   }
 
@@ -20,7 +20,10 @@ export class SystemProduction extends System {
 
   public dispatch(
     _: never,
-    [sproducer]: [ComponentStorage<ComponentProducer>],
+    [Producer, Draft]: [
+      ComponentStorage<ComponentProducer>,
+      ComponentStorage<ComponentDraft>,
+    ],
     [{ mass, energy }, { dt }]: [ResourceResources, ResourceClock],
   ) {
     mass.production = 0
@@ -29,7 +32,10 @@ export class SystemProduction extends System {
     mass.consumption = (this.prev.mass - mass.current) * 60 * dt
     energy.consumption = (this.prev.energy - energy.current) * 60 * dt
 
-    for (const producer of sproducer.values()) {
+    for (const [entity, producer] of Producer) {
+      // skip if not yet built
+      if (Draft.has(entity)) continue
+
       mass.current = Math.min(mass.current + (producer.mass / 60) * dt, mass.max)
       energy.current = Math.min(energy.current + (producer.energy / 60) * dt, energy.max)
 

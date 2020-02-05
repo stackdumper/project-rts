@@ -20,14 +20,14 @@ export class ResourceTextures
 
     land: new PIXI.Graphics()
       .beginFill(0xffffff, 0.2)
-      .lineStyle(3, 0xffffff, 0.5)
-      .drawCircle(0, 0, 32)
+      .lineStyle(4, 0xffffff, 0.5)
+      .drawCircle(0, 0, 16)
       .endFill(),
 
     ground: new PIXI.Graphics()
       .beginFill(0xffffff, 0.2)
       .lineStyle(2, 0xffffff, 0.5)
-      .drawRect(0, 0, 64, 64)
+      .drawRect(0, 0, 32, 32)
       .endFill(),
   }
 

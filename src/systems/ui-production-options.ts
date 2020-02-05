@@ -1,17 +1,17 @@
 import { System, Entity, ComponentStorage } from '~/core'
-import { ComponentBuildOptions } from '~/components'
-import { ResourceSelection, ResourcePlacement } from '~/resources'
+import { ComponentProductionOptions, ComponentOrders } from '~/components'
+import { ResourceSelection } from '~/resources'
 import { EntityTemplate } from '~/utils'
 
 /**
- * SystemUIBuildOptions is responsible for displaying build options of a selected entity.
+ * SystemUIProductionOptions is responsible for displaying production options for entities (e.g. factories).
  */
-export class SystemUIBuildOptions extends System {
-  static id = 'ui-build-options'
+export class SystemUIProductionOptions extends System {
+  static id = 'ui-production-options'
   static query = {
     core: false,
-    components: [ComponentBuildOptions],
-    resources: [ResourceSelection, ResourcePlacement],
+    components: [ComponentProductionOptions, ComponentOrders],
+    resources: [ResourceSelection],
   }
 
   private container: HTMLDivElement = document.getElementById(
@@ -31,8 +31,11 @@ export class SystemUIBuildOptions extends System {
 
   public dispatch(
     _: never,
-    [BuildOptions]: [ComponentStorage<ComponentBuildOptions>],
-    [selection, placement]: [ResourceSelection, ResourcePlacement],
+    [ProductionOptions, Orders]: [
+      ComponentStorage<ComponentProductionOptions>,
+      ComponentStorage<ComponentOrders>,
+    ],
+    [selection]: [ResourceSelection],
   ) {
     // clear
     if (
@@ -44,18 +47,20 @@ export class SystemUIBuildOptions extends System {
 
     // render
     if (!this.renderedEntity && selection.entity) {
-      const buildOptions = BuildOptions.get(selection.entity)
-      if (!buildOptions) return
+      const productionOptions = ProductionOptions.get(selection.entity)
+      if (!productionOptions) return
 
       // clear container
       this.container.innerText = ''
 
-      for (const template of buildOptions.templates) {
+      for (const template of productionOptions.templates) {
         const element = this.createElement(template)
 
         element.onclick = () => {
-          placement.template = template
-          placement.builder = selection.entity
+          Orders.get(selection.entity!)!.push({
+            action: 'produce',
+            template,
+          })
         }
 
         this.container.appendChild(element)

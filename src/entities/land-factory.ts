@@ -4,18 +4,24 @@ import {
   ComponentIcon,
   ComponentProductionOptions,
   ComponentDimensions,
-  ComponentDraft,
   ComponentOrders,
   ComponentSelectable,
+  ComponentEngineering,
+  ComponentTexture,
 } from '~/components'
-import { engineer } from '~/entities'
+import { engineer } from './engineer'
 
-export const landFactory = new EntityTemplate('Land Factory').withComponents([
+export const landFactory = new EntityTemplate('Land Factory', {
+  mass: 210,
+  energy: 1500,
+  time: 300,
+}).withComponents([
   new ComponentPosition(0.0, 0.0),
   new ComponentIcon('landFactory', 1.3),
+  new ComponentTexture('ground'),
   new ComponentProductionOptions([engineer]),
-  new ComponentDimensions(152, 152),
+  new ComponentDimensions(128, 128),
   new ComponentSelectable(),
-  new ComponentDraft(300, 210, 1500),
   new ComponentOrders(),
+  new ComponentEngineering(100),
 ])
