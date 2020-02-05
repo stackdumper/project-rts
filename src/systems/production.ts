@@ -1,6 +1,6 @@
 import { System, ComponentStorage } from '~/core'
-import { ResourceClock, ResourceResources } from '~/resources'
-import { ComponentProducer, ComponentDraft } from '~/components'
+import { ResourceClock, ResourceResources, ResourcePlacement } from '~/resources'
+import { ComponentProducer, ComponentDraft, ComponentOwnership } from '~/components'
 
 /**
  * SystemProduction is responsible for calculating produced and consumed mass and energy.
@@ -9,41 +9,67 @@ export class SystemProduction extends System {
   static id = 'production'
   static query = {
     core: false,
-    components: [ComponentProducer, ComponentDraft],
+    components: [ComponentProducer, ComponentOwnership, ComponentDraft],
     resources: [ResourceResources, ResourceClock],
-  }
-
-  private prev = {
-    energy: 0,
-    mass: 0,
   }
 
   public dispatch(
     _: never,
-    [Producer, Draft]: [
+    [Producer, Ownership, Draft]: [
       ComponentStorage<ComponentProducer>,
+      ComponentStorage<ComponentOwnership>,
       ComponentStorage<ComponentDraft>,
     ],
-    [{ mass, energy }, { dt }]: [ResourceResources, ResourceClock],
+    [resources, { dt }]: [ResourceResources, ResourceClock],
   ) {
-    mass.production = 0
-    energy.production = 0
+    // reset consumption and production
+    for (const { mass, energy } of resources.values()) {
+      mass.production = 0
+      mass.consumption = 0
+      energy.production = 0
+      energy.consumption = 0
+    }
 
-    mass.consumption = (this.prev.mass - mass.current) * 60 * dt
-    energy.consumption = (this.prev.energy - energy.current) * 60 * dt
-
-    for (const [entity, producer] of Producer) {
+    // calculate static consumption and productino
+    for (const [entity, [producer, ownership]] of ComponentStorage.join(
+      Producer,
+      Ownership,
+    )) {
       // skip if not yet built
       if (Draft.has(entity)) continue
+
+      const { mass, energy } = resources.get(ownership.playerID)!
 
       mass.current = Math.min(mass.current + (producer.mass / 60) * dt, mass.max)
       energy.current = Math.min(energy.current + (producer.energy / 60) * dt, energy.max)
 
-      mass.production += producer.mass
-      energy.production += producer.energy
+      if (producer.mass > 0) {
+        mass.production += producer.mass
+      } else {
+        mass.consumption += producer.mass
+      }
+
+      if (producer.energy > 0) {
+        energy.production += producer.energy
+      } else {
+        energy.consumption += producer.energy
+      }
     }
 
-    this.prev.mass = mass.current
-    this.prev.energy = energy.current
+    // calculate dynamic consumption and production
+    for (const { mass, energy } of resources.values()) {
+      if (mass.current < mass.previous + mass.consumption) {
+        mass.consumption += (mass.current - (mass.previous - mass.consumption)) * 60
+      }
+
+      if (energy.current < energy.previous + energy.consumption) {
+        energy.consumption +=
+          (energy.current - (energy.previous + energy.consumption)) * 60
+      }
+
+      // reset consumption and production
+      mass.previous = mass.current
+      energy.previous = energy.current
+    }
   }
 }

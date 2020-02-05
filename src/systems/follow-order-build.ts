@@ -5,6 +5,7 @@ import {
   ComponentEngineering,
   ComponentDraft,
   ComponentVelocity,
+  ComponentOwnership,
 } from '~/components'
 import { ResourceResources, ResourceClock } from '~/resources'
 
@@ -19,6 +20,7 @@ export class SystemFollowOrderBuild extends System {
       ComponentOrders,
       ComponentPosition,
       ComponentEngineering,
+      ComponentOwnership,
       ComponentVelocity,
       ComponentDraft,
     ],
@@ -27,19 +29,21 @@ export class SystemFollowOrderBuild extends System {
 
   public dispatch(
     core: Core,
-    [Orders, Position, Engineering, Velocity, Draft]: [
+    [Orders, Position, Engineering, Ownership, Velocity, Draft]: [
       ComponentStorage<ComponentOrders>,
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentEngineering>,
+      ComponentStorage<ComponentOwnership>,
       ComponentStorage<ComponentVelocity>,
       ComponentStorage<ComponentDraft>,
     ],
     [clock, resources]: [ResourceClock, ResourceResources],
   ) {
-    for (const [e, [orders, position, engineering]] of ComponentStorage.join(
+    for (const [e, [orders, position, engineering, ownership]] of ComponentStorage.join(
       Orders,
       Position,
       Engineering,
+      Ownership,
     )) {
       if (!orders.current || orders.current.action !== 'construct') continue
 
@@ -79,7 +83,7 @@ export class SystemFollowOrderBuild extends System {
           // fill draft with mass and energy
           if (draft.mass < template.cost.mass || draft.energy < template.cost.energy) {
             const { cost } = template
-            const { mass, energy } = resources
+            const { mass, energy } = resources.get(ownership.playerID)!
 
             const neededMass =
               cost.mass / (cost.time / engineering.rate) / (60 * clock.dt)

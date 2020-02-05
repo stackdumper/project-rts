@@ -1,5 +1,5 @@
 import { System } from '~/core'
-import { ResourceResources } from '~/resources'
+import { ResourceResources, ResourcePlayers } from '~/resources'
 
 /**
  * SystemUIResources is responsible for showing resources in the top left menu.
@@ -9,7 +9,7 @@ export class SystemUIResources extends System {
   static query = {
     core: false,
     components: [],
-    resources: [ResourceResources],
+    resources: [ResourceResources, ResourcePlayers],
   }
 
   // woah
@@ -53,27 +53,32 @@ export class SystemUIResources extends System {
     )! as HTMLDivElement,
   }
 
-  public dispatch(_: never, __: [], [resources]: [ResourceResources]) {
+  public dispatch(
+    _: never,
+    __: [],
+    [resources, players]: [ResourceResources, ResourcePlayers],
+  ) {
+    const { mass, energy } = resources.get(players.currentPlayer)!
+
     // resource current
-    this.bars.energyCurrent.textContent = resources.energy.current.toFixed(0)
-    this.bars.massCurrent.textContent = resources.mass.current.toFixed(0)
+    this.bars.energyCurrent.textContent = energy.current.toFixed(0)
+    this.bars.massCurrent.textContent = mass.current.toFixed(0)
 
     // resource max
-    this.bars.energyMax.textContent = resources.energy.max.toString()
-    this.bars.massMax.textContent = resources.mass.max.toString()
+    this.bars.energyMax.textContent = energy.max.toString()
+    this.bars.massMax.textContent = mass.max.toString()
 
     // resource production
-    this.bars.energyProduction.textContent = '+' + resources.energy.production.toString()
-    this.bars.massProduction.textContent = '+' + resources.mass.production.toString()
+    this.bars.energyProduction.textContent = '+' + energy.production.toString()
+    this.bars.massProduction.textContent = '+' + mass.production.toString()
 
     // resource consumption
-    this.bars.energyConsumption.textContent =
-      '-' + resources.energy.consumption.toFixed(0)
-    this.bars.massConsumption.textContent = '-' + resources.mass.consumption.toFixed(0)
+    this.bars.energyConsumption.textContent = '-' + energy.consumption.toFixed(0)
+    this.bars.massConsumption.textContent = '-' + mass.consumption.toFixed(0)
 
     // resource fill
-    const energyPercentage = (resources.energy.current / resources.energy.max) * 100
-    const massPercentage = (resources.mass.current / resources.mass.max) * 100
+    const energyPercentage = (energy.current / energy.max) * 100
+    const massPercentage = (mass.current / mass.max) * 100
 
     // bar position
     this.bars.energy.style.transform = `translateX(${energyPercentage - 100}%)`

@@ -48,7 +48,7 @@ export class SystemFollowOrderProduce extends System {
     ] of ComponentStorage.join(Orders, Engineering, Ownership, Position)) {
       if (orders.current && orders.current.action === 'produce' && !Draft.has(entity)) {
         const { cost } = orders.current.template
-        const { mass, energy } = resources
+        const { mass, energy } = resources.get(ownership.playerID)!
 
         if (this.completion.energy < cost.energy || this.completion.mass < cost.mass) {
           const neededMass = cost.mass / (cost.time / engineering.rate) / (60 * clock.dt)
