@@ -5,6 +5,7 @@ import {
   ComponentIcon,
   ComponentProducer,
   ComponentTexture,
+  ComponentHealth,
 } from '~/components'
 import { EntityTemplate } from '~/utils'
 
@@ -16,6 +17,7 @@ export const generator = new EntityTemplate('Generator', {
   new ComponentPosition(0.0, 0.0),
   new ComponentIcon('generator'),
   new ComponentTexture('ground'),
+  new ComponentHealth(600),
   new ComponentDimensions(32, 32),
   new ComponentSelectable(),
   new ComponentProducer(0, 20),

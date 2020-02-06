@@ -12,13 +12,13 @@ export class Core {
     ID,
     {
       core?: Core
-      components: Map<Entity, Component>[]
+      components: ComponentStorage[]
       resources: Resource[]
     }
   >()
 
   public addComponent(component: typeof Component) {
-    this.components.set(component.id, new Map())
+    this.components.set(component.id, new ComponentStorage(component.id))
   }
 
   public getComponent<T extends Component>(

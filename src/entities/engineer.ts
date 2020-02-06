@@ -10,6 +10,7 @@ import {
   ComponentSelectable,
   ComponentBuildOptions,
   ComponentTexture,
+  ComponentHealth,
 } from '~/components'
 import { extractor, generator } from '~/entities'
 
@@ -22,6 +23,7 @@ export const engineer = new EntityTemplate('Engineer', {
   new ComponentVelocity(0.0, 0.0),
   new ComponentIcon('engineer'),
   new ComponentTexture('land'),
+  new ComponentHealth(150),
   new ComponentDimensions(32, 32),
   new ComponentMobile(1),
   new ComponentSelectable(),

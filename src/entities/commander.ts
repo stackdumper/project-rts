@@ -11,6 +11,7 @@ import {
   ComponentEngineering,
   ComponentProducer,
   ComponentTexture,
+  ComponentHealth,
 } from '~/components'
 import { extractor, generator, landFactory } from '~/entities'
 
@@ -24,6 +25,7 @@ export const commander = new EntityTemplate('Commander', {
   new ComponentIcon('commander'),
   new ComponentTexture('land'),
   new ComponentDimensions(32, 32),
+  new ComponentHealth(12000),
   new ComponentMobile(0.3),
   new ComponentSelectable(),
   new ComponentBuildOptions([extractor, generator, landFactory]),

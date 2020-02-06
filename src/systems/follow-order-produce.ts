@@ -64,17 +64,16 @@ export class SystemFollowOrderProduce extends System {
           }
         } else {
           // add entity
-          orders.current.template
-            .getComponent(ComponentPosition)
-            .set(position.x, position.y)
+          const entity = core.addEntity(orders.current.template.build(ownership.playerID))
 
-          // TEMP: add move order
-          orders.current.template.getComponent(ComponentOrders).push({
+          // set position to be in factory
+          Position.get(entity)!.set(position.x, position.y)
+
+          // add order to move out of factory
+          Orders.get(entity)!.push({
             action: 'move',
             position: new Vector2(position.x, position.y + 92),
           })
-
-          core.addEntity(orders.current.template.build(ownership.playerID))
 
           // remove orders
           orders.shift()
