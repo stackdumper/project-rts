@@ -92,7 +92,7 @@ export class SystemRender extends System {
         sprite.tint = players.get(ownership.playerID)!.color
 
         this.sprites.set(entity, sprite)
-        // warn
+        // @ts-ignore FIXME
         scene.containers[texture.texture].addChild(sprite)
       }
 

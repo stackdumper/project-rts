@@ -6,6 +6,7 @@ import {
   ComponentSelectable,
   ComponentProducer,
   ComponentTexture,
+  ComponentHealth,
 } from '~/components'
 
 export const extractor = new EntityTemplate('Extractor', {
@@ -16,6 +17,7 @@ export const extractor = new EntityTemplate('Extractor', {
   new ComponentPosition(0.0, 0.0),
   new ComponentIcon('extractor'),
   new ComponentTexture('ground'),
+  new ComponentHealth(800),
   new ComponentDimensions(32, 32),
   new ComponentSelectable(),
   new ComponentProducer(2, -2),

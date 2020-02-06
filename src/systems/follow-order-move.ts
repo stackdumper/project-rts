@@ -19,7 +19,7 @@ export class SystemFollowOrderMove extends System {
 
   public dispatch(
     _: never,
-    components: [
+    [Orders, Mobile, Position, Velocity]: [
       ComponentStorage<ComponentOrders>,
       ComponentStorage<ComponentMobile>,
       ComponentStorage<ComponentPosition>,
@@ -28,7 +28,10 @@ export class SystemFollowOrderMove extends System {
     [],
   ) {
     for (const [entity, [orders, mobile, position, velocity]] of ComponentStorage.join(
-      ...components,
+      Orders,
+      Mobile,
+      Position,
+      Velocity,
     )) {
       if (orders.current && orders.current.action === 'move') {
         // if not reached, move
@@ -46,7 +49,7 @@ export class SystemFollowOrderMove extends System {
           // if reached, remove order
           velocity.set(0.0, 0.0)
 
-          components[0].get(entity)!.shift()
+          Orders.get(entity)!.shift()
         }
       }
     }

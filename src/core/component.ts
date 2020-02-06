@@ -13,8 +13,21 @@ export abstract class Component {
 
 /** ComponentStorage is used to store components with Entity as key */
 export class ComponentStorage<C extends Component = Component> extends Map<Entity, C> {
+  constructor(public id: string) {
+    super()
+  }
+
+  static cache = new Map<string, Map<string, Component>>()
+
   /** ComponentStorage.join is used to join multiple component storages by entity */
+  // @ts-ignore
   static join: ComponentStorage.Join = (...storages: ComponentStorage[]) => {
+    const key = storages.map((s) => s.id + s.size).join('-')
+    const cached = ComponentStorage.cache.get(key)
+    if (cached) {
+      return cached
+    }
+
     const joint = new Map()
 
     for (const key of intersection(...storages.map((s) => Array.from(s.keys())))) {
@@ -22,6 +35,8 @@ export class ComponentStorage<C extends Component = Component> extends Map<Entit
 
       joint.set(key, components)
     }
+
+    ComponentStorage.cache.set(key, joint)
 
     return joint
   }

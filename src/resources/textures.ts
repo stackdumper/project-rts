@@ -29,6 +29,11 @@ export class ResourceTextures
       .lineStyle(2, 0xffffff, 0.5)
       .drawRect(0, 0, 32, 32)
       .endFill(),
+
+    healthBar: new PIXI.Graphics()
+      .beginFill(0x55e6c1)
+      .drawRect(0, 0, 32, 2)
+      .endFill(),
   }
 
   public initialize(core: Core) {

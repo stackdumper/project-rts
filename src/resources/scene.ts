@@ -16,9 +16,10 @@ export class ResourceScene extends Resource {
   public containers = {
     viewport: new PIXI.Container(),
     icons: new PIXI.Container(),
+    indicators: new PIXI.ParticleContainer(4096, { vertices: true, tint: true }),
     map: new PIXI.Container(),
-    land: new PIXI.Container(),
-    ground: new PIXI.Container(),
+    land: new PIXI.ParticleContainer(4096, { tint: true }),
+    ground: new PIXI.ParticleContainer(4096, { tint: true }),
   }
 
   constructor() {
@@ -32,11 +33,13 @@ export class ResourceScene extends Resource {
     this.containers.viewport.interactive = true
 
     // add containers to stage
-    this.app.stage.addChild(this.containers.viewport)
-    this.app.stage.addChild(this.containers.icons)
+
     this.containers.viewport.addChild(this.containers.map)
     this.containers.viewport.addChild(this.containers.land)
     this.containers.viewport.addChild(this.containers.ground)
+    this.containers.viewport.addChild(this.containers.indicators)
+    this.app.stage.addChild(this.containers.viewport)
+    this.app.stage.addChild(this.containers.icons)
 
     // set scale mode to nearest for crisp and sharp textures
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST

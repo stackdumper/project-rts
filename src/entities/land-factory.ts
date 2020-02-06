@@ -8,6 +8,7 @@ import {
   ComponentSelectable,
   ComponentEngineering,
   ComponentTexture,
+  ComponentHealth,
 } from '~/components'
 import { engineer } from './engineer'
 
@@ -19,6 +20,7 @@ export const landFactory = new EntityTemplate('Land Factory', {
   new ComponentPosition(0.0, 0.0),
   new ComponentIcon('landFactory', 1.3),
   new ComponentTexture('ground'),
+  new ComponentHealth(4800),
   new ComponentProductionOptions([engineer]),
   new ComponentDimensions(128, 128),
   new ComponentSelectable(),

@@ -15,6 +15,7 @@ import {
   ComponentIcon,
   ComponentProductionOptions,
   ComponentTexture,
+  ComponentHealth,
 } from '~/components'
 import {
   ResourceKeyboard,
@@ -48,6 +49,7 @@ import {
   SystemRenderIcons,
   SystemUIProductionOptions,
   SystemFollowOrderProduce,
+  SystemRenderHealth,
 } from '~/systems'
 import * as entities from '~/entities'
 
@@ -69,6 +71,7 @@ const createCore = async () => {
   core.addComponent(ComponentOrders)
   core.addComponent(ComponentEngineering)
   core.addComponent(ComponentProducer)
+  core.addComponent(ComponentHealth)
 
   // add resources
   await core.addResource(new ResourceKeyboard())
@@ -95,21 +98,22 @@ const createCore = async () => {
   // add systems
   core.addSystem(new SystemVelocity())
   core.addSystem(new SystemProduction())
-  core.addSystem(new SystemRenderMap())
   core.addSystem(new SystemUIResources())
   core.addSystem(new SystemNavigation())
-  core.addSystem(new SystemRender())
   core.addSystem(new SystemSelection())
   core.addSystem(new SystemOrderMove())
   core.addSystem(new SystemOrderBuild())
   core.addSystem(new SystemFollowOrderMove())
   core.addSystem(new SystemFollowOrderBuild())
   core.addSystem(new SystemFollowOrderProduce())
+  core.addSystem(new SystemRenderMap())
+  core.addSystem(new SystemRender())
   core.addSystem(new SystemRenderOrders())
   core.addSystem(new SystemRenderIcons())
+  core.addSystem(new SystemRenderHealth())
+  core.addSystem(new SystemRenderPlacement())
   core.addSystem(new SystemUIBuildOptions())
   core.addSystem(new SystemUIProductionOptions())
-  core.addSystem(new SystemRenderPlacement())
 
   return core
 }
@@ -117,9 +121,22 @@ const createCore = async () => {
 window.addEventListener('load', async () => {
   const core = await createCore()
 
+  // const d = Array(32)
+  //   .fill(0)
+  //   .map((_, i) => i)
+
+  // for (const x of d) {
+  //   for (const y of d) {
+  //     const commander = core.addEntity(entities.commander.build(1))
+
+  //     core
+  //       .getComponent(ComponentPosition)
+  //       .set(commander, new ComponentPosition(64 * 16 + 32 * x, 64 * 16 + 32 * y))
+  //   }
+  // }
+
   // add commanders
   const players = core.getResource(ResourcePlayers)
-
   for (const playerID of players.keys()) {
     const commander = core.addEntity(entities.commander.build(playerID))
 
