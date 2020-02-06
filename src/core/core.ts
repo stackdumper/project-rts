@@ -12,7 +12,7 @@ export class Core {
     ID,
     {
       core?: Core
-      components: Map<Entity, Component>[]
+      components: ComponentStorage[]
       resources: Resource[]
     }
   >()
