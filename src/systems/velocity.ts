@@ -3,7 +3,7 @@ import { ComponentPosition, ComponentVelocity } from '~/components'
 import { ResourceClock } from '~/resources'
 
 /**
- * SystemVelocity is used to apply velocities to entities positions.
+ * SystemVelocity is responsible for applying velocities to entities positions.
  */
 export class SystemVelocity extends System {
   static id = 'velocity'

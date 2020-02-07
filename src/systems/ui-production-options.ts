@@ -60,6 +60,9 @@ export class SystemUIProductionOptions extends System {
           Orders.get(selection.entity!)!.push({
             action: 'produce',
             template,
+            mass: 0,
+            energy: 0,
+            percentage: 0,
           })
         }
 

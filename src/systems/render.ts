@@ -50,25 +50,13 @@ export class SystemRender extends System {
       ResourceSelection,
     ],
   ) {
+    // skip if land and ground is not visible
+    if (!scene.containers.land.visible && !scene.containers.ground.visible) return
+
+    // remove deleted entities
     for (const [entity, sprite] of this.sprites) {
-      // remove deleted entities
       if (!Dimensions.has(entity)) {
         scene.containers.land.removeChild(sprite)
-      }
-
-      // if draft, set opaque
-      const draft = Draft.get(entity)
-      if (draft) {
-        sprite.alpha = draft.percentage
-      }
-
-      // make sprite white if selected
-      if (selection.entity === entity) {
-        sprite.tint = 0xffffff
-      } else if (sprite.tint === 0xffffff) {
-        const ownership = Ownership.get(entity)!
-
-        sprite.tint = players.get(ownership.playerID)!.color
       }
     }
 
@@ -96,8 +84,24 @@ export class SystemRender extends System {
         scene.containers[texture.texture].addChild(sprite)
       }
 
+      // update position
       sprite!.position.x = position.x
       sprite!.position.y = position.y
+
+      // if draft, set opaque
+      const draft = Draft.get(entity)
+      if (draft) {
+        sprite.alpha = draft.percentage
+      }
+
+      // make sprite white if selected
+      if (selection.entity === entity) {
+        sprite.tint = 0xffffff
+      } else if (sprite.tint === 0xffffff) {
+        const ownership = Ownership.get(entity)!
+
+        sprite.tint = players.get(ownership.playerID)!.color
+      }
     }
 
     // scene.app.render()

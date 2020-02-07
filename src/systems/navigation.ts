@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { System, Core } from '~/core'
+import { System } from '~/core'
 import {
   ResourceKeyboard,
   ResourceClock,
@@ -26,6 +26,10 @@ export class SystemNavigation extends System {
   }
 
   private speed = 10.0
+  private limits = {
+    min: 0.1,
+    max: 2,
+  }
 
   private scale(cursor: ResourceCursor, viewport: PIXI.Container, scale: number) {
     // const x = window.innerWidth / 2
@@ -38,7 +42,7 @@ export class SystemNavigation extends System {
 
     const s = viewport.scale.y * scale
 
-    if (s > 0.2 && s < 2) {
+    if (s > this.limits.min && s < this.limits.max) {
       const px = wx * s + viewport.x
       const py = wy * s + viewport.y
 

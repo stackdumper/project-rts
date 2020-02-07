@@ -50,6 +50,8 @@ import {
   SystemUIProductionOptions,
   SystemFollowOrderProduce,
   SystemRenderHealth,
+  SystemRenderProgress,
+  SystemVisibility,
 } from '~/systems'
 import * as entities from '~/entities'
 
@@ -81,7 +83,7 @@ const createCore = async () => {
   await core.addResource(new ResourceIcons())
   await core.addResource(new ResourceTextures())
   await core.addResource(new ResourceResources([1, 2]))
-  await core.addResource(new ResourceMap(128, 128))
+  await core.addResource(new ResourceMap(64, 64))
   await core.addResource(new ResourceClock())
   await core.addResource(new ResourceSelection())
   await core.addResource(new ResourcePlacement())
@@ -97,6 +99,7 @@ const createCore = async () => {
 
   // add systems
   core.addSystem(new SystemVelocity())
+  core.addSystem(new SystemVisibility())
   core.addSystem(new SystemProduction())
   core.addSystem(new SystemUIResources())
   core.addSystem(new SystemNavigation())
@@ -111,6 +114,7 @@ const createCore = async () => {
   core.addSystem(new SystemRenderOrders())
   core.addSystem(new SystemRenderIcons())
   core.addSystem(new SystemRenderHealth())
+  core.addSystem(new SystemRenderProgress())
   core.addSystem(new SystemRenderPlacement())
   core.addSystem(new SystemUIBuildOptions())
   core.addSystem(new SystemUIProductionOptions())
@@ -121,20 +125,6 @@ const createCore = async () => {
 window.addEventListener('load', async () => {
   const core = await createCore()
 
-  // const d = Array(32)
-  //   .fill(0)
-  //   .map((_, i) => i)
-
-  // for (const x of d) {
-  //   for (const y of d) {
-  //     const commander = core.addEntity(entities.commander.build(1))
-
-  //     core
-  //       .getComponent(ComponentPosition)
-  //       .set(commander, new ComponentPosition(64 * 16 + 32 * x, 64 * 16 + 32 * y))
-  //   }
-  // }
-
   // add commanders
   const players = core.getResource(ResourcePlayers)
   for (const playerID of players.keys()) {
@@ -142,7 +132,7 @@ window.addEventListener('load', async () => {
 
     core
       .getComponent(ComponentPosition)
-      .set(commander, new ComponentPosition(64 * 16, 64 * 16))
+      .set(commander, new ComponentPosition(64 * 16 + 64 * playerID, 64 * 16))
   }
 
   // start game loop
@@ -154,3 +144,17 @@ window.addEventListener('load', async () => {
     core.dispatch()
   })
 })
+
+// const d = Array(32)
+//   .fill(0)
+//   .map((_, i) => i)
+
+// for (const x of d) {
+//   for (const y of d) {
+//     const commander = core.addEntity(entities.commander.build(1))
+
+//     core
+//       .getComponent(ComponentPosition)
+//       .set(commander, new ComponentPosition(64 * 16 + 32 * x, 64 * 16 + 32 * y))
+//   }
+// }

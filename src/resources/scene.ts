@@ -16,7 +16,8 @@ export class ResourceScene extends Resource {
   public containers = {
     viewport: new PIXI.Container(),
     icons: new PIXI.Container(),
-    indicators: new PIXI.ParticleContainer(4096, { vertices: true, tint: true }),
+    health: new PIXI.ParticleContainer(4096, { vertices: true }),
+    progress: new PIXI.ParticleContainer(4096, { vertices: true, tint: true }),
     map: new PIXI.Container(),
     land: new PIXI.ParticleContainer(4096, { tint: true }),
     ground: new PIXI.ParticleContainer(4096, { tint: true }),
@@ -37,7 +38,8 @@ export class ResourceScene extends Resource {
     this.containers.viewport.addChild(this.containers.map)
     this.containers.viewport.addChild(this.containers.land)
     this.containers.viewport.addChild(this.containers.ground)
-    this.containers.viewport.addChild(this.containers.indicators)
+    this.containers.viewport.addChild(this.containers.health)
+    this.containers.viewport.addChild(this.containers.progress)
     this.app.stage.addChild(this.containers.viewport)
     this.app.stage.addChild(this.containers.icons)
 

@@ -30,7 +30,7 @@ export const commander = new EntityTemplate('Commander', {
   new ComponentSelectable(),
   new ComponentBuildOptions([extractor, generator, landFactory]),
   new ComponentOrders(),
-  // new ComponentEngineering(10),
-  new ComponentEngineering(100),
+  new ComponentEngineering(10),
+  // new ComponentEngineering(100),
   new ComponentProducer(1, 20),
 ])

@@ -25,5 +25,6 @@ export const landFactory = new EntityTemplate('Land Factory', {
   new ComponentDimensions(128, 128),
   new ComponentSelectable(),
   new ComponentOrders(),
-  new ComponentEngineering(100),
+  new ComponentEngineering(20),
+  // new ComponentEngineering(100),
 ])

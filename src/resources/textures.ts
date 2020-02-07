@@ -34,6 +34,11 @@ export class ResourceTextures
       .beginFill(0x55e6c1)
       .drawRect(0, 0, 32, 2)
       .endFill(),
+
+    progressBar: new PIXI.Graphics()
+      .beginFill(0x1b9cfc)
+      .drawRect(0, 0, 32, 2)
+      .endFill(),
   }
 
   public initialize(core: Core) {

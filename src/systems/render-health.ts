@@ -31,11 +31,14 @@ export class SystemRenderHealth extends System {
     ],
     [scene, textures]: [ResourceScene, ResourceTextures],
   ) {
-    if (scene.containers.viewport.scale.x < 0.5) {
-      scene.containers.indicators.visible = false
-      return
-    } else {
-      scene.containers.indicators.visible = true
+    // skip if health is not visible
+    if (!scene.containers.health.visible) return
+
+    // remove deleted entities
+    for (const [entity, sprite] of this.sprites) {
+      if (!Dimensions.has(entity)) {
+        scene.containers.health.removeChild(sprite)
+      }
     }
 
     // add missing bars and update existing
@@ -44,29 +47,25 @@ export class SystemRenderHealth extends System {
       Dimensions,
       Health,
     )) {
+      // skip if draft
+      if (Draft.has(entity)) continue
+
+      // get sprite
       let sprite = this.sprites.get(entity)!
 
+      // if not present, create sprite
       if (!sprite) {
         sprite = new PIXI.Sprite(textures.get('healthBar'))
 
         sprite.anchor.set(0.5, -dimensions.max.y * 0.5)
 
         this.sprites.set(entity, sprite)
-        scene.containers.indicators.addChild(sprite)
+        scene.containers.health.addChild(sprite)
       }
 
+      // update position and set scale to match health
       sprite.position.set(position.x, position.y)
-
-      const draft = Draft.get(entity)
-      if (draft) {
-        // if draft, tint blue (progreess bar)
-        sprite.scale.x = draft.percentage * dimensions.max.x * 0.04
-        sprite.tint = 0x1b9cfc
-      } else {
-        // if not, tint green (health bar)
-        sprite.scale.x = (health.current / health.max) * dimensions.max.x * 0.04
-        sprite.tint = 0x55e6c1
-      }
+      sprite.scale.x = (health.current / health.max) * dimensions.max.x * 0.04
     }
   }
 }
