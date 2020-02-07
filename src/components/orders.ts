@@ -17,6 +17,9 @@ type Order =
   | {
       action: 'produce'
       template: EntityTemplate
+      mass: number
+      energy: number
+      percentage: number
     }
 
 export class ComponentOrders extends Component {

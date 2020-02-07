@@ -26,11 +26,6 @@ export class SystemFollowOrderProduce extends System {
     resources: [ResourceResources, ResourceClock],
   }
 
-  private completion = {
-    energy: 0,
-    mass: 0,
-  }
-
   public dispatch(
     core: Core,
     [Orders, Engineering, Ownership, Position, Draft]: [
@@ -46,25 +41,34 @@ export class SystemFollowOrderProduce extends System {
       entity,
       [orders, engineering, ownership, position],
     ] of ComponentStorage.join(Orders, Engineering, Ownership, Position)) {
-      if (orders.current && orders.current.action === 'produce' && !Draft.has(entity)) {
-        const { cost } = orders.current.template
+      const { current } = orders
+
+      if (current && current.action === 'produce' && !Draft.has(entity)) {
+        const { cost } = current.template
         const { mass, energy } = resources.get(ownership.playerID)!
 
-        if (this.completion.energy < cost.energy || this.completion.mass < cost.mass) {
+        // check if not completed
+        if (current.energy < cost.energy || current.mass < cost.mass) {
+          // calculate energy and mass fractions
           const neededMass = cost.mass / (cost.time / engineering.rate) / (60 * clock.dt)
           const neededEnergy =
             cost.energy / (cost.time / engineering.rate) / (60 * clock.dt)
 
+          // check if enough resources
           if (mass.current >= neededMass && energy.current >= neededEnergy) {
+            // pour energy and mass
             mass.current -= neededMass
             energy.current -= neededEnergy
 
-            this.completion.mass += neededMass
-            this.completion.energy += neededEnergy
+            current.mass += neededMass
+            current.energy += neededEnergy
+
+            current.percentage =
+              (current.mass / cost.mass) * 0.5 + (current.energy / cost.energy) * 0.5
           }
         } else {
           // add entity
-          const entity = core.addEntity(orders.current.template.build(ownership.playerID))
+          const entity = core.addEntity(current.template.build(ownership.playerID))
 
           // set position to be in factory
           Position.get(entity)!.set(position.x, position.y)
@@ -77,12 +81,6 @@ export class SystemFollowOrderProduce extends System {
 
           // remove orders
           orders.shift()
-
-          // reset completion
-          this.completion = {
-            energy: 0,
-            mass: 0,
-          }
         }
       }
     }

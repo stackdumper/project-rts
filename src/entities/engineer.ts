@@ -15,9 +15,9 @@ import {
 import { extractor, generator } from '~/entities'
 
 export const engineer = new EntityTemplate('Engineer', {
-  mass: 100,
-  energy: 1000,
-  time: 30,
+  mass: 52,
+  energy: 60,
+  time: 260,
 }).withComponents([
   new ComponentPosition(0.0, 0.0),
   new ComponentVelocity(0.0, 0.0),
