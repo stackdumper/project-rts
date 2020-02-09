@@ -53,7 +53,8 @@ import {
   SystemRenderHealth,
   SystemRenderProgress,
   SystemVisibility,
-  SystemBuildQuadtree,
+  SystemCheckCollisions,
+  SystemResolveCollisions,
 } from '~/systems'
 import * as entities from '~/entities'
 
@@ -101,8 +102,9 @@ const createCore = async () => {
   )
 
   // add systems
+  core.addSystem(new SystemResolveCollisions())
   core.addSystem(new SystemVelocity())
-  core.addSystem(new SystemBuildQuadtree())
+  core.addSystem(new SystemCheckCollisions())
   core.addSystem(new SystemVisibility())
   core.addSystem(new SystemProduction())
   core.addSystem(new SystemUIResources())
@@ -129,28 +131,14 @@ const createCore = async () => {
 window.addEventListener('load', async () => {
   const core = await createCore()
 
-  // // add commanders
-  // const players = core.getResource(ResourcePlayers)
-  // for (const playerID of players.keys()) {
-  //   const commander = core.addEntity(entities.commander.build(playerID))
+  // add commanders
+  const players = core.getResource(ResourcePlayers)
+  for (const playerID of players.keys()) {
+    const commander = core.addEntity(entities.commander.build(playerID))
 
-  //   core
-  //     .getComponent(ComponentPosition)
-  //     .set(commander, new ComponentPosition(64 * 16 + 64 * playerID, 64 * 16))
-  // }
-
-  const d = Array(32)
-    .fill(0)
-    .map((_, i) => i)
-
-  for (const x of d) {
-    for (const y of d) {
-      const commander = core.addEntity(entities.commander.build(1))
-
-      core
-        .getComponent(ComponentPosition)
-        .set(commander, new ComponentPosition(64 * 16 + 32 * x, 64 * 16 + 32 * y))
-    }
+    core
+      .getComponent(ComponentPosition)
+      .set(commander, new ComponentPosition(64 * 16 + 64 * playerID, 64 * 16))
   }
 
   // start game loop

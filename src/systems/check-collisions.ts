@@ -3,17 +3,17 @@ import { ComponentPosition, ComponentDimensions } from '~/components'
 import { ResourceCollisions } from '~/resources'
 
 /**
- * SystemBuildQuadtree is responsible for building collision quadtree.
+ * SystemCheckCollisions is responsible for checking collisions between entities.
  */
-export class SystemBuildQuadtree extends System {
-  static id = 'build-quadtree'
+export class SystemCheckCollisions extends System {
+  static id = 'check-collisions'
   static query = {
     core: false,
     components: [ComponentPosition, ComponentDimensions],
     resources: [ResourceCollisions],
   }
 
-  private worker = new Worker('./build-quadtree.worker.ts')
+  private worker = new Worker('./check-collisions.worker.ts')
   private indexes = new Map<number, string>()
   private collisions?: Map<number, number[]>
   private sent = false
