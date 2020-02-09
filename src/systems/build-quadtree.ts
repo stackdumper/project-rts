@@ -69,6 +69,8 @@ export class SystemBuildQuadtree extends System {
 
     // save collisions to resource
     if (this.collisions) {
+      collisions.clear()
+
       for (const [index, colls] of this.collisions.entries()) {
         if (colls.length) {
           const source = this.indexes.get(index)!

@@ -38,7 +38,7 @@ import {
   SystemProduction,
   SystemUIResources,
   SystemNavigation,
-  SystemRender,
+  SystemRenderTextures,
   SystemSelection,
   SystemOrderMove,
   SystemFollowOrderMove,
@@ -114,7 +114,7 @@ const createCore = async () => {
   core.addSystem(new SystemFollowOrderBuild())
   core.addSystem(new SystemFollowOrderProduce())
   core.addSystem(new SystemRenderMap())
-  core.addSystem(new SystemRender())
+  core.addSystem(new SystemRenderTextures())
   core.addSystem(new SystemRenderOrders())
   core.addSystem(new SystemRenderIcons())
   core.addSystem(new SystemRenderHealth())
@@ -129,14 +129,28 @@ const createCore = async () => {
 window.addEventListener('load', async () => {
   const core = await createCore()
 
-  // add commanders
-  const players = core.getResource(ResourcePlayers)
-  for (const playerID of players.keys()) {
-    const commander = core.addEntity(entities.commander.build(playerID))
+  // // add commanders
+  // const players = core.getResource(ResourcePlayers)
+  // for (const playerID of players.keys()) {
+  //   const commander = core.addEntity(entities.commander.build(playerID))
 
-    core
-      .getComponent(ComponentPosition)
-      .set(commander, new ComponentPosition(64 * 16 + 64 * playerID, 64 * 16))
+  //   core
+  //     .getComponent(ComponentPosition)
+  //     .set(commander, new ComponentPosition(64 * 16 + 64 * playerID, 64 * 16))
+  // }
+
+  const d = Array(32)
+    .fill(0)
+    .map((_, i) => i)
+
+  for (const x of d) {
+    for (const y of d) {
+      const commander = core.addEntity(entities.commander.build(1))
+
+      core
+        .getComponent(ComponentPosition)
+        .set(commander, new ComponentPosition(64 * 16 + 32 * x, 64 * 16 + 32 * y))
+    }
   }
 
   // start game loop

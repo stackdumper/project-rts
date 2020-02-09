@@ -1,5 +1,10 @@
 import { System, Core } from '~/core'
-import { ResourceScene, ResourcePlacement, ResourceKeyboard } from '~/resources'
+import {
+  ResourceScene,
+  ResourcePlacement,
+  ResourceKeyboard,
+  ResourceCollisions,
+} from '~/resources'
 import { ComponentOrders, ComponentOwnership } from '~/components'
 import { Vector2 } from '~/math'
 
@@ -13,6 +18,7 @@ export class SystemOrderBuild extends System {
     const scene = core.getResource(ResourceScene)
     const placement = core.getResource(ResourcePlacement)
     const keyboard = core.getResource(ResourceKeyboard)
+    const collisions = core.getResource(ResourceCollisions)
 
     window.addEventListener('keydown', (k) => {
       if (k.keyCode === 27 && placement.template) {
@@ -22,7 +28,11 @@ export class SystemOrderBuild extends System {
     })
 
     scene.containers.viewport.addListener('click', (e) => {
-      if (placement.template) {
+      if (
+        placement.template &&
+        placement.placeholder &&
+        !collisions.has(placement.placeholder)
+      ) {
         // @ts-ignore
         const { x, y } = scene.containers.viewport.toLocal(e.data.originalEvent)
         const position = new Vector2(x, y)

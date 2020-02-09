@@ -1,13 +1,17 @@
-import * as PIXI from 'pixi.js'
-import { System, Entity, ComponentStorage } from '~/core'
+import { System, Entity, ComponentStorage, Core } from '~/core'
 import {
   ResourceScene,
   ResourcePlacement,
   ResourceCursor,
-  ResourcePlayers,
-  ResourceTextures,
+  ResourceCollisions,
 } from '~/resources'
-import { ComponentDimensions, ComponentOwnership, ComponentMobile } from '~/components'
+import {
+  ComponentDimensions,
+  ComponentOwnership,
+  ComponentIcon,
+  ComponentTexture,
+  ComponentPosition,
+} from '~/components'
 import { EntityTemplate } from '~/utils'
 
 /**
@@ -16,72 +20,73 @@ import { EntityTemplate } from '~/utils'
 export class SystemRenderPlacement extends System {
   static id = 'render-placement'
   static query = {
-    core: false,
-    components: [ComponentOwnership],
-    resources: [
-      ResourcePlacement,
-      ResourceTextures,
-      ResourceScene,
-      ResourceCursor,
-      ResourcePlayers,
-    ],
+    core: true,
+    components: [ComponentOwnership, ComponentPosition, ComponentTexture],
+    resources: [ResourcePlacement, ResourceScene, ResourceCursor, ResourceCollisions],
   }
 
   private renderedTemplate?: EntityTemplate
-  private renderedSprite?: PIXI.Sprite
 
   public dispatch(
-    _: never,
-    [Ownership]: [ComponentStorage<ComponentOwnership>],
-    [placement, textures, scene, cursor, players]: [
+    core: Core,
+    [Ownership, Position, Texture]: [
+      ComponentStorage<ComponentOwnership>,
+      ComponentStorage<ComponentPosition>,
+      ComponentStorage<ComponentTexture>,
+    ],
+    [placement, scene, cursor, collisions]: [
       ResourcePlacement,
-      ResourceTextures,
       ResourceScene,
       ResourceCursor,
-      ResourcePlayers,
+      ResourceCollisions,
     ],
   ) {
     // remove box
     if (
-      (!placement.template && this.renderedTemplate) ||
-      placement.template !== this.renderedTemplate
+      placement.placeholder &&
+      ((!placement.template && this.renderedTemplate) ||
+        placement.template !== this.renderedTemplate)
     ) {
-      scene.containers.viewport.removeChild(this.renderedSprite!)
+      core.removeEntity(placement.placeholder)
 
+      placement.placeholder = undefined
       this.renderedTemplate = undefined
-      this.renderedSprite = undefined
     }
 
     // add box
     if (placement.template && placement.template !== this.renderedTemplate) {
-      this.renderedTemplate = placement.template
-
+      const ownership = Ownership.get(placement.builder!)!
+      const position = placement.template.getComponent(ComponentPosition)
       const dimensions = placement.template.getComponent(ComponentDimensions)
-      const ownership = Ownership.get(placement.builder!)
+      const icon = placement.template.getComponent(ComponentIcon)
+      const texture = placement.template.getComponent(ComponentTexture)
 
-      if (dimensions) {
-        const sprite = new PIXI.Sprite(
-          textures.get(
-            placement.template.hasComponent(ComponentMobile) ? 'land' : 'ground',
-          ),
-        )
-        sprite.width = dimensions.width
-        sprite.height = dimensions.height
-        sprite.alpha = 0.5
-        sprite.anchor.set(0.5, 0.5)
-        sprite.tint = players.get(ownership!.playerID)!.color
-
-        scene.containers.viewport.addChild(sprite)
-        this.renderedSprite = sprite
-      }
+      placement.placeholder = core.addEntity([
+        ownership,
+        position,
+        dimensions,
+        texture,
+        icon,
+      ])
+      this.renderedTemplate = placement.template
     }
 
     // reposition box
-    if (placement.template && placement.template === this.renderedTemplate) {
-      // @ts-ignore
+    if (placement.placeholder && placement.template === this.renderedTemplate) {
+      // @ts-ignore update position
       const { x, y } = scene.containers.viewport.toLocal(cursor.position)
+      Position.get(placement.placeholder!)!.set(
+        Math.round(x / 16) * 16,
+        Math.round(y / 16) * 16,
+      )
 
-      this.renderedSprite!.position.set(Math.round(x / 16) * 16, Math.round(y / 16) * 16)
+      // dim if collides and can't be placed
+      const texture = Texture.get(placement.placeholder)!
+      if (collisions.has(placement.placeholder)) {
+        texture.alpha = 0.2
+      } else {
+        texture.alpha = 1
+      }
     }
   }
 }

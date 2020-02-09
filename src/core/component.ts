@@ -12,33 +12,58 @@ export abstract class Component {
 }
 
 /** ComponentStorage is used to store components with Entity as key */
-export class ComponentStorage<C extends Component = Component> extends Map<Entity, C> {
+export class ComponentStorage<C extends Component = any> extends Map<Entity, C> {
+  public iteration = 0
+
   constructor(public id: string) {
     super()
   }
 
+  // overwrite base methods to keep iteration number
+  public set = (k: Entity, v: C) => {
+    this.iteration += 1
+
+    return super.set(k, v)
+  }
+
+  public delete = (k: Entity) => {
+    this.iteration += 1
+
+    return super.delete(k)
+  }
+
+  public clear = () => {
+    this.iteration = 0
+
+    return super.clear()
+  }
+
+  // key for caching
+  public getKey = () => this.id + this.iteration
+
   static cache = new Map<string, Map<string, Component>>()
 
   /** ComponentStorage.join is used to join multiple component storages by entity */
-  // @ts-ignore
   static join: ComponentStorage.Join = (...storages: ComponentStorage[]) => {
-    const key = storages.map((s) => s.id + s.size).join('-')
+    // if exists, return cached
+    const key = storages.map((s) => s.getKey()).join('-')
     const cached = ComponentStorage.cache.get(key)
     if (cached) {
       return cached
     }
 
+    // perform intersection
     const joint = new Map()
-
     for (const key of intersection(...storages.map((s) => Array.from(s.keys())))) {
       const components = storages.map((storage) => storage.get(key))
 
       joint.set(key, components)
     }
 
+    // save to cache
     ComponentStorage.cache.set(key, joint)
 
-    return joint
+    return joint as any
   }
 }
 

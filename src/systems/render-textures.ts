@@ -11,15 +11,14 @@ import {
   ComponentDimensions,
   ComponentOwnership,
   ComponentDraft,
-  ComponentMobile,
   ComponentTexture,
 } from '~/components'
 
 /**
  * SystemRender is used to render game content into pixi.js scene.
  */
-export class SystemRender extends System {
-  static id = 'render'
+export class SystemRenderTextures extends System {
+  static id = 'render-textures'
   static query = {
     core: false,
     components: [
@@ -104,6 +103,13 @@ export class SystemRender extends System {
 
         sprite.tint = players.get(ownership.playerID)!.color
       }
+    }
+
+    // update existing entities
+    for (const [entity, texture] of Texture.entries()) {
+      // update alpha
+      const sprite = this.sprites.get(entity)!
+      sprite.alpha = texture.alpha
     }
 
     // scene.app.render()

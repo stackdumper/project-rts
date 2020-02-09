@@ -41,8 +41,8 @@ self.addEventListener('message', (message) => {
     const [x, y] = [pos[i], pos[i + 1]]
     const [width, height] = [dim[i], dim[i + 1]]
 
-    const halfWidth = width / 2
-    const halfHeight = height / 2
+    const halfWidth = (width - 1) / 2
+    const halfHeight = (height - 1) / 2
 
     items.set(i, {
       i,
