@@ -77,11 +77,14 @@ export class SystemFollowOrderBuild extends System {
             template,
           })
         } else if (entity && template) {
-          const draft = Draft.get(entity)!
+          const draft = Draft.get(entity)
 
           // if not yet completed,
           // fill draft with mass and energy
-          if (draft.mass < template.cost.mass || draft.energy < template.cost.energy) {
+          if (
+            draft &&
+            (draft.mass < template.cost.mass || draft.energy < template.cost.energy)
+          ) {
             const { cost } = template
             const { mass, energy } = resources.get(ownership.playerID)!
 

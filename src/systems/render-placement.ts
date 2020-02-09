@@ -17,7 +17,7 @@ export class SystemRenderPlacement extends System {
   static id = 'render-placement'
   static query = {
     core: false,
-    components: [ComponentOwnership, ComponentMobile],
+    components: [ComponentOwnership],
     resources: [
       ResourcePlacement,
       ResourceTextures,
@@ -32,10 +32,7 @@ export class SystemRenderPlacement extends System {
 
   public dispatch(
     _: never,
-    [Ownership, Mobile]: [
-      ComponentStorage<ComponentOwnership>,
-      ComponentStorage<ComponentMobile>,
-    ],
+    [Ownership]: [ComponentStorage<ComponentOwnership>],
     [placement, textures, scene, cursor, players]: [
       ResourcePlacement,
       ResourceTextures,

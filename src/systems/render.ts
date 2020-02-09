@@ -57,6 +57,8 @@ export class SystemRender extends System {
     for (const [entity, sprite] of this.sprites) {
       if (!Dimensions.has(entity)) {
         scene.containers.land.removeChild(sprite)
+        scene.containers.ground.removeChild(sprite)
+        this.sprites.delete(entity)
       }
     }
 

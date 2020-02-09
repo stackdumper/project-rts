@@ -44,12 +44,14 @@ export class SystemRenderIcons extends System {
     for (const [entity, sprite] of this.sprites) {
       // remove deleted entities
       if (!Icon.has(entity)) {
+        this.sprites.delete(entity)
         scene.containers.icons.removeChild(sprite)
-      } else {
-        const draft = Draft.get(entity)
-        if (draft) {
-          sprite.alpha = 0.2 + draft.percentage * 0.8
-        }
+        continue
+      }
+
+      const draft = Draft.get(entity)
+      if (draft) {
+        sprite.alpha = 0.2 + draft.percentage * 0.8
       }
 
       // make icon white if selected
@@ -58,7 +60,7 @@ export class SystemRenderIcons extends System {
       } else if (sprite.tint === 0xffffff) {
         const ownership = Ownership.get(entity)!
 
-        sprite.tint = players.get(ownership.playerID)!.color
+        sprite.tint = players.get(ownership!.playerID)?.color || 0x000000
       }
     }
 

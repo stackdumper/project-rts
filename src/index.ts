@@ -30,6 +30,7 @@ import {
   ResourceScene,
   ResourcePlayers,
   ResourcePlacement,
+  ResourceCollisions,
 } from '~/resources'
 import {
   SystemVelocity,
@@ -52,6 +53,7 @@ import {
   SystemRenderHealth,
   SystemRenderProgress,
   SystemVisibility,
+  SystemBuildQuadtree,
 } from '~/systems'
 import * as entities from '~/entities'
 
@@ -87,6 +89,7 @@ const createCore = async () => {
   await core.addResource(new ResourceClock())
   await core.addResource(new ResourceSelection())
   await core.addResource(new ResourcePlacement())
+  await core.addResource(new ResourceCollisions())
   await core.addResource(
     new ResourcePlayers(
       [
@@ -99,6 +102,7 @@ const createCore = async () => {
 
   // add systems
   core.addSystem(new SystemVelocity())
+  core.addSystem(new SystemBuildQuadtree())
   core.addSystem(new SystemVisibility())
   core.addSystem(new SystemProduction())
   core.addSystem(new SystemUIResources())
