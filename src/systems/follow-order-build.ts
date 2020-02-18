@@ -58,12 +58,12 @@ export class SystemFollowOrderBuild extends System {
         const { template, entity, position, playerID } = orders.current
 
         if (!entity) {
-          // set position to ordered
-          template.getComponent(ComponentPosition).set(position.x, position.y)
+          const components = template.build(playerID)
 
           // add entity
           const constructionEntity = core.addEntity([
-            ...template.build(playerID),
+            ...components,
+            new ComponentPosition(position.x, position.y),
             new ComponentDraft(),
           ])
 

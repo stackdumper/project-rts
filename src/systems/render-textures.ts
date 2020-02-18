@@ -89,12 +89,6 @@ export class SystemRenderTextures extends System {
       sprite!.position.x = position.x
       sprite!.position.y = position.y
 
-      // if draft, set opaque
-      const draft = Draft.get(entity)
-      if (draft) {
-        sprite.alpha = draft.percentage
-      }
-
       // make sprite white if selected
       if (selection.entity === entity) {
         sprite.tint = 0xffffff
@@ -105,13 +99,17 @@ export class SystemRenderTextures extends System {
       }
     }
 
-    // update existing entities
-    for (const [entity, texture] of Texture.entries()) {
-      // update alpha
-      const sprite = this.sprites.get(entity)!
-      sprite.alpha = texture.alpha
-    }
+    // update existing sprites
+    for (const [entity, sprite] of this.sprites) {
+      const texture = Texture.get(entity)
+      if (texture) {
+        sprite.alpha = texture.alpha
+      }
 
-    // scene.app.render()
+      const draft = Draft.get(entity)
+      if (draft) {
+        sprite.alpha = draft.percentage
+      }
+    }
   }
 }

@@ -2,7 +2,7 @@ import { Component, Entity } from '~/core'
 import { EntityTemplate } from '~/utils'
 import { Vector2 } from '~/math'
 
-type Order =
+export type Order =
   | {
       action: 'move'
       position: Vector2

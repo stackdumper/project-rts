@@ -5,7 +5,7 @@ import {
   ResourceKeyboard,
   ResourceCollisions,
 } from '~/resources'
-import { ComponentOrders, ComponentOwnership } from '~/components'
+import { ComponentOrders, ComponentOwnership, Order } from '~/components'
 import { Vector2 } from '~/math'
 
 /**
@@ -46,22 +46,20 @@ export class SystemOrderBuild extends System {
 
         const ownership = core.getComponent(ComponentOwnership).get(placement.builder!)!
 
+        // create order
+        const order: Order = {
+          action: 'construct',
+          template: placement.template,
+          position: position,
+          playerID: ownership.playerID,
+        }
+
         // if shift is pressed, add order to queue
         // else, override previous order
         if (keyboard.pressed.has(16)) {
-          orders.push({
-            action: 'construct',
-            template: placement.template,
-            position: position,
-            playerID: ownership.playerID,
-          })
+          orders.push(order)
         } else {
-          orders.set({
-            action: 'construct',
-            template: placement.template,
-            position: position,
-            playerID: ownership.playerID,
-          })
+          orders.set(order)
         }
 
         // finish placement if shift is not pressed
