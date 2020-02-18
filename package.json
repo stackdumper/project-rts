@@ -25,27 +25,27 @@
     "check": "prettier --check './!(node_modules|dist)/**/*.{ts,tsx,js,jsx}' && tsc --noEmit -p ."
   },
   "devDependencies": {
-    "@babel/core": "7.8.3",
+    "@babel/core": "7.8.4",
     "@babel/plugin-transform-runtime": "7.8.3",
-    "@types/jest": "24.9.0",
+    "@types/jest": "25.1.2",
     "@types/lodash.intersection": "4.4.6",
     "@types/nanoid": "2.1.0",
     "@types/stats.js": "0.17.0",
     "jest": "25.1.0",
-    "less": "3.10.3",
+    "less": "3.11.1",
     "parcel-bundler": "1.12.4",
     "parcel-plugin-clean-dist": "0.0.6",
     "prettier": "1.19.1",
     "stats.js": "0.17.0",
-    "ts-jest": "25.1.0",
+    "ts-jest": "25.2.0",
     "typescript": "3.7.5"
   },
   "dependencies": {
     "eventemitter3": "^4.0.0",
     "lodash.intersection": "^4.4.0",
-    "nanoid": "^2.1.10",
+    "nanoid": "^2.1.11",
     "pixi.js": "^5.2.1",
     "quadtree-lib": "^1.0.9",
-    "three": "^0.112.1"
+    "three": "^0.113.2"
   }
 }
