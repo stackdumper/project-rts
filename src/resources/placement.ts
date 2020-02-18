@@ -6,4 +6,5 @@ export class ResourcePlacement extends Resource {
 
   public template?: EntityTemplate
   public builder?: Entity
+  public placeholder?: Entity
 }

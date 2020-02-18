@@ -11,15 +11,14 @@ import {
   ComponentDimensions,
   ComponentOwnership,
   ComponentDraft,
-  ComponentMobile,
   ComponentTexture,
 } from '~/components'
 
 /**
  * SystemRender is used to render game content into pixi.js scene.
  */
-export class SystemRender extends System {
-  static id = 'render'
+export class SystemRenderTextures extends System {
+  static id = 'render-textures'
   static query = {
     core: false,
     components: [
@@ -57,6 +56,8 @@ export class SystemRender extends System {
     for (const [entity, sprite] of this.sprites) {
       if (!Dimensions.has(entity)) {
         scene.containers.land.removeChild(sprite)
+        scene.containers.ground.removeChild(sprite)
+        this.sprites.delete(entity)
       }
     }
 
@@ -88,12 +89,6 @@ export class SystemRender extends System {
       sprite!.position.x = position.x
       sprite!.position.y = position.y
 
-      // if draft, set opaque
-      const draft = Draft.get(entity)
-      if (draft) {
-        sprite.alpha = draft.percentage
-      }
-
       // make sprite white if selected
       if (selection.entity === entity) {
         sprite.tint = 0xffffff
@@ -104,6 +99,17 @@ export class SystemRender extends System {
       }
     }
 
-    // scene.app.render()
+    // update existing sprites
+    for (const [entity, sprite] of this.sprites) {
+      const texture = Texture.get(entity)
+      if (texture) {
+        sprite.alpha = texture.alpha
+      }
+
+      const draft = Draft.get(entity)
+      if (draft) {
+        sprite.alpha = draft.percentage
+      }
+    }
   }
 }

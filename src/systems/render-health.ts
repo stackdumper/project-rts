@@ -37,6 +37,7 @@ export class SystemRenderHealth extends System {
     // remove deleted entities
     for (const [entity, sprite] of this.sprites) {
       if (!Dimensions.has(entity)) {
+        this.sprites.delete(entity)
         scene.containers.health.removeChild(sprite)
       }
     }

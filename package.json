@@ -45,6 +45,7 @@
     "lodash.intersection": "^4.4.0",
     "nanoid": "^2.1.10",
     "pixi.js": "^5.2.1",
+    "quadtree-lib": "^1.0.9",
     "three": "^0.112.1"
   }
 }

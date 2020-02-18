@@ -30,6 +30,7 @@ import {
   ResourceScene,
   ResourcePlayers,
   ResourcePlacement,
+  ResourceCollisions,
 } from '~/resources'
 import {
   SystemVelocity,
@@ -37,7 +38,7 @@ import {
   SystemProduction,
   SystemUIResources,
   SystemNavigation,
-  SystemRender,
+  SystemRenderTextures,
   SystemSelection,
   SystemOrderMove,
   SystemFollowOrderMove,
@@ -52,6 +53,8 @@ import {
   SystemRenderHealth,
   SystemRenderProgress,
   SystemVisibility,
+  SystemCheckCollisions,
+  SystemResolveCollisions,
 } from '~/systems'
 import * as entities from '~/entities'
 
@@ -87,6 +90,7 @@ const createCore = async () => {
   await core.addResource(new ResourceClock())
   await core.addResource(new ResourceSelection())
   await core.addResource(new ResourcePlacement())
+  await core.addResource(new ResourceCollisions())
   await core.addResource(
     new ResourcePlayers(
       [
@@ -98,7 +102,9 @@ const createCore = async () => {
   )
 
   // add systems
+  core.addSystem(new SystemResolveCollisions())
   core.addSystem(new SystemVelocity())
+  core.addSystem(new SystemCheckCollisions())
   core.addSystem(new SystemVisibility())
   core.addSystem(new SystemProduction())
   core.addSystem(new SystemUIResources())
@@ -110,7 +116,7 @@ const createCore = async () => {
   core.addSystem(new SystemFollowOrderBuild())
   core.addSystem(new SystemFollowOrderProduce())
   core.addSystem(new SystemRenderMap())
-  core.addSystem(new SystemRender())
+  core.addSystem(new SystemRenderTextures())
   core.addSystem(new SystemRenderOrders())
   core.addSystem(new SystemRenderIcons())
   core.addSystem(new SystemRenderHealth())

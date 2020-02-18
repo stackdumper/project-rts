@@ -15,7 +15,7 @@ import { ResourceResources, ResourceClock } from '~/resources'
 export class SystemFollowOrderBuild extends System {
   static id = 'follow-order-build'
   static query = {
-    core: true,
+    core: false,
     components: [
       ComponentOrders,
       ComponentPosition,
@@ -28,7 +28,7 @@ export class SystemFollowOrderBuild extends System {
   }
 
   public dispatch(
-    core: Core,
+    _: never,
     [Orders, Position, Engineering, Ownership, Velocity, Draft]: [
       ComponentStorage<ComponentOrders>,
       ComponentStorage<ComponentPosition>,
@@ -53,57 +53,39 @@ export class SystemFollowOrderBuild extends System {
       // if in range, build
       // else, add move closer order
       if (distanceDiff < 5) {
+        // stop moving
         Velocity.get(e)!.set(0.0, 0.0)
 
-        const { template, entity, position, playerID } = orders.current
+        const { entity, template } = orders.current
 
-        if (!entity) {
-          // set position to ordered
-          template.getComponent(ComponentPosition).set(position.x, position.y)
+        // if not yet completed,
+        // fill draft with mass and energy
+        const draft = Draft.get(entity)
 
-          // add entity
-          const constructionEntity = core.addEntity([
-            ...template.build(playerID),
-            new ComponentDraft(),
-          ])
+        if (
+          draft &&
+          (draft.mass < template.cost.mass || draft.energy < template.cost.energy)
+        ) {
+          const { cost } = template
+          const { mass, energy } = resources.get(ownership.playerID)!
 
-          // set entity
-          orders.shift()
-          orders.unshift({
-            action: 'construct',
-            position: Position.get(constructionEntity)!,
-            entity: constructionEntity,
-            playerID,
-            template,
-          })
-        } else if (entity && template) {
-          const draft = Draft.get(entity)!
+          const neededMass = cost.mass / (cost.time / engineering.rate) / (60 * clock.dt)
+          const neededEnergy =
+            cost.energy / (cost.time / engineering.rate) / (60 * clock.dt)
 
-          // if not yet completed,
-          // fill draft with mass and energy
-          if (draft.mass < template.cost.mass || draft.energy < template.cost.energy) {
-            const { cost } = template
-            const { mass, energy } = resources.get(ownership.playerID)!
+          if (mass.current >= neededMass && energy.current >= neededEnergy) {
+            mass.current -= neededMass
+            energy.current -= neededEnergy
 
-            const neededMass =
-              cost.mass / (cost.time / engineering.rate) / (60 * clock.dt)
-            const neededEnergy =
-              cost.energy / (cost.time / engineering.rate) / (60 * clock.dt)
-
-            if (mass.current >= neededMass && energy.current >= neededEnergy) {
-              mass.current -= neededMass
-              energy.current -= neededEnergy
-
-              draft.mass += neededMass
-              draft.energy += neededEnergy
-              draft.percentage =
-                (draft.energy / cost.energy) * 0.5 + (draft.mass / cost.mass) * 0.5
-            }
-          } else {
-            // if completed, remove order
-            Draft.delete(entity)
-            orders.shift()
+            draft.mass += neededMass
+            draft.energy += neededEnergy
+            draft.percentage =
+              (draft.energy / cost.energy) * 0.5 + (draft.mass / cost.mass) * 0.5
           }
+        } else {
+          // if completed, remove order
+          Draft.delete(entity)
+          orders.shift()
         }
       } else {
         // move closer

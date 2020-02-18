@@ -2,7 +2,7 @@ import { Component, Entity } from '~/core'
 import { EntityTemplate } from '~/utils'
 import { Vector2 } from '~/math'
 
-type Order =
+export type Order =
   | {
       action: 'move'
       position: Vector2
@@ -10,9 +10,8 @@ type Order =
   | {
       action: 'construct'
       position: Vector2
+      entity: Entity
       template: EntityTemplate
-      playerID: number
-      entity?: Entity
     }
   | {
       action: 'produce'
