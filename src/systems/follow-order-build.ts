@@ -15,7 +15,7 @@ import { ResourceResources, ResourceClock } from '~/resources'
 export class SystemFollowOrderBuild extends System {
   static id = 'follow-order-build'
   static query = {
-    core: true,
+    core: false,
     components: [
       ComponentOrders,
       ComponentPosition,
@@ -28,7 +28,7 @@ export class SystemFollowOrderBuild extends System {
   }
 
   public dispatch(
-    core: Core,
+    _: never,
     [Orders, Position, Engineering, Ownership, Velocity, Draft]: [
       ComponentStorage<ComponentOrders>,
       ComponentStorage<ComponentPosition>,
