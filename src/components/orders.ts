@@ -10,9 +10,8 @@ export type Order =
   | {
       action: 'construct'
       position: Vector2
+      entity: Entity
       template: EntityTemplate
-      playerID: number
-      entity?: Entity
     }
   | {
       action: 'produce'
