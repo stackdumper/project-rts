@@ -7,7 +7,7 @@ export class EntityTemplate {
 
   constructor(
     public name: string,
-    public cost: { mass: number; energy: number; time: number },
+    public cost?: { mass: number; energy: number; time: number },
   ) {}
 
   public withComponents(components: Component[]) {

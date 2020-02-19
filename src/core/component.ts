@@ -33,13 +33,13 @@ export class ComponentStorage<C extends Component = any> extends Map<Entity, C> 
   }
 
   public clear = () => {
-    this.iteration = 0
+    this.iteration += 1
 
     return super.clear()
   }
 
   // key for caching
-  public getKey = () => this.id + this.iteration
+  public getKey = () => this.id + this.iteration + this.size
 
   static cache = new Map<string, Map<string, Component>>()
 

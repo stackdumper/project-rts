@@ -57,6 +57,7 @@ export class SystemRenderTextures extends System {
       if (!Dimensions.has(entity)) {
         scene.containers.land.removeChild(sprite)
         scene.containers.ground.removeChild(sprite)
+        scene.containers.projectile.removeChild(sprite)
         this.sprites.delete(entity)
       }
     }

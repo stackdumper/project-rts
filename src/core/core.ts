@@ -47,6 +47,15 @@ export class Core {
     return entity
   }
 
+  public addEntityLazy(components: Component[]) {
+    return new Promise((resolve) => {
+      // @ts-ignore
+      window.requestIdleCallback(() => {
+        resolve(this.addEntity(components))
+      })
+    })
+  }
+
   public removeEntity(entity: Entity) {
     // delete entity
     this.entities.delete(entity)
@@ -55,6 +64,15 @@ export class Core {
     for (const component of this.components.values()) {
       component.delete(entity)
     }
+  }
+
+  public removeEntityLazy(entity: Entity) {
+    return new Promise((resolve) => {
+      // @ts-ignore
+      window.requestIdleCallback(() => {
+        resolve(this.removeEntity(entity))
+      })
+    })
   }
 
   public async addResource(resource: Resource) {

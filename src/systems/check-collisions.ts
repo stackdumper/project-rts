@@ -1,6 +1,7 @@
-import { System, ComponentStorage } from '~/core'
-import { ComponentPosition, ComponentDimensions } from '~/components'
-import { ResourceCollisions } from '~/resources'
+import * as PIXI from 'pixi.js'
+import { System, ComponentStorage, Core } from '~/core'
+import { ComponentPosition, ComponentDimensions, ComponentOwnership } from '~/components'
+import { ResourceCollisions, ResourceScene } from '~/resources'
 
 /**
  * SystemCheckCollisions is responsible for checking collisions between entities.
@@ -9,8 +10,8 @@ export class SystemCheckCollisions extends System {
   static id = 'check-collisions'
   static query = {
     core: false,
-    components: [ComponentPosition, ComponentDimensions],
-    resources: [ResourceCollisions],
+    components: [ComponentPosition, ComponentDimensions, ComponentOwnership],
+    resources: [ResourceCollisions, ResourceScene],
   }
 
   private worker = new Worker('./check-collisions.worker.ts')
@@ -30,12 +31,31 @@ export class SystemCheckCollisions extends System {
 
   public dispatch(
     _: never,
-    [Position, Dimensions]: [
+    [Position, Dimensions, Ownership]: [
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentDimensions>,
+      ComponentStorage<ComponentOwnership>,
     ],
-    [collisions]: [ResourceCollisions],
+    [collisions, scene]: [ResourceCollisions, ResourceScene],
   ) {
+    // save collisions to resource
+    if (this.collisions) {
+      collisions.clear()
+
+      for (const [index, colls] of this.collisions.entries()) {
+        if (colls.length) {
+          const source = this.indexes.get(index)!
+
+          const targets = colls.map((index) => this.indexes.get(index)!)
+
+          collisions.set(source, targets)
+        }
+      }
+
+      this.collisions = undefined
+      this.indexes.clear()
+    }
+
     // send data for detecting collisions to worker
     if (!this.sent) {
       this.sent = true
@@ -50,6 +70,7 @@ export class SystemCheckCollisions extends System {
         Position,
         Dimensions,
       )) {
+        // get offset index
         const index = this.indexes.size
 
         // save index-entity relation
@@ -66,21 +87,26 @@ export class SystemCheckCollisions extends System {
 
       this.worker.postMessage({ pos, dim }, [pos.buffer, dim.buffer])
     }
-
-    // save collisions to resource
-    if (this.collisions) {
-      collisions.clear()
-
-      for (const [index, colls] of this.collisions.entries()) {
-        if (colls.length) {
-          const source = this.indexes.get(index)!
-          const targets = colls.map((index) => this.indexes.get(index)!)
-
-          collisions.set(source, targets)
-        }
-      }
-
-      this.collisions = undefined
-    }
   }
 }
+
+// // debug
+// for (const [entity, targets] of collisions.entries()) {
+//   const entityOwnership = Ownership.get(entity)
+//   const entityPosition = Position.get(entity)
+
+//   for (const target of targets) {
+//     const targetOwnership = Ownership.get(target)
+//     const targetPosition = Position.get(target)
+
+//     if (entityOwnership?.playerID === targetOwnership?.playerID) continue
+
+//     scene.containers.map.addChild(
+//       new PIXI.Graphics()
+//         .moveTo(entityPosition?.x || 0, entityPosition?.y || 0)
+//         .lineStyle(1, 0xffffff, 0.2)
+//         .lineTo(targetPosition?.x || 0, targetPosition?.y || 0)
+//         .endFill(),
+//     )
+//   }
+// }

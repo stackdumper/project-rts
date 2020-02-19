@@ -1,5 +1,5 @@
 import { System, Entity, ComponentStorage } from '~/core'
-import { ComponentPosition, ComponentMobile } from '~/components'
+import { ComponentPosition, ComponentMobile, ComponentProjectile } from '~/components'
 import { ResourceCollisions } from '~/resources'
 
 /**
@@ -9,31 +9,40 @@ export class SystemResolveCollisions extends System {
   static id = 'resolve-collisions'
   static query = {
     core: false,
-    components: [ComponentPosition, ComponentMobile],
+    components: [ComponentPosition, ComponentMobile, ComponentProjectile],
     resources: [ResourceCollisions],
   }
 
   public dispatch(
     _: never,
-    [Position, Mobile]: [
+    [Position, Mobile, Projectile]: [
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentMobile>,
+      ComponentStorage<ComponentProjectile>,
     ],
     [collisions]: [ResourceCollisions],
   ) {
     for (const [entity, [position, mobile]] of ComponentStorage.join(Position, Mobile)) {
-      const collision = collisions.get(entity)
-      if (collision && collision.length !== 0) {
-        const targetPosition = Position.get(collision[0])
+      // skip for projectile
+      if (Projectile.has(entity)) continue
 
-        if (targetPosition) {
-          const distance = position.distanceTo(targetPosition)
-          const normal = position
-            .clone()
-            .sub(targetPosition)
-            .normalize()
+      const collided = collisions.get(entity)
+      if (collided && collided.length !== 0) {
+        for (const collision of collided) {
+          // skip for projectile
+          if (Projectile.has(collision)) continue
 
-          position.add(normal.divideScalar(distance).multiplyScalar(mobile.speed * 10))
+          const targetPosition = Position.get(collision)
+
+          if (targetPosition) {
+            const distance = position.distanceTo(targetPosition)
+            const normal = position
+              .clone()
+              .sub(targetPosition)
+              .normalize()
+
+            position.add(normal.divideScalar(distance).multiplyScalar(mobile.speed * 10))
+          }
         }
       }
     }
