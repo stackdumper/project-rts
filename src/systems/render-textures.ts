@@ -58,6 +58,8 @@ export class SystemRenderTextures extends System {
         scene.containers.land.removeChild(sprite)
         scene.containers.ground.removeChild(sprite)
         scene.containers.projectile.removeChild(sprite)
+        sprite.destroy()
+
         this.sprites.delete(entity)
       }
     }

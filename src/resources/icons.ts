@@ -11,6 +11,7 @@ export class ResourceIcons extends Map<keyof typeof ResourceIcons.graphics, PIXI
     generator: require('~/icons/generator.png'),
     extractor: require('~/icons/extractor.png'),
     landFactory: require('~/icons/land-factory.png'),
+    assaultBot: require('~/icons/assault-bot.png'),
   }
 
   public initialize() {

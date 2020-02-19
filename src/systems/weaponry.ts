@@ -51,11 +51,14 @@ export class SystemWeaponry extends System {
         targetEntity,
         [targetOwnership, targetPosition, _Health],
       ] of ComponentStorage.join(Ownership, Position, Health)) {
+        // skip if the same entity or have same ownership
         if (entity === targetEntity || ownership.playerID === targetOwnership.playerID) {
           continue
         }
 
-        if (position.distanceTo(targetPosition) > weaponry.range) {
+        // skip is out of firing range
+        const distance = position.distanceTo(targetPosition)
+        if (distance > weaponry.range) {
           continue
         }
 
@@ -64,20 +67,28 @@ export class SystemWeaponry extends System {
           .clone()
           .sub(position.clone())
           .normalize()
+          .multiplyScalar(weaponry.speed)
 
+        // add entity lazily to prevent lag when adding many projectiles
         core.addEntityLazy([
           new ComponentOwnership(ownership.playerID),
           new ComponentPosition(position.x, position.y),
           new ComponentVelocity(velocity.x, velocity.y),
           new ComponentDimensions(2, 2),
           new ComponentTexture('projectile'),
-          new ComponentProjectile(weaponry.damage),
+          new ComponentProjectile(
+            weaponry.damage,
+            distance / weaponry.speed + 32 / weaponry.speed,
+          ),
         ])
 
+        weaponry.cooldown = weaponry.reload
         break
       }
 
-      weaponry.cooldown = weaponry.reload
+      if (weaponry.cooldown <= 0) {
+        weaponry.cooldown = weaponry.reload / 3
+      }
     }
   }
 }

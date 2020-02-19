@@ -62,6 +62,7 @@ import {
   SystemHealth,
 } from '~/systems'
 import * as entities from '~/entities'
+import { Vector2 } from 'three/src/math/Vector2'
 
 const createCore = async () => {
   const core = new Core()
@@ -109,9 +110,9 @@ const createCore = async () => {
   )
 
   // add systems
-  core.addSystem(new SystemResolveCollisions())
   core.addSystem(new SystemVelocity())
   core.addSystem(new SystemCheckCollisions())
+  core.addSystem(new SystemResolveCollisions())
   core.addSystem(new SystemVisibility())
   core.addSystem(new SystemProduction())
   core.addSystem(new SystemUIResources())
@@ -141,39 +142,61 @@ const createCore = async () => {
 window.addEventListener('load', async () => {
   const core = await createCore()
 
-  // // add commanders
-  // const players = core.getResource(ResourcePlayers)
-  // for (const playerID of players.keys()) {
-  //   const commander = core.addEntity(entities.commander.build(playerID))
+  // add commanders
+  const players = core.getResource(ResourcePlayers)
+  for (const playerID of players.keys()) {
+    const commander = core.addEntity(entities.commander.build(playerID))
 
-  //   core
-  //     .getComponent(ComponentPosition)
-  //     .set(commander, new ComponentPosition(64 * 16 + 64 * playerID, 64 * 16))
+    core
+      .getComponent(ComponentPosition)
+      .set(commander, new ComponentPosition(64 * 16 + 64 * playerID, 64 * 16))
+  }
+
+  // const d = Array(10)
+  //   .fill(0)
+  //   .map((_, i) => i)
+
+  // const size = 64 * 16
+
+  // for (const x of d) {
+  //   for (const y of d) {
+  //     const commander = core.addEntity(entities.assaultBot.build(1))
+
+  //     core
+  //       .getComponent(ComponentPosition)
+  //       .set(commander, new ComponentPosition(Math.random() * size, Math.random() * size))
+
+  //     for (let x = 0; x < 5; x++) {
+  //       core
+  //         .getComponent(ComponentOrders)
+  //         .get(commander)!
+  //         .push({
+  //           action: 'move',
+  //           position: new Vector2(Math.random() * size, Math.random() * size),
+  //         })
+  //     }
+  //   }
   // }
 
-  const d = Array(16)
-    .fill(0)
-    .map((_, i) => i)
+  // for (const x of d) {
+  //   for (const y of d) {
+  //     const commander = core.addEntity(entities.assaultBot.build(2))
 
-  for (const x of d) {
-    for (const y of d) {
-      const commander = core.addEntity(entities.commander.build(1))
+  //     core
+  //       .getComponent(ComponentPosition)
+  //       .set(commander, new ComponentPosition(Math.random() * size, Math.random() * size))
 
-      core
-        .getComponent(ComponentPosition)
-        .set(commander, new ComponentPosition(20 * 16 + 32 * x, 64 * 16 + 32 * y))
-    }
-  }
-
-  for (const x of d) {
-    for (const y of d) {
-      const commander = core.addEntity(entities.commander.build(2))
-
-      core
-        .getComponent(ComponentPosition)
-        .set(commander, new ComponentPosition(80 * 16 + 32 * x, 64 * 16 + 32 * y))
-    }
-  }
+  //     for (let x = 0; x < 5; x++) {
+  //       core
+  //         .getComponent(ComponentOrders)
+  //         .get(commander)!
+  //         .push({
+  //           action: 'move',
+  //           position: new Vector2(Math.random() * size, Math.random() * size),
+  //         })
+  //     }
+  //   }
+  // }
 
   // start game loop
   const clock = core.getResource(ResourceClock)

@@ -7,7 +7,7 @@ import {
   ComponentPosition,
   ComponentVelocity,
 } from '~/components'
-import { ResourceCollisions, ResourceScene } from '~/resources'
+import { ResourceCollisions, ResourceScene, ResourceClock } from '~/resources'
 
 /**
  * SystemProjectile is responsible for controling projectiles.
@@ -16,31 +16,29 @@ export class SystemProjectile extends System {
   static id = 'projectile'
   static query = {
     core: true,
-    components: [
-      ComponentProjectile,
-      ComponentOwnership,
-      ComponentHealth,
-      ComponentPosition,
-      ComponentVelocity,
-    ],
-    resources: [ResourceCollisions, ResourceScene],
+    components: [ComponentProjectile, ComponentOwnership, ComponentHealth],
+    resources: [ResourceCollisions, ResourceClock],
   }
 
   public dispatch(
     core: Core,
-    [Projectile, Ownership, Health, Position, Velocity]: [
+    [Projectile, Ownership, Health]: [
       ComponentStorage<ComponentProjectile>,
       ComponentStorage<ComponentOwnership>,
       ComponentStorage<ComponentHealth>,
-      ComponentStorage<ComponentPosition>,
-      ComponentStorage<ComponentVelocity>,
     ],
-    [collisions, scene]: [ResourceCollisions, ResourceScene],
+    [collisions, clock]: [ResourceCollisions, ResourceClock],
   ) {
     for (const [entity, [projectile, ownership]] of ComponentStorage.join(
       Projectile,
       Ownership,
     )) {
+      projectile.ttl -= clock.dt
+      if (projectile.ttl <= 0) {
+        core.removeEntityLazy(entity)
+        continue
+      }
+
       const [target] = collisions.get(entity) || []
       if (!target) continue
 

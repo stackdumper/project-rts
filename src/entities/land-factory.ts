@@ -11,6 +11,7 @@ import {
   ComponentHealth,
 } from '~/components'
 import { engineer } from './engineer'
+import { assaultBot } from './assault-bot'
 
 export const landFactory = new EntityTemplate('Land Factory', {
   mass: 210,
@@ -21,7 +22,7 @@ export const landFactory = new EntityTemplate('Land Factory', {
   new ComponentIcon('landFactory', 1.3),
   new ComponentTexture('ground'),
   new ComponentHealth(4800),
-  new ComponentProductionOptions([engineer]),
+  new ComponentProductionOptions([engineer, assaultBot]),
   new ComponentDimensions(128, 128),
   new ComponentSelectable(),
   new ComponentOrders(),
