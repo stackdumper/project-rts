@@ -10,6 +10,8 @@ import {
   ComponentTexture,
   ComponentHealth,
   ComponentWeaponry,
+  ComponentCollidable,
+  ComponentRigid,
 } from '~/components'
 
 export const assaultBot = new EntityTemplate('Assault Bot', {
@@ -27,4 +29,6 @@ export const assaultBot = new EntityTemplate('Assault Bot', {
   new ComponentSelectable(),
   new ComponentOrders(),
   new ComponentWeaponry(14 * 16, 60 / 3, 7, 5),
+  new ComponentCollidable(),
+  new ComponentRigid(),
 ])

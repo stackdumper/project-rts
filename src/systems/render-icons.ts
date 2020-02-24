@@ -55,7 +55,7 @@ export class SystemRenderIcons extends System {
       }
 
       // make icon white if selected
-      if (selection.entity === entity) {
+      if (selection.has(entity)) {
         sprite.tint = 0xffffff
       } else if (sprite.tint === 0xffffff) {
         const ownership = Ownership.get(entity)!

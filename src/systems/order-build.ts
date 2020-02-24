@@ -11,6 +11,7 @@ import {
   Order,
   ComponentPosition,
   ComponentDraft,
+  ComponentRigid,
 } from '~/components'
 import { Vector2 } from '~/math'
 
@@ -51,11 +52,13 @@ export class SystemOrderBuild extends System {
         const ownership = core.getComponent(ComponentOwnership).get(placement.builder!)!
 
         // add draft entity
-        const constructionEntity = core.addEntity([
-          ...placement.template.build(ownership.playerID),
-          new ComponentPosition(position.x, position.y),
-          new ComponentDraft(),
-        ])
+        const constructionEntity = core.addEntity(
+          [
+            ...placement.template.build(ownership.playerID),
+            new ComponentPosition(position.x, position.y),
+            new ComponentDraft(),
+          ].filter((t) => !(t instanceof ComponentRigid)),
+        )
 
         // add new order to builder orders queue
         const orders = core.getComponent(ComponentOrders).get(placement.builder!)!

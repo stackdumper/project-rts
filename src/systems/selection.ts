@@ -1,5 +1,10 @@
 import { System, ComponentStorage, Core } from '~/core'
-import { ResourceSelection, ResourceScene, ResourcePlacement } from '~/resources'
+import {
+  ResourceSelection,
+  ResourceScene,
+  ResourcePlacement,
+  ResourceKeyboard,
+} from '~/resources'
 import { ComponentPosition, ComponentSelectable, ComponentDimensions } from '~/components'
 
 /**
@@ -11,6 +16,7 @@ export class SystemSelection extends System {
   public initialize(core: Core) {
     const scene = core.getResource(ResourceScene)
     const placement = core.getResource(ResourcePlacement)
+    const keyboard = core.getResource(ResourceKeyboard)
 
     scene.view.addEventListener('mousedown', (e) => {
       if (e.which === 3) return
@@ -24,8 +30,10 @@ export class SystemSelection extends System {
       // get selection resource
       const selection = core.getResource(ResourceSelection)
 
-      // reset selection
-      selection.entity = undefined
+      // reset selection if shift is not pressed
+      if (!keyboard.pressed.has(16)) {
+        selection.clear()
+      }
 
       // transform global on-screen click coordinates to local ones
       // @ts-ignored
@@ -47,9 +55,7 @@ export class SystemSelection extends System {
           clickY < position.y + dimensions.max.y
 
         if (intersects) {
-          selection.entity = entity
-
-          break
+          selection.add(entity)
         }
       }
     })

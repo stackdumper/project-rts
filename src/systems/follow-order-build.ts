@@ -6,6 +6,7 @@ import {
   ComponentDraft,
   ComponentVelocity,
   ComponentOwnership,
+  ComponentRigid,
 } from '~/components'
 import { ResourceResources, ResourceClock } from '~/resources'
 
@@ -23,19 +24,21 @@ export class SystemFollowOrderBuild extends System {
       ComponentOwnership,
       ComponentVelocity,
       ComponentDraft,
+      ComponentRigid,
     ],
     resources: [ResourceClock, ResourceResources],
   }
 
   public dispatch(
     _: never,
-    [Orders, Position, Engineering, Ownership, Velocity, Draft]: [
+    [Orders, Position, Engineering, Ownership, Velocity, Draft, Rigid]: [
       ComponentStorage<ComponentOrders>,
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentEngineering>,
       ComponentStorage<ComponentOwnership>,
       ComponentStorage<ComponentVelocity>,
       ComponentStorage<ComponentDraft>,
+      ComponentStorage<ComponentRigid>,
     ],
     [clock, resources]: [ResourceClock, ResourceResources],
   ) {
@@ -66,6 +69,10 @@ export class SystemFollowOrderBuild extends System {
           draft &&
           (draft.mass < template.cost.mass || draft.energy < template.cost.energy)
         ) {
+          if (!Rigid.has(entity)) {
+            Rigid.set(entity, new ComponentRigid())
+          }
+
           const { cost } = template
           const { mass, energy } = resources.get(ownership.playerID)!
 
@@ -96,7 +103,7 @@ export class SystemFollowOrderBuild extends System {
               .clone()
               .sub(position)
               .normalize()
-              .multiplyScalar(distanceDiff),
+              .multiplyScalar(distanceDiff + 64),
           ),
         })
       }

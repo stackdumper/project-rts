@@ -13,6 +13,8 @@ import {
   ComponentTexture,
   ComponentHealth,
   ComponentWeaponry,
+  ComponentCollidable,
+  ComponentRigid,
 } from '~/components'
 import { extractor, generator, landFactory } from '~/entities'
 
@@ -35,4 +37,6 @@ export const commander = new EntityTemplate('Commander', {
   // new ComponentEngineering(100),
   new ComponentProducer(1, 20),
   new ComponentWeaponry(300, 100, 100, 4),
+  new ComponentCollidable(),
+  new ComponentRigid(),
 ])

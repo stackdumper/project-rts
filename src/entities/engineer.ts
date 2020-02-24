@@ -11,6 +11,8 @@ import {
   ComponentBuildOptions,
   ComponentTexture,
   ComponentHealth,
+  ComponentCollidable,
+  ComponentRigid,
 } from '~/components'
 import { extractor, generator } from '~/entities'
 
@@ -30,4 +32,6 @@ export const engineer = new EntityTemplate('Engineer', {
   new ComponentOrders(),
   new ComponentEngineering(10),
   new ComponentBuildOptions([extractor, generator]),
+  new ComponentCollidable(),
+  new ComponentRigid(),
 ])

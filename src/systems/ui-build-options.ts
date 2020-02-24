@@ -34,17 +34,19 @@ export class SystemUIBuildOptions extends System {
     [BuildOptions]: [ComponentStorage<ComponentBuildOptions>],
     [selection, placement]: [ResourceSelection, ResourcePlacement],
   ) {
+    const [entity] = Array.from(selection)
+
     // clear
     if (
-      (this.renderedEntity && !selection.entity) ||
-      (this.renderedEntity && this.renderedEntity !== selection.entity)
+      (this.renderedEntity && !entity) ||
+      (this.renderedEntity && this.renderedEntity !== entity)
     ) {
       this.renderedEntity = undefined
     }
 
     // render
-    if (!this.renderedEntity && selection.entity) {
-      const buildOptions = BuildOptions.get(selection.entity)
+    if (!this.renderedEntity && entity) {
+      const buildOptions = BuildOptions.get(entity)
       if (!buildOptions) return
 
       // clear container
@@ -55,13 +57,13 @@ export class SystemUIBuildOptions extends System {
 
         element.onclick = () => {
           placement.template = template
-          placement.builder = selection.entity
+          placement.builder = entity
         }
 
         this.container.appendChild(element)
       }
 
-      this.renderedEntity = selection.entity
+      this.renderedEntity = entity
     }
   }
 }

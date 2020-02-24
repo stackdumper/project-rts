@@ -1,5 +1,11 @@
 import { System, Entity, ComponentStorage } from '~/core'
-import { ComponentPosition, ComponentMobile, ComponentProjectile } from '~/components'
+import {
+  ComponentPosition,
+  ComponentMobile,
+  ComponentProjectile,
+  ComponentRigid,
+  ComponentDimensions,
+} from '~/components'
 import { ResourceCollisions } from '~/resources'
 import { Vector2 } from 'three/src/math/Vector2'
 
@@ -10,41 +16,45 @@ export class SystemResolveCollisions extends System {
   static id = 'resolve-collisions'
   static query = {
     core: false,
-    components: [ComponentPosition, ComponentMobile, ComponentProjectile],
+    components: [ComponentMobile, ComponentRigid, ComponentPosition, ComponentDimensions],
     resources: [ResourceCollisions],
   }
 
   public dispatch(
     _: never,
-    [Position, Mobile, Projectile]: [
-      ComponentStorage<ComponentPosition>,
+    [Mobile, Rigid, Position, Dimensions]: [
       ComponentStorage<ComponentMobile>,
-      ComponentStorage<ComponentProjectile>,
+      ComponentStorage<ComponentRigid>,
+      ComponentStorage<ComponentPosition>,
+      ComponentStorage<ComponentDimensions>,
     ],
     [collisions]: [ResourceCollisions],
   ) {
-    for (const [entity, [position, mobile]] of ComponentStorage.join(Position, Mobile)) {
-      // skip for projectile
-      if (Projectile.has(entity)) continue
+    const sources = ComponentStorage.join(Mobile, Rigid, Position, Dimensions)
+    const targets = ComponentStorage.join(Rigid, Position, Dimensions)
 
+    for (const [entity, [_mobile, _rigid, position, dimensions]] of sources) {
       const collided = collisions.get(entity)
-      if (collided && collided.length !== 0) {
-        for (const collision of collided) {
-          // skip for projectile
-          if (Projectile.has(collision)) continue
 
-          const targetPosition = Position.get(collision)
+      // resolve each collision
+      for (const collision of collided || []) {
+        // get target components
+        const [_rigid, targetPosition, targetDimensions] = targets.get(collision) || []
 
-          if (targetPosition) {
-            const distance = position.distanceTo(targetPosition)
-            const normal = position
-              .clone()
-              .sub(targetPosition)
-              .add(new Vector2((Math.random() - 1) * 0.1, (Math.random() - 1) * 0.1))
-              .normalize()
+        // resolve if has eligible
+        if (targetPosition && targetDimensions) {
+          const distance = position.distanceTo(targetPosition)
+          const penetration = Math.abs(
+            distance - (dimensions.width / 2 + targetDimensions.width / 2),
+          )
 
-            position.add(normal.divideScalar(distance).multiplyScalar(6))
-          }
+          const normal = position
+            .clone()
+            .sub(targetPosition)
+            .add(new Vector2((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10))
+            .normalize()
+
+          position.add(normal.multiplyScalar(penetration * 0.003).multiplyScalar(6))
         }
       }
     }

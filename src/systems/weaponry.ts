@@ -10,6 +10,7 @@ import {
   ComponentProjectile,
 } from '~/components'
 import { ResourceClock } from '~/resources'
+import { Vector2 } from 'three/src/math/Vector2'
 
 /**
  * SystemWeaponry is responsible for targeting and firing projectiles at hostile entities.
@@ -65,12 +66,13 @@ export class SystemWeaponry extends System {
         // calculate velocity
         const velocity = targetPosition
           .clone()
+          .add(new Vector2((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4))
           .sub(position.clone())
           .normalize()
           .multiplyScalar(weaponry.speed)
 
-        // add entity lazily to prevent lag when adding many projectiles
-        core.addEntityLazy([
+        // add projectile to world
+        core.addEntity([
           new ComponentOwnership(ownership.playerID),
           new ComponentPosition(position.x, position.y),
           new ComponentVelocity(velocity.x, velocity.y),
@@ -78,7 +80,7 @@ export class SystemWeaponry extends System {
           new ComponentTexture('projectile'),
           new ComponentProjectile(
             weaponry.damage,
-            distance / weaponry.speed + 32 / weaponry.speed,
+            distance / weaponry.speed + (32 / weaponry.speed) * Math.random(),
           ),
         ])
 

@@ -1,7 +1,6 @@
-import * as PIXI from 'pixi.js'
-import { System, ComponentStorage, Core } from '~/core'
-import { ComponentPosition, ComponentDimensions, ComponentOwnership } from '~/components'
-import { ResourceCollisions, ResourceScene } from '~/resources'
+import { System, ComponentStorage } from '~/core'
+import { ComponentPosition, ComponentDimensions, ComponentCollidable } from '~/components'
+import { ResourceCollisions } from '~/resources'
 
 /**
  * SystemCheckCollisions is responsible for checking collisions between entities.
@@ -10,8 +9,8 @@ export class SystemCheckCollisions extends System {
   static id = 'check-collisions'
   static query = {
     core: false,
-    components: [ComponentPosition, ComponentDimensions, ComponentOwnership],
-    resources: [ResourceCollisions, ResourceScene],
+    components: [ComponentCollidable, ComponentPosition, ComponentDimensions],
+    resources: [ResourceCollisions],
   }
 
   private worker = new Worker('./check-collisions.worker.ts')
@@ -31,12 +30,12 @@ export class SystemCheckCollisions extends System {
 
   public dispatch(
     _: never,
-    [Position, Dimensions, Ownership]: [
+    [Collidable, Position, Dimensions]: [
+      ComponentStorage<ComponentCollidable>,
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentDimensions>,
-      ComponentStorage<ComponentOwnership>,
     ],
-    [collisions, scene]: [ResourceCollisions, ResourceScene],
+    [collisions]: [ResourceCollisions],
   ) {
     // save collisions to resource
     if (this.collisions) {
@@ -66,7 +65,8 @@ export class SystemCheckCollisions extends System {
       const pos = new Float64Array(Position.size * 2)
       const dim = new Float64Array(Position.size * 2)
 
-      for (const [entity, [position, dimensions]] of ComponentStorage.join(
+      for (const [entity, [_, position, dimensions]] of ComponentStorage.join(
+        Collidable,
         Position,
         Dimensions,
       )) {

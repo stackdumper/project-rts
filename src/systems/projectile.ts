@@ -35,7 +35,7 @@ export class SystemProjectile extends System {
     )) {
       projectile.ttl -= clock.dt
       if (projectile.ttl <= 0) {
-        core.removeEntityLazy(entity)
+        core.removeEntity(entity)
         continue
       }
 
@@ -53,7 +53,10 @@ export class SystemProjectile extends System {
       const targetOwnership = Ownership.get(target)
       if (!targetOwnership || targetOwnership.playerID === ownership.playerID) continue
 
+      // make damage
       targetHealth.current -= projectile.damage
+
+      // remove projectile
       core.removeEntity(entity)
     }
   }

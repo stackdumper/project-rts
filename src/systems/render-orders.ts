@@ -15,12 +15,11 @@ export class SystemRenderOrders extends System {
   }
 
   // colors for each order type
+  private graphics = new PIXI.Graphics()
   private colors = {
     move: 0x1b9cfc,
     construct: 0xeab543,
   }
-  private renderedEntity?: Entity
-  private graphics = new PIXI.Graphics()
 
   private drawGraphics(orders: ComponentOrders, position: ComponentPosition) {
     // start at the entity position
@@ -68,23 +67,36 @@ export class SystemRenderOrders extends System {
 
   public dispatch(
     _: never,
-    components: [ComponentStorage<ComponentOrders>, ComponentStorage<ComponentPosition>],
+    [Orders, Position]: [
+      ComponentStorage<ComponentOrders>,
+      ComponentStorage<ComponentPosition>,
+    ],
     [selection]: [ResourceSelection],
   ) {
-    const orders = selection.entity ? components[0].get(selection.entity)! : undefined
+    // clear graphics
+    this.graphics.clear()
 
-    // clear orders if entity is being selected or is deselected
-    if (selection.entity || (!selection.entity && this.renderedEntity)) {
-      this.graphics.clear()
-      this.renderedEntity = undefined
+    for (const entity of selection) {
+      const orders = Orders.get(entity)
+      const position = Position.get(entity)
+
+      if (orders && position) {
+        this.drawGraphics(orders, position)
+      }
     }
 
-    // draw orders if entity is selected
-    if (selection.entity && orders) {
-      const position = components[1].get(selection.entity!)
-
-      this.drawGraphics(orders!, position!)
-      this.renderedEntity = selection.entity
-    }
+    // clear missing entities
+    // const orders = selection.entity ? components[0].get(selection.entity)! : undefined
+    // // clear orders if entity is being selected or is deselected
+    // if (selection.entity || (!selection.entity && this.renderedEntity)) {
+    //   this.graphics.clear()
+    //   this.renderedEntity = undefined
+    // }
+    // // draw orders if entity is selected
+    // if (selection.entity && orders) {
+    //   const position = components[1].get(selection.entity!)
+    //   this.drawGraphics(orders!, position!)
+    //   this.renderedEntity = selection.entity
+    // }
   }
 }

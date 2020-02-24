@@ -1,7 +1,7 @@
 import { Resource, Entity } from '~/core'
 
-export class ResourceSelection extends Resource {
+export class ResourceSelection extends Set<Entity> implements Resource {
   static id = 'selection'
 
-  public entity?: Entity
+  public initialize() {}
 }

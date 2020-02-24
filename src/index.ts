@@ -18,6 +18,8 @@ import {
   ComponentHealth,
   ComponentWeaponry,
   ComponentProjectile,
+  ComponentCollidable,
+  ComponentRigid,
 } from '~/components'
 import {
   ResourceKeyboard,
@@ -62,7 +64,6 @@ import {
   SystemHealth,
 } from '~/systems'
 import * as entities from '~/entities'
-import { Vector2 } from 'three/src/math/Vector2'
 
 const createCore = async () => {
   const core = new Core()
@@ -85,6 +86,8 @@ const createCore = async () => {
   core.addComponent(ComponentHealth)
   core.addComponent(ComponentWeaponry)
   core.addComponent(ComponentProjectile)
+  core.addComponent(ComponentCollidable)
+  core.addComponent(ComponentRigid)
 
   // add resources
   await core.addResource(new ResourceKeyboard())
@@ -152,6 +155,20 @@ window.addEventListener('load', async () => {
       .set(commander, new ComponentPosition(64 * 16 + 64 * playerID, 64 * 16))
   }
 
+  // const d = Array(32)
+  //   .fill(0)
+  //   .map((_, i) => i)
+
+  // for (const x of d) {
+  //   for (const y of d) {
+  //     const commander = core.addEntity(entities.commander.build(1))
+
+  //     core
+  //       .getComponent(ComponentPosition)
+  //       .set(commander, new ComponentPosition(64 * 16 + 32 * x, 64 * 16 + 32 * y))
+  //   }
+  // }
+
   // const d = Array(10)
   //   .fill(0)
   //   .map((_, i) => i)
@@ -207,17 +224,3 @@ window.addEventListener('load', async () => {
     core.dispatch()
   })
 })
-
-// const d = Array(32)
-//   .fill(0)
-//   .map((_, i) => i)
-
-// for (const x of d) {
-//   for (const y of d) {
-//     const commander = core.addEntity(entities.commander.build(1))
-
-//     core
-//       .getComponent(ComponentPosition)
-//       .set(commander, new ComponentPosition(64 * 16 + 32 * x, 64 * 16 + 32 * y))
-//   }
-// }
