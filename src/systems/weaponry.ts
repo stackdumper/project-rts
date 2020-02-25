@@ -8,6 +8,7 @@ import {
   ComponentDimensions,
   ComponentTexture,
   ComponentProjectile,
+  ComponentCollidable,
 } from '~/components'
 import { ResourceClock } from '~/resources'
 import { Vector2 } from 'three/src/math/Vector2'
@@ -82,6 +83,7 @@ export class SystemWeaponry extends System {
             weaponry.damage,
             distance / weaponry.speed + (32 / weaponry.speed) * Math.random(),
           ),
+          new ComponentCollidable(),
         ])
 
         weaponry.cooldown = weaponry.reload

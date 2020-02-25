@@ -1,5 +1,5 @@
-import { Component } from './core'
-import { ComponentOwnership } from './components'
+import { Component } from '../core'
+import { ComponentOwnership } from '../components'
 
 export class EntityTemplate {
   public components = new Map<string, Component>()

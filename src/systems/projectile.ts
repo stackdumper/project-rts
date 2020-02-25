@@ -1,13 +1,6 @@
-import * as PIXI from 'pixi.js'
 import { System, ComponentStorage, Core } from '~/core'
-import {
-  ComponentOwnership,
-  ComponentProjectile,
-  ComponentHealth,
-  ComponentPosition,
-  ComponentVelocity,
-} from '~/components'
-import { ResourceCollisions, ResourceScene, ResourceClock } from '~/resources'
+import { ComponentOwnership, ComponentProjectile, ComponentHealth } from '~/components'
+import { ResourceCollisions, ResourceClock } from '~/resources'
 
 /**
  * SystemProjectile is responsible for controling projectiles.

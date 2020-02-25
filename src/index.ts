@@ -165,7 +165,10 @@ window.addEventListener('load', async () => {
 
   //     core
   //       .getComponent(ComponentPosition)
-  //       .set(commander, new ComponentPosition(64 * 16 + 32 * x, 64 * 16 + 32 * y))
+  //       .set(
+  //         commander,
+  //         new ComponentPosition(Math.random() * 64 * 32, Math.random() * 64 * 32),
+  //       )
   //   }
   // }
 

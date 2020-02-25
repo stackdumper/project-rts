@@ -1,6 +1,7 @@
-import { System, ComponentStorage } from '~/core'
+import { System, ComponentStorage, Core } from '~/core'
 import { ComponentPosition, ComponentDimensions, ComponentCollidable } from '~/components'
 import { ResourceCollisions } from '~/resources'
+import { WorkerPool } from '~/utils'
 
 /**
  * SystemCheckCollisions is responsible for checking collisions between entities.
@@ -13,24 +14,64 @@ export class SystemCheckCollisions extends System {
     resources: [ResourceCollisions],
   }
 
-  private worker = new Worker('./check-collisions.worker.ts')
+  private workers = new WorkerPool(
+    // @ts-ignore
+    Array.from({ length: navigator.hardwareConcurrency / 2 }).map(
+      () => new Worker('./check-collisions.worker.ts'),
+    ),
+  )
+
   private indexes = new Map<number, string>()
   private collisions?: Map<number, number[]>
-  private sent = false
 
   constructor() {
     super()
 
-    this.worker.addEventListener('message', (message) => {
-      this.sent = false
-
+    // @ts-ignore
+    this.workers.addEventListener('message', (message) => {
       this.collisions = message.data
     })
   }
 
+  private send(
+    components: [
+      ComponentStorage<ComponentCollidable>,
+      ComponentStorage<ComponentPosition>,
+      ComponentStorage<ComponentDimensions>,
+    ],
+  ) {
+    // this.worker.postMessage(ComponentStorage.join(Position, Dimensions))
+    this.indexes.clear()
+
+    // collect data
+    const data = ComponentStorage.join(...components)
+
+    // create typed arrays for data
+    const pos = new Float64Array(data.size * 2)
+    const dim = new Float64Array(data.size * 2)
+
+    for (const [entity, [_, position, dimensions]] of data) {
+      // get offset index
+      const index = this.indexes.size
+
+      // save index-entity relation
+      this.indexes.set(index * 2, entity)
+
+      // store positions
+      pos[index * 2] = position.x
+      pos[index * 2 + 1] = position.y
+
+      // store dimensions
+      dim[index * 2] = dimensions.width
+      dim[index * 2 + 1] = dimensions.height
+    }
+
+    this.workers.postMessage({ pos, dim }, [pos.buffer, dim.buffer])
+  }
+
   public dispatch(
     _: never,
-    [Collidable, Position, Dimensions]: [
+    components: [
       ComponentStorage<ComponentCollidable>,
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentDimensions>,
@@ -56,36 +97,10 @@ export class SystemCheckCollisions extends System {
     }
 
     // send data for detecting collisions to worker
-    if (!this.sent) {
-      this.sent = true
-
-      // this.worker.postMessage(ComponentStorage.join(Position, Dimensions))
-      this.indexes.clear()
-
-      const pos = new Float64Array(Position.size * 2)
-      const dim = new Float64Array(Position.size * 2)
-
-      for (const [entity, [_, position, dimensions]] of ComponentStorage.join(
-        Collidable,
-        Position,
-        Dimensions,
-      )) {
-        // get offset index
-        const index = this.indexes.size
-
-        // save index-entity relation
-        this.indexes.set(index * 2, entity)
-
-        // store positions
-        pos[index * 2] = position.x
-        pos[index * 2 + 1] = position.y
-
-        // store dimensions
-        dim[index * 2] = dimensions.width
-        dim[index * 2 + 1] = dimensions.height
-      }
-
-      this.worker.postMessage({ pos, dim }, [pos.buffer, dim.buffer])
+    if (this.workers.available) {
+      this.send(components)
+    } else {
+      console.log('non available')
     }
   }
 }
