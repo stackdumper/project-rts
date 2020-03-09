@@ -1,4 +1,3 @@
-import nanoid from 'nanoid'
 import { ID, Entity, Component, ComponentStorage, System, Resource } from '.'
 
 export class Core {
@@ -6,6 +5,9 @@ export class Core {
   public components = new Map<ID, ComponentStorage>()
   public resources = new Map<ID, Resource>()
   public systems = new Map<ID, System>()
+
+  // sequential id provider
+  private lastID = 1
 
   // pre-calculated system queries
   public queries = new Map<
@@ -33,7 +35,7 @@ export class Core {
   }
 
   public addEntity(components: Component[]) {
-    const entity = nanoid()
+    const entity = this.lastID++
 
     // add associated components
     for (const component of components) {

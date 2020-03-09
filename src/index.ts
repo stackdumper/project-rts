@@ -20,6 +20,7 @@ import {
   ComponentProjectile,
   ComponentCollidable,
   ComponentRigid,
+  ComponentTarget,
 } from '~/components'
 import {
   ResourceKeyboard,
@@ -62,6 +63,7 @@ import {
   SystemWeaponry,
   SystemProjectile,
   SystemHealth,
+  SystemTargeting,
 } from '~/systems'
 import * as entities from '~/entities'
 
@@ -88,6 +90,7 @@ const createCore = async () => {
   core.addComponent(ComponentProjectile)
   core.addComponent(ComponentCollidable)
   core.addComponent(ComponentRigid)
+  core.addComponent(ComponentTarget)
 
   // add resources
   await core.addResource(new ResourceKeyboard())
@@ -126,6 +129,7 @@ const createCore = async () => {
   core.addSystem(new SystemFollowOrderMove())
   core.addSystem(new SystemFollowOrderBuild())
   core.addSystem(new SystemFollowOrderProduce())
+  core.addSystem(new SystemTargeting())
   core.addSystem(new SystemWeaponry())
   core.addSystem(new SystemProjectile())
   core.addSystem(new SystemHealth())

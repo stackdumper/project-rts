@@ -1,4 +1,4 @@
-import { System, ComponentStorage, Core } from '~/core'
+import { System, ComponentStorage } from '~/core'
 import { ComponentPosition, ComponentDimensions, ComponentCollidable } from '~/components'
 import { ResourceCollisions } from '~/resources'
 import { WorkerPool } from '~/utils'

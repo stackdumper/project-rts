@@ -12,12 +12,13 @@ import {
   ComponentWeaponry,
   ComponentCollidable,
   ComponentRigid,
+  ComponentTarget,
 } from '~/components'
 
 export const assaultBot = new EntityTemplate('Assault Bot', {
-  mass: 0,
-  energy: 0,
-  time: 0,
+  mass: 1,
+  energy: 1,
+  time: 1,
 }).withComponents([
   new ComponentPosition(0.0, 0.0),
   new ComponentVelocity(0.0, 0.0),
@@ -29,6 +30,7 @@ export const assaultBot = new EntityTemplate('Assault Bot', {
   new ComponentSelectable(),
   new ComponentOrders(),
   new ComponentWeaponry(14 * 16, 60 / 3, 7, 5),
+  new ComponentTarget(),
   new ComponentCollidable(),
   new ComponentRigid(),
 ])

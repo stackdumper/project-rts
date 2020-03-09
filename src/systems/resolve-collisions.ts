@@ -54,7 +54,13 @@ export class SystemResolveCollisions extends System {
             .add(new Vector2((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10))
             .normalize()
 
-          position.add(normal.multiplyScalar(penetration * 0.003).multiplyScalar(6))
+          const impulse = normal.multiplyScalar(penetration * 0.003).multiplyScalar(6)
+
+          if (impulse.length() > 0.5) {
+            impulse.setLength(0.5)
+          }
+
+          position.add(impulse)
         }
       }
     }

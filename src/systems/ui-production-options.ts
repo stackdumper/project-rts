@@ -1,6 +1,6 @@
 import { System, Entity, ComponentStorage } from '~/core'
 import { ComponentProductionOptions, ComponentOrders } from '~/components'
-import { ResourceSelection } from '~/resources'
+import { ResourceSelection, ResourceKeyboard } from '~/resources'
 import { EntityTemplate } from '~/utils'
 
 /**
@@ -11,7 +11,7 @@ export class SystemUIProductionOptions extends System {
   static query = {
     core: false,
     components: [ComponentProductionOptions, ComponentOrders],
-    resources: [ResourceSelection],
+    resources: [ResourceSelection, ResourceKeyboard],
   }
 
   private container: HTMLDivElement = document.getElementById(
@@ -35,7 +35,7 @@ export class SystemUIProductionOptions extends System {
       ComponentStorage<ComponentProductionOptions>,
       ComponentStorage<ComponentOrders>,
     ],
-    [selection]: [ResourceSelection],
+    [selection, keyboard]: [ResourceSelection, ResourceKeyboard],
   ) {
     const [entity] = Array.from(selection)
 
@@ -59,13 +59,17 @@ export class SystemUIProductionOptions extends System {
         const element = this.createElement(template)
 
         element.onclick = () => {
-          Orders.get(entity)!.push({
-            action: 'produce',
-            template,
-            mass: 0,
-            energy: 0,
-            percentage: 0,
-          })
+          const times = keyboard.pressed.has(16) ? 10 : 1
+
+          for (let _ = 0; _ < times; _++) {
+            Orders.get(entity)!.push({
+              action: 'produce',
+              template,
+              mass: 0,
+              energy: 0,
+              percentage: 0,
+            })
+          }
         }
 
         this.container.appendChild(element)

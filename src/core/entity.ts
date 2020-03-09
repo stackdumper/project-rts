@@ -1,1 +1,1 @@
-export type Entity = string
+export type Entity = number

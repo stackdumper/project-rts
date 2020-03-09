@@ -10,7 +10,7 @@ export class WorkerPool {
   }
 
   get available() {
-    return this.workers.some((t) => t.available)
+    return this.workers.find((t) => t.available)
   }
 
   public addEventListener(type: 'error' | 'message', func: (event: MessageEvent) => any) {
