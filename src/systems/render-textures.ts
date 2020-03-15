@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { System, ComponentStorage, Core } from '~/core'
+import { System, ComponentStorage, Core, Entity } from '~/core'
 import {
   ResourceScene,
   ResourcePlayers,
@@ -31,7 +31,7 @@ export class SystemRenderTextures extends System {
     resources: [ResourceScene, ResourceTextures, ResourcePlayers, ResourceSelection],
   }
 
-  private sprites = new Map<string, PIXI.Sprite>()
+  private sprites = new Map<Entity, PIXI.Sprite>()
 
   public dispatch(
     core: Core,

@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { System, ComponentStorage } from '~/core'
+import { System, ComponentStorage, Entity } from '~/core'
 import {
   ResourceScene,
   ResourcePlayers,
@@ -24,7 +24,7 @@ export class SystemRenderIcons extends System {
     resources: [ResourceScene, ResourceIcons, ResourcePlayers, ResourceSelection],
   }
 
-  private sprites = new Map<string, PIXI.Sprite>()
+  private sprites = new Map<Entity, PIXI.Sprite>()
 
   public dispatch(
     _: never,

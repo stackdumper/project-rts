@@ -1,4 +1,4 @@
-import { System, ComponentStorage } from '~/core'
+import { System, ComponentStorage, Entity } from '~/core'
 import { ComponentPosition, ComponentDimensions, ComponentCollidable } from '~/components'
 import { ResourceCollisions } from '~/resources'
 import { WorkerPool } from '~/utils'
@@ -21,8 +21,8 @@ export class SystemCheckCollisions extends System {
     ),
   )
 
-  private indexes = new Map<number, string>()
-  private collisions?: Map<number, number[]>
+  private indexes = new Map<Entity, Entity>()
+  private collisions?: Map<Entity, Entity[]>
 
   constructor() {
     super()

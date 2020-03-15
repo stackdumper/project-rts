@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { System, ComponentStorage } from '~/core'
+import { System, ComponentStorage, Entity } from '~/core'
 import { ResourceScene, ResourceTextures } from '~/resources'
 import {
   ComponentPosition,
@@ -19,7 +19,7 @@ export class SystemRenderHealth extends System {
     resources: [ResourceScene, ResourceTextures],
   }
 
-  private sprites = new Map<string, PIXI.Sprite>()
+  private sprites = new Map<Entity, PIXI.Sprite>()
 
   public dispatch(
     _: never,
