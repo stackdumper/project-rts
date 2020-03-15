@@ -1,55 +1,76 @@
+import * as PIXI from 'pixi.js'
 import { System, ComponentStorage, Core } from '~/core'
 import {
   ResourceSelection,
   ResourceScene,
   ResourcePlacement,
   ResourceKeyboard,
+  ResourceCursor,
+  ResourcePlayers,
 } from '~/resources'
-import { ComponentPosition, ComponentSelectable, ComponentDimensions } from '~/components'
+import {
+  ComponentPosition,
+  ComponentSelectable,
+  ComponentDimensions,
+  ComponentOwnership,
+} from '~/components'
 
 /**
  * SystemSelection is used to add selected entities to selected resource.
  */
 export class SystemSelection extends System {
   static id = 'selection'
+  static query = {
+    core: false,
+    components: [],
+    resources: [ResourceScene, ResourceCursor],
+  }
 
   private selection: {
     min?: { x: number; y: number }
     max?: { x: number; y: number }
   } = {}
+  private graphics = new PIXI.Graphics()
 
   public initialize(core: Core) {
     const scene = core.getResource(ResourceScene)
-    const placement = core.getResource(ResourcePlacement)
     const keyboard = core.getResource(ResourceKeyboard)
     const selection = core.getResource(ResourceSelection)
+    const players = core.getResource(ResourcePlayers)
 
     const Position = core.getComponent(ComponentPosition)
+    const Selectable = core.getComponent(ComponentSelectable)
+    const Dimensions = core.getComponent(ComponentDimensions)
+    const Ownership = core.getComponent(ComponentOwnership)
+
+    scene.containers.viewport.addChild(this.graphics)
 
     // box selection
-    let timeout: NodeJS.Timeout
-
     scene.view.addEventListener('mousedown', (e) => {
-      timeout = setTimeout(() => {
-        // @ts-ignore
-        this.selection.min = scene.containers.land.toLocal({
-          x: e.clientX,
-          y: e.clientY,
-        })
-      }, 150)
+      // skip right click
+      if (e.which === 3) return
+
+      // @ts-ignore
+      this.selection.min = scene.containers.map.toLocal({
+        x: e.clientX,
+        y: e.clientY,
+      })
+
+      // @ts-ignore set max
+      this.selection.max = scene.containers.map.toLocal({
+        x: e.clientX,
+        y: e.clientY,
+      })
     })
 
-    scene.view.addEventListener('mouseup', (e) => {
-      clearTimeout(timeout)
+    document.addEventListener('mouseup', (e) => {
+      this.graphics.clear()
 
-      if (this.selection.min) {
-        // @ts-ignore
-        this.selection.max = scene.containers.land.toLocal({
-          x: e.clientX,
-          y: e.clientY,
-        })
-
-        selection.clear()
+      if (this.selection.min && this.selection.max) {
+        // if shift is not pressed
+        if (!keyboard.pressed.has(16)) {
+          selection.clear()
+        }
 
         // allow selection from any direction
         ;[this.selection.min.x, this.selection.max.x] = [
@@ -61,14 +82,21 @@ export class SystemSelection extends System {
           Math.max(this.selection.min.y, this.selection.max.y),
         ]
 
-        // select intersecting entities
-        for (const [entity, position] of Position) {
-          if (
-            position.x > this.selection.min.x &&
-            position.x < this.selection.max.x &&
-            position.y > this.selection.min.y &&
-            position.y < this.selection.max.y
-          ) {
+        // check intersection for each entity
+        for (const [
+          entity,
+          [_, position, dimensions, ownership],
+        ] of ComponentStorage.join(Selectable, Position, Dimensions, Ownership)) {
+          // skip if not owned by player
+          if (ownership.playerID !== players.currentPlayer) continue
+
+          const intersects =
+            position.x - dimensions.min.x >= this.selection.min.x &&
+            position.y - dimensions.min.y >= this.selection.min.y &&
+            position.x - dimensions.max.x <= this.selection.max.x &&
+            position.y - dimensions.max.y <= this.selection.max.y
+
+          if (intersects) {
             selection.add(entity)
           }
         }
@@ -77,44 +105,31 @@ export class SystemSelection extends System {
       this.selection = {}
     })
 
-    // select one
-    scene.view.addEventListener('mousedown', (e) => {
-      if (e.which === 3) return
-
-      // skip if placement is in process
-      if (placement.template !== undefined) return
-
-      // stop event propagating to children
-      e.stopPropagation()
-
-      // reset selection if shift is not pressed
-      if (!keyboard.pressed.has(16)) {
-        selection.clear()
-      }
-
-      // transform global on-screen click coordinates to local ones
-      // @ts-ignored
-      const { x: clickX, y: clickY } = scene.containers.viewport.toLocal(e)
-
-      // FIXME: clear build menu
+    scene.containers.viewport.addListener('mouseup', () => {
       document.getElementById('bottom-menu')!.innerText = ''
-
-      // check intersection for each entity
-      for (const [entity, [_, position, dimensions]] of ComponentStorage.join(
-        core.getComponent(ComponentSelectable),
-        core.getComponent(ComponentPosition),
-        core.getComponent(ComponentDimensions),
-      )) {
-        const intersects =
-          clickX > position.x + dimensions.min.x &&
-          clickY > position.y + dimensions.min.y &&
-          clickX < position.x + dimensions.max.x &&
-          clickY < position.y + dimensions.max.y
-
-        if (intersects) {
-          selection.add(entity)
-        }
-      }
     })
+  }
+
+  public dispatch(_: never, []: [], [scene, cursor]: [ResourceScene, ResourceCursor]) {
+    if (this.selection.min) {
+      // @ts-ignore set max
+      this.selection.max = scene.containers.map.toLocal({
+        x: cursor.position.x,
+        y: cursor.position.y,
+      })
+
+      // render
+      this.graphics.clear()
+      this.graphics
+        .beginFill(0xffffff, 0.07)
+        .lineStyle(1, 0xffffff, 0.5)
+        .drawRect(
+          this.selection.min.x,
+          this.selection.min.y,
+          this.selection.max.x - this.selection.min.x,
+          this.selection.max.y - this.selection.min.y,
+        )
+        .endFill()
+    }
   }
 }

@@ -16,8 +16,8 @@ import {
 } from '~/components'
 
 export const assaultBot = new EntityTemplate('Assault Bot', {
-  mass: 1,
-  energy: 1,
+  mass: 0.1,
+  energy: 0.1,
   time: 1,
 }).withComponents([
   new ComponentPosition(0.0, 0.0),
