@@ -21,6 +21,7 @@ export class ResourceScene extends Resource {
     map: new PIXI.Container(),
     land: new PIXI.ParticleContainer(4096, { tint: true }),
     ground: new PIXI.ParticleContainer(4096, { tint: true }),
+    projectile: new PIXI.ParticleContainer(4096),
   }
 
   constructor() {
@@ -38,6 +39,7 @@ export class ResourceScene extends Resource {
     this.containers.viewport.addChild(this.containers.map)
     this.containers.viewport.addChild(this.containers.land)
     this.containers.viewport.addChild(this.containers.ground)
+    this.containers.viewport.addChild(this.containers.projectile)
     this.containers.viewport.addChild(this.containers.health)
     this.containers.viewport.addChild(this.containers.progress)
     this.app.stage.addChild(this.containers.viewport)

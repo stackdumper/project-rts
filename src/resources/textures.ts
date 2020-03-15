@@ -39,6 +39,11 @@ export class ResourceTextures
       .beginFill(0x1b9cfc)
       .drawRect(0, 0, 32, 2)
       .endFill(),
+
+    projectile: new PIXI.Graphics()
+      .beginFill(0xffffff)
+      .drawRect(0, 0, 1, 1)
+      .endFill(),
   }
 
   public initialize(core: Core) {

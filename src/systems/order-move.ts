@@ -19,13 +19,21 @@ export class SystemOrderMove extends System {
       e.preventDefault()
     })
 
+    document.addEventListener(
+      'mousewheel',
+      (e) => {
+        // @ts-ignore
+        if (e.ctrlKey) {
+          e.preventDefault()
+        }
+      },
+      { passive: false },
+    )
+
     // listen to right clicks on viewport
     scene.view.addEventListener('contextmenu', (e) => {
       // skip if no entity is selected
-      if (!selection.entity) return
-
-      // skip if entity is not mobile
-      if (!core.getComponent(ComponentMobile).has(selection.entity)) return
+      if (!selection.size) return
 
       // prevent event propogating down
       e.stopPropagation()
@@ -33,21 +41,26 @@ export class SystemOrderMove extends System {
       // @ts-ignore
       const { x, y } = scene.containers.viewport.toLocal(e)
 
-      // add movemeent order
-      const orders = core.getComponent(ComponentOrders).get(selection.entity)!
+      for (const entity of selection) {
+        // skip if entity is not mobile
+        if (!core.getComponent(ComponentMobile).has(entity)) continue
 
-      // if shift is pressed, add order to the queue
-      // if not, override previous orders
-      if (keyboard.pressed.has(16)) {
-        orders.push({
-          action: 'move',
-          position: new Vector2(x, y),
-        })
-      } else {
-        orders.set({
-          action: 'move',
-          position: new Vector2(x, y),
-        })
+        // add movemeent order
+        const orders = core.getComponent(ComponentOrders).get(entity)!
+
+        // if shift is pressed, add order to the queue
+        // if not, override previous orders
+        if (keyboard.pressed.has(16)) {
+          orders.push({
+            action: 'move',
+            position: new Vector2(x, y),
+          })
+        } else {
+          orders.set({
+            action: 'move',
+            position: new Vector2(x, y),
+          })
+        }
       }
     })
   }

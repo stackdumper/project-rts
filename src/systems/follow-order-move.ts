@@ -37,7 +37,7 @@ export class SystemFollowOrderMove extends System {
         // if not reached, move
         const distance = orders.current.position.distanceToSquared(position)
 
-        if (distance > 2) {
+        if (distance > 64) {
           const direction = orders.current.position
             .clone()
             .sub(position)

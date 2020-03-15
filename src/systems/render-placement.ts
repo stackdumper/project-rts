@@ -11,6 +11,7 @@ import {
   ComponentIcon,
   ComponentTexture,
   ComponentPosition,
+  ComponentCollidable,
 } from '~/components'
 import { EntityTemplate } from '~/utils'
 
@@ -41,25 +42,26 @@ export class SystemRenderPlacement extends System {
       ResourceCollisions,
     ],
   ) {
+    const { placeholder, template, builder } = placement
+
     // remove box
     if (
-      placement.placeholder &&
-      ((!placement.template && this.renderedTemplate) ||
-        placement.template !== this.renderedTemplate)
+      placeholder &&
+      ((!template && this.renderedTemplate) || template !== this.renderedTemplate)
     ) {
-      core.removeEntity(placement.placeholder)
+      core.removeEntity(placeholder)
 
       placement.placeholder = undefined
       this.renderedTemplate = undefined
     }
 
     // add box
-    if (placement.template && placement.template !== this.renderedTemplate) {
-      const ownership = Ownership.get(placement.builder!)!
-      const position = placement.template.getComponent(ComponentPosition)
-      const dimensions = placement.template.getComponent(ComponentDimensions)
-      const icon = placement.template.getComponent(ComponentIcon)
-      const texture = placement.template.getComponent(ComponentTexture)
+    if (template && template !== this.renderedTemplate) {
+      const ownership = Ownership.get(builder!)!
+      const position = template.getComponent(ComponentPosition)
+      const dimensions = template.getComponent(ComponentDimensions)
+      const icon = template.getComponent(ComponentIcon)
+      const texture = template.getComponent(ComponentTexture)
 
       placement.placeholder = core.addEntity([
         ownership,
@@ -67,22 +69,24 @@ export class SystemRenderPlacement extends System {
         dimensions,
         texture,
         icon,
+        new ComponentCollidable(),
       ])
-      this.renderedTemplate = placement.template
+      this.renderedTemplate = template
     }
 
     // reposition box
-    if (placement.placeholder && placement.template === this.renderedTemplate) {
+    if (
+      placeholder &&
+      template === this.renderedTemplate &&
+      core.entities.has(placeholder)
+    ) {
       // @ts-ignore update position
       const { x, y } = scene.containers.viewport.toLocal(cursor.position)
-      Position.get(placement.placeholder!)!.set(
-        Math.round(x / 16) * 16,
-        Math.round(y / 16) * 16,
-      )
+      Position.get(placeholder)!.set(Math.round(x / 16) * 16, Math.round(y / 16) * 16)
 
       // dim if collides and can't be placed
-      const texture = Texture.get(placement.placeholder)!
-      if (collisions.has(placement.placeholder)) {
+      const texture = Texture.get(placeholder)!
+      if (collisions.has(placeholder)) {
         texture.alpha = 0.2
       } else {
         texture.alpha = 1

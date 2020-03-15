@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { System, ComponentStorage } from '~/core'
+import { System, ComponentStorage, Core, Entity } from '~/core'
 import {
   ResourceScene,
   ResourcePlayers,
@@ -20,7 +20,7 @@ import {
 export class SystemRenderTextures extends System {
   static id = 'render-textures'
   static query = {
-    core: false,
+    core: true,
     components: [
       ComponentPosition,
       ComponentDimensions,
@@ -31,10 +31,10 @@ export class SystemRenderTextures extends System {
     resources: [ResourceScene, ResourceTextures, ResourcePlayers, ResourceSelection],
   }
 
-  private sprites = new Map<string, PIXI.Sprite>()
+  private sprites = new Map<Entity, PIXI.Sprite>()
 
   public dispatch(
-    _: never,
+    core: Core,
     [Position, Dimensions, Ownership, Draft, Texture]: [
       ComponentStorage<ComponentPosition>,
       ComponentStorage<ComponentDimensions>,
@@ -54,11 +54,33 @@ export class SystemRenderTextures extends System {
 
     // remove deleted entities
     for (const [entity, sprite] of this.sprites) {
-      if (!Dimensions.has(entity)) {
+      if (!core.entities.has(entity)) {
+        // FIXME
         scene.containers.land.removeChild(sprite)
         scene.containers.ground.removeChild(sprite)
+        scene.containers.projectile.removeChild(sprite)
+        sprite.destroy()
+
         this.sprites.delete(entity)
       }
+
+      // // not render invisible elements invisible
+      // const position = Position.get(entity)
+      // if (position) {
+      //   // @ts-ignore
+      //   const local = scene.containers.land.toGlobal(position)
+
+      //   if (
+      //     local.x < 0 ||
+      //     local.y < 0 ||
+      //     local.x > window.innerWidth ||
+      //     local.y > window.innerHeight
+      //   ) {
+      //     sprite.visible = false
+      //   } else {
+      //     sprite.visible = true
+      //   }
+      // }
     }
 
     // add missing entities
@@ -90,7 +112,7 @@ export class SystemRenderTextures extends System {
       sprite!.position.y = position.y
 
       // make sprite white if selected
-      if (selection.entity === entity) {
+      if (selection.has(entity)) {
         sprite.tint = 0xffffff
       } else if (sprite.tint === 0xffffff) {
         const ownership = Ownership.get(entity)!

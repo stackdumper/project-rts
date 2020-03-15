@@ -7,6 +7,8 @@ import {
   ComponentProducer,
   ComponentTexture,
   ComponentHealth,
+  ComponentCollidable,
+  ComponentRigid,
 } from '~/components'
 
 export const extractor = new EntityTemplate('Extractor', {
@@ -21,4 +23,6 @@ export const extractor = new EntityTemplate('Extractor', {
   new ComponentDimensions(32, 32),
   new ComponentSelectable(),
   new ComponentProducer(2, -2),
+  new ComponentCollidable(),
+  new ComponentRigid(),
 ])

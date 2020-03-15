@@ -1,6 +1,6 @@
 import { System, Entity, ComponentStorage } from '~/core'
 import { ComponentProductionOptions, ComponentOrders } from '~/components'
-import { ResourceSelection } from '~/resources'
+import { ResourceSelection, ResourceKeyboard } from '~/resources'
 import { EntityTemplate } from '~/utils'
 
 /**
@@ -11,7 +11,7 @@ export class SystemUIProductionOptions extends System {
   static query = {
     core: false,
     components: [ComponentProductionOptions, ComponentOrders],
-    resources: [ResourceSelection],
+    resources: [ResourceSelection, ResourceKeyboard],
   }
 
   private container: HTMLDivElement = document.getElementById(
@@ -35,19 +35,21 @@ export class SystemUIProductionOptions extends System {
       ComponentStorage<ComponentProductionOptions>,
       ComponentStorage<ComponentOrders>,
     ],
-    [selection]: [ResourceSelection],
+    [selection, keyboard]: [ResourceSelection, ResourceKeyboard],
   ) {
+    const [entity] = Array.from(selection)
+
     // clear
     if (
-      (this.renderedEntity && !selection.entity) ||
-      (this.renderedEntity && this.renderedEntity !== selection.entity)
+      (this.renderedEntity && !entity) ||
+      (this.renderedEntity && this.renderedEntity !== entity)
     ) {
       this.renderedEntity = undefined
     }
 
     // render
-    if (!this.renderedEntity && selection.entity) {
-      const productionOptions = ProductionOptions.get(selection.entity)
+    if (!this.renderedEntity && entity) {
+      const productionOptions = ProductionOptions.get(entity)
       if (!productionOptions) return
 
       // clear container
@@ -57,19 +59,23 @@ export class SystemUIProductionOptions extends System {
         const element = this.createElement(template)
 
         element.onclick = () => {
-          Orders.get(selection.entity!)!.push({
-            action: 'produce',
-            template,
-            mass: 0,
-            energy: 0,
-            percentage: 0,
-          })
+          const times = keyboard.pressed.has(16) ? 10 : 1
+
+          for (let _ = 0; _ < times; _++) {
+            Orders.get(entity)!.push({
+              action: 'produce',
+              template,
+              mass: 0,
+              energy: 0,
+              percentage: 0,
+            })
+          }
         }
 
         this.container.appendChild(element)
       }
 
-      this.renderedEntity = selection.entity
+      this.renderedEntity = entity
     }
   }
 }

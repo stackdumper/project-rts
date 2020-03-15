@@ -33,37 +33,52 @@ export class ComponentStorage<C extends Component = any> extends Map<Entity, C> 
   }
 
   public clear = () => {
-    this.iteration = 0
+    this.iteration += 1
 
     return super.clear()
   }
 
   // key for caching
-  public getKey = () => this.id + this.iteration
+  public getKey = () => this.id + this.iteration + this.size
 
-  static cache = new Map<string, Map<string, Component>>()
+  static cache: Map<string, Map<string, Component> & { iteration: string }> = new Map()
 
-  /** ComponentStorage.join is used to join multiple component storages by entity */
-  static join: ComponentStorage.Join = (...storages: ComponentStorage[]) => {
-    // if exists, return cached
-    const key = storages.map((s) => s.getKey()).join('-')
-    const cached = ComponentStorage.cache.get(key)
-    if (cached) {
-      return cached
-    }
-
-    // perform intersection
+  private static intersect: ComponentStorage.Join = (...storages: ComponentStorage[]) => {
     const joint = new Map()
+
     for (const key of intersection(...storages.map((s) => Array.from(s.keys())))) {
       const components = storages.map((storage) => storage.get(key))
 
       joint.set(key, components)
     }
 
-    // save to cache
-    ComponentStorage.cache.set(key, joint)
-
     return joint as any
+  }
+
+  public static intersectCached: ComponentStorage.Join = (
+    ...storages: ComponentStorage[]
+  ) => {
+    const key = storages.map((s) => s.id).join()
+    const iteration = storages.map((s) => s.getKey()).join()
+
+    let cache = ComponentStorage.cache.get(key)
+    if (cache && cache.iteration === iteration) {
+      return cache
+    } else {
+      //  @ts-ignore perform intersection
+      const joint = ComponentStorage.intersect(...storages)
+
+      joint.iteration = iteration
+      ComponentStorage.cache.set(key, joint)
+
+      return joint
+    }
+  }
+
+  public static join: ComponentStorage.Join = (...storages: ComponentStorage[]) => {
+    // @ts-ignore
+    return ComponentStorage.intersectCached(...storages)
+    // return ComponentStorage.intersect(...storages)
   }
 }
 
