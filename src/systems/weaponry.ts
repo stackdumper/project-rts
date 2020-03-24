@@ -78,7 +78,7 @@ export class SystemWeaponry extends System {
           new ComponentTexture('projectile'),
           new ComponentProjectile(
             weaponry.damage,
-            target.distance! / weaponry.speed + (32 / weaponry.speed) * Math.random(),
+            target.distance! / weaponry.speed + weaponry.range * 0.1 * Math.random(),
           ),
           new ComponentCollidable(),
         ])

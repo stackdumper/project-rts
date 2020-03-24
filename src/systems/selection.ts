@@ -88,7 +88,7 @@ export class SystemSelection extends System {
           [_, position, dimensions, ownership],
         ] of ComponentStorage.join(Selectable, Position, Dimensions, Ownership)) {
           // skip if not owned by player
-          if (ownership.playerID !== players.currentPlayer) continue
+          // if (ownership.playerID !== players.currentPlayer) continue
 
           const intersects =
             position.x - dimensions.min.x >= this.selection.min.x &&

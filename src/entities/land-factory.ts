@@ -15,6 +15,7 @@ import {
 import { engineer } from './engineer'
 import { assaultBot } from './assault-bot'
 import { heavyAssaultBot } from './heavy-assault-bot'
+import { heavyTank } from './heavy-tank'
 
 export const landFactory = new EntityTemplate('Land Factory', {
   // mass: 210,
@@ -28,7 +29,7 @@ export const landFactory = new EntityTemplate('Land Factory', {
   new ComponentIcon('landFactory', 1.3),
   new ComponentTexture('ground'),
   new ComponentHealth(4800),
-  new ComponentProductionOptions([engineer, assaultBot, heavyAssaultBot]),
+  new ComponentProductionOptions([engineer, assaultBot, heavyAssaultBot, heavyTank]),
   new ComponentDimensions(128, 128),
   new ComponentSelectable(),
   new ComponentOrders(),
